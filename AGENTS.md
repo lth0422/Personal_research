@@ -148,10 +148,10 @@ git diff
 ## 5. 논문 카드 작성 규칙
 
 논문 카드는 `prompts/paper_card_prompt.md` 형식을 따른다.
-저장 위치는 기본적으로 다음을 사용한다.
+저장 위치는 기본적으로 그룹별 하위 폴더를 사용한다.
 
 ```text
-surveys/paper_cards/{짧은제목}.md
+surveys/paper_cards/{그룹번호_그룹명}/{짧은제목}.md
 ```
 
 논문 카드를 작성한 뒤에는 반드시 다음을 검토한다.
@@ -160,6 +160,8 @@ surveys/paper_cards/{짧은제목}.md
 2. `surveys/related_work_map.md`에 연결할 claim이 있는가?
 3. `surveys/claim_bank.md`에 발전시킬 연구 주장이 있는가?
 4. `decisions/open_questions.md`에 남길 확인 사항이 있는가?
+
+논문 요약 중 확인하지 못한 venue, year, dataset, metric, result, 실험 환경, 저자 주장 등은 paper card의 `불확실한 점` 섹션에 명시한다.
 
 ---
 

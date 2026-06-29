@@ -103,6 +103,7 @@ feasibility (elastic utilization):
 - 학술 문서에 괄호 사용 자제 (교수님 지침)
 - 교수님 보고용 = 개조식 간결 / 내부 노트 = 상세
 - 단정적 표현 자제, 불확실하면 decisions/open_questions.md 에 기록
+- 논문 요약 중 확인하지 못한 정보는 paper card의 `불확실한 점` 섹션에 명시
 - 한국어로 작업
 
 ---
@@ -118,8 +119,8 @@ personal-research/
 │   ├── claim_bank.md         # 내 연구 주장 모음
 │   ├── related_work_map.md
 │   ├── comparison_table.md   # 6번 표 (확장판, Table 1 될 것)
-│   └── paper_cards/          # 논문별 카드
-├── papers/                   # PDF 원본 (그룹 1~7)
+│   └── paper_cards/          # 논문별 카드, 그룹별 하위 폴더 사용
+├── papers/                   # PDF 원본 (그룹 1~8)
 ├── experiments/              # 손 트랙 — KSC 실험
 │   ├── pi_setup/
 │   ├── preempt_rt/
@@ -142,3 +143,4 @@ personal-research/
 5. fault_diagnosis_app — TinyML bearing, Time-Varying Speed FD, lightweight FD
 6. platform_preempt_rt — OSPERT 2024, MDPI ARM 2021, DLR pattern recognition, vision displacement
 7. platform_pi_zero2w — Dolphin whistle, RT object detection
+8. misc_realtime_scheduling — EDF ready queue, mixed-criticality DAG, cause-effect chain latency, self-suspending tasks
