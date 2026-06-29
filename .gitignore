@@ -1,0 +1,10 @@
+*.pdf
+*.PDF
+papers/**/*.pdf
+papers/**/*.PDF
+paper_text/
+paper_pool/
+sources/
+.DS_Store
+.vscode/
+
