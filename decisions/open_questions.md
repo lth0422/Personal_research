@@ -5,6 +5,19 @@
 ## Questions
 
 - classic elastic scheduling 두 편의 정량 결과를 manuscript에서 사용할 경우, HARTIK 실험과 IEEE TC 2002 후반 evaluation 수치를 별도로 재확인해야 한다.
+- Chantem et al. IEEE TC 2009의 heuristic 성능, feasible solution 비율, global optimal 비율을 원고에 사용할 경우 utilization level, workload, iteration 조건을 재확인해야 한다.
+- Tian and Gui Real-Time Systems 2011의 QoC examples를 사용할 경우 plant/control task 설정과 QoC metric을 Section 7에서 재확인해야 한다.
+- Tian and Gui의 QoC feedback은 control performance measurement이므로 본 연구의 anomaly score 또는 diagnosis utility와 동일한 trigger로 쓰지 않아야 한다.
+- Sudvarg et al. Real-Time Systems 2021은 short note 성격이므로 detailed algorithm performance는 follow-up LITES 2025 또는 dissertation과 함께 확인해야 한다.
+- Salman et al. ETFA 2021의 bandwidth adjustment reduction 수치는 Section IV의 workload, reservation, local scheduler 조건을 재확인해야 한다.
+- Salman et al.의 reservation bandwidth와 본 연구의 system slack S 사이의 mapping은 원고에서 별도 정의가 필요하다.
+- Orr et al. RTNS 2020의 virtual RTHS 실험에서 hardware, controller mode, utilization loss 수치를 원고에 사용할 경우 Section 4/5 조건을 재확인해야 한다.
+- Orr et al. RTNS 2020의 discrete workload/period mode를 본 연구의 `(W,H,M)` mode set과 연결할 때, W와 M이 utilization candidate에 어떻게 mapping되는지 별도로 정의해야 한다.
+- Sudvarg et al. RTAS 2024 Harmonic Task Systems의 FIMS deadline miss 회피와 ORB-SLAM3 10.4x RTE 개선 수치는 utilization bound, interference workload, platform 조건을 재확인해야 한다.
+- Sudvarg et al. RTAS 2024의 ORB-SLAM3 실험은 Linux/LITMUS^RT 기반이므로 PREEMPT_RT 실험 근거로 직접 쓰지 않아야 한다.
+- Sudvarg PhD dissertation 2024는 여러 출판 논문과 chapter를 포함하므로 원고에서는 가능한 한 원 논문을 우선 인용하고, dissertation은 taxonomy/background 보조로 사용해야 한다.
+- Sudvarg et al. LITES 2025 PDF에는 accepted/published date가 2025-11-26/2025-12-19로 표시된다. 현재 날짜 기준 미래 날짜이므로 bibliographic status를 인용 전 확인해야 한다.
+- Sudvarg et al. LITES 2025의 algorithm speedup/runtime 수치는 Section 3~5 evaluation 조건을 확인한 뒤 사용해야 한다.
 - FLEX의 abstract에 나온 `up to 22.0% recall`, `up to 14.7% mAP` 개선 수치를 manuscript에 인용하려면 Figure 9/10과 baseline 조건을 재확인해야 한다.
 - EdgeServing은 현재 로컬 PDF 기준 arXiv v1이다. manuscript 인용 전 최신 version 또는 출판 venue 여부를 확인해야 한다.
 - EdgeServing의 SLO violation ratio, P95 latency, accuracy 수치를 manuscript에 넣으려면 figure별 platform, traffic intensity, SLO threshold 조건을 재확인해야 한다.
@@ -12,12 +25,53 @@
 - Pantheon의 preemption은 GPU/DNN runtime preemption이다. PREEMPT_RT 커널 preemption 또는 RTOS scheduling과 혼동하지 않도록 원고 표현을 구분해야 한다.
 - Yao et al. RTCSA 2020의 `10%~20%` accuracy improvement와 deadline miss 관련 수치를 manuscript에 인용하려면 Figure별 workload, baseline, dataset 조건을 재확인해야 한다.
 - Yao et al. RTCSA 2020은 object classification service 중심이다. vibration fault diagnosis와 연결할 때 domain 차이와 utility 정의 차이를 명시해야 한다.
+- Laskaridis et al. EMDL 2021은 survey/design paper이므로 정량 성능 근거가 아니라 early-exit 설계 축 배경으로 사용해야 한다.
+- He et al. Adaptive Scheduling for Edge-Assisted DNN Serving은 현재 로컬 PDF 기준 arXiv v2 2023이다. manuscript 인용 전 출판 venue 여부를 확인해야 한다.
+- He et al.의 system capacity, completion time, on-time ratio 개선 수치는 DNN model, request rate, deadline, batch size bound, binary/partial offloading 조건별로 달라지므로 Figure 5, 8, 11 조건을 재확인해야 한다.
+- BCEdge는 현재 로컬 PDF 기준 arXiv v1 2023이다. manuscript 인용 전 출판 venue 여부를 확인해야 한다.
+- BCEdge의 `up to 37.6%` utility improvement는 edge GPU, DNN model, baseline, utility definition 조건을 Section V에서 재확인해야 한다.
+- Raj et al. DEMS-A/GEMS는 현재 로컬 PDF 기준 arXiv v2 2025이다. manuscript 인용 전 출판 venue 여부를 확인해야 한다.
+- Raj et al.의 task completion rate, QoS utility, QoE utility, real-drone trajectory 관련 수치는 workload, edge/cloud setup, FPS, completion window 조건을 확인한 뒤 사용해야 한다.
+- Raj et al.의 QoE completion window는 application-level task completion window이며, 본 연구의 vibration window W 또는 hop size H와 혼동하지 않아야 한다.
+- Demand Layering의 96.5% memory reduction, 14.8% average delay overhead, near-zero overhead 수치는 representative DNN, pipeline architecture, buffer size 조건을 Section V에서 재확인해야 한다.
+- Demand Layering은 Jetson AGX Xavier + NVMe SSD + integrated GPU 구조이므로 Pi Zero 2W CPU inference나 MCU inference와 직접 비교하지 않아야 한다.
+- Rahmath P et al. ACM Computing Surveys 2024는 survey 논문이므로 정량 성능 근거가 아니라 early-exit taxonomy/background 근거로 사용해야 한다.
+- early-exit survey들의 prediction confidence 또는 input complexity trigger를 본 연구의 anomaly score 기반 machine condition trigger와 동일하게 표현하지 않아야 한다.
 - Jalonen et al. ICIT 2024의 `up to 15.8%` gain과 `3.6% point gain`은 비교 기준과 figure/table 조건을 manuscript 인용 전 재확인해야 한다.
 - Jalonen et al. ICIT 2024의 inference time은 MacBook Pro M1 Pro 기반이다. MCU/SBC/PREEMPT_RT 결과와 직접 비교하지 말고, 100 ms acquisition 대비 20.2 ms processing이라는 구조적 참고로만 사용해야 한다.
+- Adam et al. Electronics 2021의 150 us upper bound, 118 us average maximum latency 등 수치는 platform/kernel/distribution 조건별로 다르므로 manuscript 인용 전 Table 4와 관련 figure를 재확인해야 한다.
+- Raspberry Pi 5 PREEMPT_RT preliminary assessment의 venue가 PDF 안에서 명확히 확인되지 않았다. manuscript 인용 전 출처/venue를 확인해야 한다.
+- Raspberry Pi 5 논문의 stock max 36802 us, RT max 124 us, 294x shorter maximum latency는 Pi 5 + Debian 12 + kernel 6.6.21 + extreme stress 조건이므로 Pi Zero 2W 결과로 일반화하면 안 된다.
+- De Marco et al. Robotics 2025의 120 ms latency와 8 spectrograms/s는 optimized TFLite model, 4-thread 조건이다. manuscript 인용 전 Figure 3/4와 thread setting을 재확인해야 한다.
+- De Marco et al. Robotics 2025는 acoustic spectrogram detection이므로 vibration FD deadline과 직접 비교하지 말고 Pi Zero 2W + TFLite platform 가능성 근거로만 사용해야 한다.
+- Wang et al. Engineering Structures 2023은 Raspberry Pi 4 기반 displacement measurement system이며 PREEMPT_RT 문헌이 아니다. 실시간 sampling/update rate, CPU load, latency를 인용하려면 본문 실험표를 확인해야 한다.
+- Vaghasiya M.Sc. thesis 2025는 thesis 문헌이므로 원고 인용 전 공개성, bibliographic status, Raspberry Pi model, object detection model, workload/deadline 결과를 확인해야 한다.
+- Jeya Agastin K et al. IRJAEM 2025는 Pi Zero 2W object detection 사례지만 venue quality와 peer-review status를 확인해야 한다. FPS/latency/accuracy 수치는 실험표 기준으로 재확인해야 한다.
+- Pathan DATE 2016의 EDF ready-queue overhead improvement는 random task-set simulation과 baseline 조건을 확인한 뒤 사용해야 한다.
+- Tang et al. RTSS 2023의 DPI/DPI-B latency improvement는 automotive benchmark와 random workload 조건을 확인해야 한다. 본 연구의 Rx-Inference-Tx pipeline에 직접 적용된다고 쓰면 안 된다.
+- Guan et al. RTSS 2024의 capacity augmentation bound 4와 acceptance ratio 결과는 relaxed-deadline DAG task generation 조건을 확인해야 한다.
+- Requirement-Based Analysis of Self-Suspending Tasks under EDF는 첫 페이지 텍스트 추출에서 저자명이 깨져 확인되지 않았다. PDF 원본 첫 페이지 또는 IEEE Xplore metadata로 author list를 확인해야 한다.
+- RTSS 2025 self-suspending task 문헌은 sensing/I/O wait 또는 offloading background로만 제한적으로 사용할 수 있으며, 본 연구의 inference adaptation 근거로 과장하지 않아야 한다.
+- Thota et al. GLSVLSI 2025는 Table 2에서 unoptimized float32 latency 30 ms, quantized int8 latency 265 ms로 보이지만 abstract/results 문장에서는 30 ms와 69.7 KB flash를 함께 언급한다. manuscript 인용 전 model type별 latency/RAM/flash를 구분해야 한다.
+- Thota et al. GLSVLSI 2025의 10000 data point segment와 7500-point raw triaxial sample의 관계를 method section 기준으로 재확인해야 한다.
+- Ma et al. Engineering Applications of Artificial Intelligence 2023의 real-time 수치는 CPU test-set processing time 중심이다. per-sample latency, worst-case latency, deadline miss, embedded target measurement와 혼동하지 않아야 한다.
+- Lee and Kim IEEE TIM 2024 FRFconv-TDSNet의 Raspberry Pi 4B inference time은 conclusion 기준 less than 5 ms로 정리했지만, average/max 수치는 Figure 6에서 재확인해야 한다.
+- FRFconv-TDSNet 논문 수치와 KCC 2026 STM32F407 + Zephyr + TFLite Micro 결과를 비교할 때 platform, framework, input window, quantization 조건을 분리해야 한다.
+- Choi et al. KSC 2025의 sensing, inference, output 실행시간은 deadline이나 주기 조건 없이 system execution time으로 제시된다. KCC/KSC 원고에서 real-time guarantee처럼 표현하지 않도록 주의해야 한다.
+- Choi et al. KSC 2025와 KCC 2026 Zephyr 결과를 연결할 때 STM32F401RET6 vs STM32F407, X-CUBE-AI vs TFLite Micro/CMSIS-NN, non-RTOS integration vs Zephyr task pipeline 차이를 분리해야 한다.
+- Chen et al. RTSS 2025 WiP의 Raspberry Pi 5 실험은 synthetic taskset schedulability와 example trace 중심이다. Pi Zero 2W, PREEMPT_RT, TFLite fault diagnosis pipeline 결과와 직접 비교하지 않아야 한다.
+- Chen et al. RTSS 2025 WiP의 QoS enhancement는 future work 성격이 있으므로 system slack 기반 runtime adaptation의 선행연구로 과장하지 않아야 한다.
+- Agrawal et al. RTSS 2024의 dependence parameter와 learning mechanism은 input stream의 classification history 기반이다. 이를 기계 상태 anomaly score와 동일한 trigger로 표현하지 않아야 한다.
+- Agrawal et al. RTSS 2024의 dataset과 expected response time 수치를 원고에 넣으려면 Section VI/VII의 experiment 조건을 재확인해야 한다.
+- Baruah et al. RTAS 2024에서 fault tolerance는 classifier wrong output에 대한 fault model이다. mechanical fault diagnosis의 machine fault와 용어를 명확히 구분해야 한다.
+- Baruah et al. RTAS 2024의 case-study expected duration과 Pareto/latency 수치는 Table II~VI 조건을 확인한 뒤 사용해야 한다.
+- Hawila et al. ECRTS 2025의 allowable deadline miss는 control stability region에서 도출된다. 이를 vibration fault diagnosis의 utility/deadline miss 허용치로 직접 옮기지 않아야 한다.
+- Hawila et al. ECRTS 2025의 period/utilization/control cost 수치를 원고에 사용할 경우 Table 4~7과 PX4/Pixhawk 조건을 확인해야 한다.
+- Guan et al. RTSS 2025의 active-dropping은 analytical WCDFP를 줄이지만 average-case deadline misses를 악화시킬 수 있다고 언급한다. 본 연구에서 skip/drop 정책과 연결할 경우 정확도와 miss-rate trade-off를 별도로 검증해야 한다.
+- Guan et al. RTSS 2025의 synthetic task-set 결과는 `UL`, `UH`, task count, pWCET cardinality 조건별로 달라지므로 Figure 3~8을 확인한 뒤 인용해야 한다.
 - elastic scheduling 계열을 원고에서 비교할 때, 각 논문의 scheduler assumption과 feasibility bound를 구분해야 한다.
   - Buttazzo et al. 1998/2002: uniprocessor periodic task, EDF/RM 및 utilization bound 중심.
   - Sudvarg et al. 2024: multicore federated scheduling, parallel DAG task, subtask workload compression.
-- `Subtask-Level_Elastic_Scheduling_copy1.pdf`와 `copy2_needs_check.pdf`는 PDF 크기와 텍스트 해시가 달라 완전 중복으로 삭제하지 않았다. 실제 중복 여부는 PDF 원본 비교가 추가로 필요하다.
 - image resizing 4편 중 원고 related work에서 대표로 인용할 논문을 선택해야 한다.
   - 후보: RTCSA 2021은 최초 exploration 성격, Real-Time Systems 2022는 journal extension, Real-Time Systems 2023은 resizing과 intermittent inspection 결합, RTAS 2024는 schedulability 관점이 강함.
 - 네 편의 정량 결과는 현재 카드에 구체 수치로 넣지 않았다. manuscript에서 수치를 인용하려면 figure/table 값을 별도로 재확인해야 한다.

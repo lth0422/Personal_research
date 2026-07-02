@@ -204,17 +204,40 @@ surveys/paper_cards/{그룹번호_그룹명}/{짧은제목}.md
 
 ---
 
-## 8. Claude Code와의 협업
+## 8. 역할 분담 (Codex vs Claude Code)
 
-이 repo에는 `CLAUDE.md`도 존재한다.
-Claude Code와 Codex는 같은 파일을 동시에 수정하지 않는다.
+### 8-1. 파일 소유권 — 절대 교차 금지
 
-협업 원칙:
+| 소유 에이전트 | 담당 디렉토리·파일 |
+| --- | --- |
+| **Codex** | `surveys/` 전체, `decisions/`, `manuscript/`, `prompts/` |
+| **Claude Code** | `experiments/pipeline/`, `experiments/results/analysis/`, 실험 자동화 스크립트 |
+| **공유 (읽기만)** | `PROJECT_CONTEXT.md`, `AGENTS.md`, `CLAUDE.md`, `experiments/experiment_design.md`, `experiments/pi_setup/`, `experiments/preempt_rt/`, `experiments/results/` (원본 데이터) |
 
-* Claude Code가 긴 논문 요약이나 문장 초안을 작성할 수 있다.
-* Codex는 구조 정리, 표 업데이트, 파일 간 연결성 점검, 반복 수정에 집중한다.
-* 한 도구가 작업한 뒤에는 `git status`와 `git diff`로 변경 사항을 확인한다.
+공유 파일을 수정해야 할 경우, 상대 에이전트가 열고 있지 않은지 확인 후 진행한다.
+
+### 8-2. Codex 담당
+
+* 논문 카드 작성 (`surveys/paper_cards/`)
+* `surveys/comparison_table.md` 행 추가·수정
+* `surveys/claim_bank.md`, `surveys/related_work_map.md` 업데이트
+* `decisions/open_questions.md` 질문 추가
+* `manuscript/` 초안 작성
+
+### 8-3. Claude Code 담당
+
+* `experiments/pipeline/` 파이썬 코드 작성·수정
+  * `main.py`, `sensor.py`, `inference.py`, `logger.py`, `config.py`
+  * `run_experiment.sh` 자동화 스크립트
+* `experiments/results/analysis/` 분석 스크립트
+  * `plot_latency.py`, `calc_stats.py`, `compare_kernels.py`
+* 실험 실행·디버깅 지원
+
+### 8-4. 공통 협업 원칙
+
+* 한 에이전트가 작업한 뒤에는 `git status`와 `git diff`로 변경 사항을 확인한다.
 * 의미 있는 작업 단위마다 commit한다.
+* 상대 에이전트가 수정 중인 파일은 건드리지 않는다.
 
 ---
 
