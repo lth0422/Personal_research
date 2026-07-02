@@ -26,6 +26,7 @@ The implementation and evaluation are planned on `TBD` platforms, including Rasp
 - 정량 결과는 아직 넣지 않는다.
 - KCC 2026의 STM32F407 + Zephyr 결과를 배경 또는 motivation으로 쓸 수 있지만, 이 초록에서는 새 논문의 결과처럼 쓰지 않는다.
 - Pi Zero 2W, Linux, PREEMPT_RT 실험 결과가 확정되면 마지막 문단을 결과 중심으로 바꾼다.
+- venue 전략과 실험 설계는 `decisions/rtas_rtcsa_dual_track_runtime_mode_selection_plan.md`를 참고하되, 공식 일정과 미검증 성과는 원고에 단정적으로 쓰지 않는다.
 
 ## Related Work Draft
 
@@ -52,3 +53,8 @@ In contrast to these lines of work, this study focuses on runtime mode selection
 ## Table Reference
 
 원고용 관련연구 압축 표는 `manuscript/table1_related_work.md`를 사용한다.
+
+## Planning Reference
+
+- `decisions/rtas_rtcsa_dual_track_runtime_mode_selection_plan.md`: RTAS/RTCSA dual-track 전략, W/H/M coupling, mode feasibility, baseline policy, evaluation metrics를 정리한 내부 기획 문서.
+- `manuscript/problem_formulation.md`: `a=(W,H,M)`, `T=H/f_s`, `U=C/T`, feasible mode set, slack definition을 정리한 문제정의 초안.
