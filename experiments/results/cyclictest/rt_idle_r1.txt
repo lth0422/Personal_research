@@ -1,0 +1,11 @@
+# cyclictest — kernel: PREEMPT_RT, load: idle, repeat: 1
+# date: 2026-07-03
+# platform: Raspberry Pi Zero 2W, Raspberry Pi OS Lite 64-bit
+# kernel: kernel8_rt.img (linux-image-rpi-v8-rt, APT 방식)
+# command: sudo cyclictest --mlockall --smp --priority=80 --interval=1000 --distance=0 --duration=30 --quiet
+# note: duration=30s, Ctrl+C로 종료
+
+T: 0 ( 1351) P:80 I:1000 C:  20367 Min:      7 Act:   17 Avg:   10 Max:      29
+T: 1 ( 1352) P:80 I:1000 C:  20349 Min:      7 Act:   46 Avg:   12 Max:      46
+T: 2 ( 1353) P:80 I:1000 C:  20329 Min:      7 Act:   16 Avg:   10 Max:      23
+T: 3 ( 1354) P:80 I:1000 C:  20309 Min:      7 Act:   25 Avg:   12 Max:      42

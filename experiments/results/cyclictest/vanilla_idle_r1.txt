@@ -1,0 +1,10 @@
+# cyclictest — kernel: vanilla, load: idle, repeat: 1
+# date: 2026-07-03
+# platform: Raspberry Pi Zero 2W, Raspberry Pi OS Lite 64-bit
+# kernel: default (kernel8_rt.img 주석 처리 후 재부팅)
+# command: sudo cyclictest --mlockall --smp --priority=80 --interval=1000 --distance=0 --duration=30 --quiet
+
+T: 0 ( 1030) P:80 I:1000 C:  30000 Min:      7 Act:   17 Avg:   13 Max:     196
+T: 1 ( 1031) P:80 I:1000 C:  29990 Min:      7 Act:   13 Avg:   14 Max:      37
+T: 2 ( 1032) P:80 I:1000 C:  29979 Min:      7 Act:   14 Avg:   13 Max:      38
+T: 3 ( 1033) P:80 I:1000 C:  29969 Min:      7 Act:   13 Avg:   13 Max:      33
