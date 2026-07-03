@@ -114,22 +114,36 @@ feasibility (elastic utilization):
 personal-research/
 ├── PROJECT_CONTEXT.md        # 이 문서 (공통 기준점)
 ├── CLAUDE.md                 # Claude Code 지침
+├── AGENTS.md                 # 에이전트 역할 분담
 ├── README.md
-├── surveys/                  # 머리 트랙 — 서베이
-│   ├── claim_bank.md         # 내 연구 주장 모음
+├── surveys/                  # 공통 서베이 (Codex 담당)
+│   ├── claim_bank.md
 │   ├── related_work_map.md
-│   ├── comparison_table.md   # 6번 표 (확장판, Table 1 될 것)
-│   └── paper_cards/          # 논문별 카드, 그룹별 하위 폴더 사용
+│   ├── comparison_table.md
+│   ├── paper_inventory.md
+│   └── paper_cards/          # 논문별 카드 (그룹 01~08)
 ├── papers/                   # PDF 원본 (그룹 1~8)
-├── experiments/              # 손 트랙 — KSC 실험
-│   ├── pi_setup/
-│   ├── preempt_rt/
-│   ├── pipeline/             # sensing/windowing/inference/logging
-│   └── results/
-├── manuscript/               # KSC 논문 초안
+│
+├── ksc2026/                  # ★ 단기 논문 — KSC 2026 (Codex 담당)
+│   └── paper_draft.md        # Pi Zero 2W Linux vs PREEMPT_RT 비교 논문
+│
+├── experiments/              # 실험 (Claude Code 담당, 두 트랙 공유)
+│   ├── experiment_design.md  # 마스터 실험 설계
+│   ├── pi_setup/             # 환경 설정 기록
+│   ├── preempt_rt/           # PREEMPT_RT 검증 절차
+│   ├── pipeline/             # 파이프라인 코드 (sensor/inference/logger)
+│   └── results/              # 측정 결과 원본 + 분석 스크립트
+│
+├── manuscript/               # ★ 중장기 논문 — 학위논문 (Codex 담당)
+│   ├── draft.md              # W/H/M elastic scheduling (RTAS/RTCSA)
+│   ├── problem_formulation.md
+│   └── table1_related_work.md
+│
 ├── prompts/                  # 재사용 프롬프트
-└── decisions/
-    └── open_questions.md     # 미해결 질문
+└── decisions/                # 미결 질문 + 연구 전략
+    ├── open_questions.md
+    ├── session_log.md
+    └── rtas_rtcsa_dual_track_runtime_mode_selection_plan.md
 ```
 
 ---
