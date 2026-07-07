@@ -211,15 +211,75 @@ run_id, kernel, load, repeat, window_idx, t_sensor, t_infer_start, t_infer_end, 
 
 ---
 
-## 11. 현재 상태 (2026-06-29 기준)
+## 11. 현재 상태 (2026-07-07 기준)
+
+### 완료
 
 - [x] Pi Zero 2W 입수
-- [x] PREEMPT_RT 패치 적용
-- [ ] PREEMPT_RT 실효성 검증 (cyclictest vanilla vs RT 비교)
-- [ ] TFLite + XNNPACK 빌드 완료
-- [ ] FRFconv-TDSNet INT8 모델 변환 (.tflite)
-- [ ] 파이프라인 코드 작성
+- [x] PREEMPT_RT 패치 적용 (APT 방식: linux-image-rpi-v8-rt)
+- [x] PREEMPT_RT 실효성 검증 — cyclictest R1 완료
+  - 결과: `experiments/results/cyclictest/summary.md`
+  - 핵심: I/O 부하 시 vanilla 2034 μs vs RT 78 μs (26x 차이)
+- [x] FRFconv-TDSNet INT8 모델 변환
+  - .cc C배열 → .tflite 바이너리 6종 (SHAFT/BEARING × 512/1024/2048)
+  - 위치: `experiments/model/*.tflite`
+- [x] 파이프라인 코드 작성
+  - `experiments/pipeline/`: config.py, inference.py, logger.py, main.py, inspect_model.py
+- [x] Pi에 GitHub 클론 + venv 세팅 + ai-edge-litert 설치
+
+### 진행 중 — **현재 단계**
+
+- [ ] Pi에서 모델 shape 검증 (`python inspect_model.py ../model/UOS_SHAFT_8k_model_512_int8.tflite`)
+- [ ] 첫 추론 테스트 (`python main.py --kernel rt --load idle`)
+
+### 미완료
+
 - [ ] 예비 실험 (부하 파라미터 조정)
-- [ ] 본 실험 30 run
-- [ ] 분석 스크립트 작성
+- [ ] 본 실험 30 run (2 커널 × 5 부하 × 3 반복)
+- [ ] cyclictest R2, R3 반복 (통계 신뢰도)
+- [ ] 분석 스크립트 작성 (`experiments/results/analysis/`)
 - [ ] manuscript Figure/Table 생성
+
+---
+
+## 12. 이 실험의 목적과 연구 맥락
+
+### 이 실험이 검증하는 것
+
+Pi Zero 2W에서 FRFconv-TDSNet INT8 추론을 실행할 때, **OS 커널 종류(vanilla vs PREEMPT_RT)가 추론 레이턴시 분포에 미치는 영향**을 정량화한다.
+
+측정 대상:
+- 단일 추론 레이턴시 (invoke() 시간)
+- 레이턴시 분포의 tail (P95, P99, Max)
+- 부하 조건(idle / CPU / memory / I/O / combined)별 변화
+
+### 전체 연구 내 위치
+
+```
+[KCC 2026 - 완료]
+  STM32F407 + Zephyr, W=512, 40.3ms, deadline 64ms, 정확도 99.30%
+  → MCU에서의 가능성 검증
+
+[KSC 2026 - 현재 진행 중]  ← 지금 여기
+  Pi Zero 2W + Linux/PREEMPT_RT
+  - OS 스케줄링 jitter가 실시간 추론에 미치는 영향 정량화
+  - "MCU(Zephyr)에서 SBC(Linux)로 올라왔을 때 무엇이 달라지는가"
+
+[학위논문 - 중장기]
+  W/H/M elastic scheduling 정식화
+  - 가변 입력크기 + 기계 상태 기반 adaptive mode selection
+  - RTAS 2027 / RTCSA 2027 목표
+```
+
+### KSC 논문에서 이 실험이 하는 역할
+
+cyclictest(OS latency)와 파이프라인 inference latency를 함께 제시하여:
+1. OS 레벨 jitter(cyclictest) → 실제 추론 tail latency에 어떻게 이어지는지
+2. PREEMPT_RT가 필요한 부하 조건이 어디인지 (idle에서는 차이 없을 수 있음)
+3. Pi Zero 2W에서 deadline 64ms 유지 가능 여부
+
+### 센서 없이 실험하는 이유
+
+Pi Zero 2W는 ADC가 없어 아날로그 진동 센서를 직접 연결할 수 없다.
+현재는 UOS dataset의 사전 수집 데이터를 numpy 배열로 로드하여 inference latency만 측정한다.
+실제 센서 연결은 추후 디지털 가속도계(MPU-6050 등) 도입 시 확장 예정이며, 이 한계는 논문에 명시한다.
