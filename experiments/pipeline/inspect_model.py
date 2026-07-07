@@ -6,9 +6,12 @@ import sys
 import numpy as np
 
 try:
-    import tflite_runtime.interpreter as tflite
+    import ai_edge_litert.interpreter as tflite
 except ImportError:
-    import tensorflow.lite as tflite
+    try:
+        import tflite_runtime.interpreter as tflite
+    except ImportError:
+        import tensorflow.lite as tflite
 
 if len(sys.argv) < 2:
     print("Usage: python inspect_model.py <model.tflite>")

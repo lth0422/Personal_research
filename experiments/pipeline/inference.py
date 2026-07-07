@@ -2,9 +2,12 @@ import numpy as np
 import time
 
 try:
-    import tflite_runtime.interpreter as tflite
+    import ai_edge_litert.interpreter as tflite          # Raspberry Pi OS Bookworm
 except ImportError:
-    import tensorflow.lite as tflite  # fallback: full TF 설치 환경
+    try:
+        import tflite_runtime.interpreter as tflite      # 구버전 패키지
+    except ImportError:
+        import tensorflow.lite as tflite                  # full TF 설치 환경
 
 import config
 
