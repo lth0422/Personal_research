@@ -28,8 +28,10 @@ class InferenceEngine:
 
         # INT8 양자화 파라미터 (float→int8 변환에 필요)
         quant = self._in.get("quantization_parameters", {})
-        self.scale = quant.get("scales", [1.0])[0]
-        self.zero_point = quant.get("zero_points", [0])[0]
+        scales = quant.get("scales", [])
+        zps    = quant.get("zero_points", [])
+        self.scale      = scales[0] if len(scales) > 0 else 1.0
+        self.zero_point = zps[0]    if len(zps)    > 0 else 0
 
     def preprocess(self, window: np.ndarray) -> np.ndarray:
         """raw float32 window → 모델 입력 tensor"""
