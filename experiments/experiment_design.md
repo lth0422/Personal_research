@@ -265,22 +265,25 @@ run_id, kernel, load, repeat, window_idx, t_sensor, t_infer_start, t_infer_end, 
 | combined | 2.85 | 4.54 | 6.46 | 7.88 | 7.96 |
 | **memory** | **2.83** | **4.18** | **7.47** | **7.82** | **8.08** |
 
-**vanilla/RT Avg 비율:**
+**실시간성 핵심 지표 비교 (R1, n=100):**
 
-| 부하 | vanilla Avg | RT Avg | 비율 |
-|---|---|---|---|
-| idle | 1.56 | 1.95 | vanilla 1.2x 빠름 |
-| cpu | 2.66 | 3.18 | vanilla 1.2x 빠름 |
-| io | 2.72 | 3.55 | vanilla 1.3x 빠름 |
-| combined | 2.81 | 4.54 | vanilla 1.6x 빠름 |
-| **memory** | **6.43** | **4.18** | **RT 1.5x 빠름** |
+| 부하 | V_Avg | RT_Avg | V_Std | RT_Std | Std비(RT/V) | V_Max | RT_Max | Max비(RT/V) |
+|---|---|---|---|---|---|---|---|---|
+| idle | 1.56 | 1.95 | 0.035 | 0.084 | 2.44x↑ | 1.75 | 2.16 | 1.23x↑ |
+| cpu | 2.66 | 3.18 | 0.549 | 0.286 | **0.52x↓** | 3.47 | 4.51 | 1.30x↑ |
+| io | 2.72 | 3.55 | 0.584 | 0.381 | **0.65x↓** | 4.12 | 4.58 | 1.11x↑ |
+| combined | 2.81 | 4.54 | 0.648 | 0.965 | 1.49x↑ | 6.63 | 7.96 | 1.20x↑ |
+| **memory** | **6.43** | **4.18** | **4.353** | **1.361** | **0.31x↓** | **18.28** | **8.08** | **0.44x↓** |
+
+↓ = RT가 감소(개선), ↑ = RT가 증가(악화). deadline miss: 전 조건 0 (기준 64ms).
 
 **관찰:**
-- memory 부하에서만 RT가 유리 — vanilla Max 18.28ms → RT Max 8.08ms (2.3x 개선). 메모리 압박 시 RT 커널의 결정적 페이지 폴트 처리가 캐시 오염 영향을 줄임
-- idle/cpu/io/combined에서는 RT가 오히려 소폭 느림 — RT 선점 인프라 오버헤드(인터럽트 핸들링, 컨텍스트 스위치 경로 추가)가 평균 latency를 증가시킴
-- cyclictest I/O 26x 차이가 inference latency에서 재현되지 않는 이유: 추론 자체가 I/O를 수행하지 않아 I/O 경로의 non-preemptible 구간이 직접 영향을 주지 않음
-- 두 지표(cyclictest vs inference latency)가 서로 다른 병목을 드러냄 → 둘 다 측정해야 하는 근거
-- deadline 64ms 기준: 전 조건에서 두 커널 모두 통과 (memory RT Max 8.08ms)
+- **memory**: jitter(Std) 68% 감소, Max 56% 감소 — RT가 압도적으로 유리. 메모리 압박 시 RT 커널의 결정적 페이지 폴트 처리가 캐시 오염 영향을 억제
+- **cpu/io**: jitter(Std)는 RT가 줄여주지만 Max는 오히려 vanilla보다 높은 역전 현상 — RT 오버헤드가 드물게 큰 latency spike를 만듦
+- **idle**: RT 오버헤드가 jitter를 2.44배 키움 — 저부하 환경에서는 RT가 불리
+- **combined**: R1 100샘플로는 통계 불안정, R2/R3 반복 필요
+- cyclictest I/O 26x 차이가 inference latency에 재현되지 않는 이유: 추론 자체가 I/O 미수행 → I/O non-preemptible 경로가 직접 영향을 주지 않음
+- **평균보다 Std·P2P·Max가 실시간성의 핵심 지표** — 평균만 보면 RT 효과를 오해할 수 있음
 
 ---
 
