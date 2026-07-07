@@ -232,19 +232,20 @@ run_id, kernel, load, repeat, window_idx, t_sensor, t_infer_start, t_infer_end, 
 
 ### 진행 중 — **현재 단계**
 
-- [ ] PREEMPT_RT 커널로 전환 후 동일 5개 조건 측정
+- [ ] R2, R3 반복 측정 (통계 신뢰도 확보)
 
 ### 미완료
 
-- [ ] RT inference latency R1 측정 (5개 부하 조건)
-- [ ] vanilla/RT R2, R3 반복 (통계 신뢰도)
+- [ ] vanilla/RT R2, R3 반복 (각 조건 100회 × 3반복 목표)
 - [ ] cyclictest R2, R3 반복
 - [ ] 분석 스크립트 작성 (`experiments/results/analysis/`)
 - [ ] manuscript Figure/Table 생성
 
 ---
 
-### vanilla R1 결과 요약 (inference latency, ms)
+### R1 결과 요약 (inference latency, ms)
+
+**vanilla:**
 
 | 부하 | Min | Avg | P95 | P99 | Max |
 |---|---|---|---|---|---|
@@ -254,11 +255,32 @@ run_id, kernel, load, repeat, window_idx, t_sensor, t_infer_start, t_infer_end, 
 | combined | 1.95 | 2.81 | 3.51 | 4.61 | 6.63 |
 | **memory** | **3.35** | **6.43** | **14.60** | **18.11** | **18.28** |
 
+**PREEMPT_RT:**
+
+| 부하 | Min | Avg | P95 | P99 | Max |
+|---|---|---|---|---|---|
+| idle | 1.71 | 1.95 | 2.08 | 2.14 | 2.16 |
+| cpu | 2.50 | 3.18 | 3.60 | 4.03 | 4.51 |
+| io | 2.21 | 3.55 | 4.16 | 4.37 | 4.58 |
+| combined | 2.85 | 4.54 | 6.46 | 7.88 | 7.96 |
+| **memory** | **2.83** | **4.18** | **7.47** | **7.82** | **8.08** |
+
+**vanilla/RT Avg 비율:**
+
+| 부하 | vanilla Avg | RT Avg | 비율 |
+|---|---|---|---|
+| idle | 1.56 | 1.95 | vanilla 1.2x 빠름 |
+| cpu | 2.66 | 3.18 | vanilla 1.2x 빠름 |
+| io | 2.72 | 3.55 | vanilla 1.3x 빠름 |
+| combined | 2.81 | 4.54 | vanilla 1.6x 빠름 |
+| **memory** | **6.43** | **4.18** | **RT 1.5x 빠름** |
+
 **관찰:**
-- memory 부하가 inference latency 기준 최악 — Avg 6.43ms, Max 18.28ms
-- cyclictest에서는 I/O가 최악(26x)이었던 것과 대조적
-- 원인: cyclictest는 OS 스케줄링 지연 측정 → I/O의 non-preemptible 경로가 지배. inference latency는 캐시·메모리 대역폭 경합 → memory stress가 가중치 캐시를 오염시켜 지배
-- 두 지표가 서로 다른 병목을 드러낸다는 점이 논문 기여의 일부
+- memory 부하에서만 RT가 유리 — vanilla Max 18.28ms → RT Max 8.08ms (2.3x 개선). 메모리 압박 시 RT 커널의 결정적 페이지 폴트 처리가 캐시 오염 영향을 줄임
+- idle/cpu/io/combined에서는 RT가 오히려 소폭 느림 — RT 선점 인프라 오버헤드(인터럽트 핸들링, 컨텍스트 스위치 경로 추가)가 평균 latency를 증가시킴
+- cyclictest I/O 26x 차이가 inference latency에서 재현되지 않는 이유: 추론 자체가 I/O를 수행하지 않아 I/O 경로의 non-preemptible 구간이 직접 영향을 주지 않음
+- 두 지표(cyclictest vs inference latency)가 서로 다른 병목을 드러냄 → 둘 다 측정해야 하는 근거
+- deadline 64ms 기준: 전 조건에서 두 커널 모두 통과 (memory RT Max 8.08ms)
 
 ---
 
