@@ -8,6 +8,14 @@
 - **가변 변수**: 없음. 비교 조건은 Linux kernel/distribution의 PREEMPT_RT 적용 여부.
 - **트리거**: 없음. 실험적 latency evaluation 논문이며 runtime adaptation을 다루지 않는다.
 
+## Abstract 3줄 요약
+- ARM-based embedded devices에서 PREEMPT_RT Linux의 real-time performance를 평가한다.
+- Raspberry Pi와 BeagleBone 계열에서 cyclictest와 자체 response/periodic task measurement module을 사용한다.
+- PREEMPT_RT가 default Linux kernel보다 latency, 특히 worst-case latency를 줄인다고 보고한다.
+
+## Conclusion 요약
+- 결론은 Raspberry Pi 3 Model B와 BeagleBone AI에서 PREEMPT_RT 적용 Linux를 실험적으로 평가하고, cyclictest만이 아니라 response task와 periodic task 측정까지 포함한 방법론을 강조한다. PREEMPT_RT가 time-sensitive embedded control application에 더 적합한 latency 특성을 보인다고 정리하지만, 본 연구의 Pi Zero 2W inference pipeline 결과를 대체하지는 않는다.
+
 ## 요점
 - 플랫폼: Raspberry Pi 3, BeagleBone AI.
 - 도메인: ARM-based embedded Linux real-time performance evaluation.

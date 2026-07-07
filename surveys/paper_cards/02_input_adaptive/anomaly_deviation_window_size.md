@@ -8,6 +8,14 @@
 - **가변 변수**: window size W. Hop size H는 `H = beta W`로 정의되지만 독립적인 최적화 변수로 다루지는 않는다.
 - **트리거**: variability, cycle, local spike anomaly pattern에서 계산한 anomaly deviation score. 논문 기준으로는 offline 또는 data-driven window size selection에 가깝다.
 
+## Abstract 3줄 요약
+- Time-series anomaly detection과 fault diagnosis 성능이 window size 선택에 민감하다는 문제를 다룬다.
+- anomaly pattern을 variability, cycle, local spike로 나누고, window size별 anomaly deviation을 계산하는 ADW 방법을 제안한다.
+- roll-to-roll tension data와 rotating bearing vibration data로 검증하며, window size를 preprocessing parameter가 아니라 diagnostic sensitivity를 좌우하는 design variable로 본다.
+
+## Conclusion 요약
+- 결론은 window size가 보조 튜닝값이 아니라 feature separability와 generalization을 결정하는 핵심 설계 문제라고 정리한다. ADW는 fixed heuristic 대신 anomaly deviation 기반으로 window size를 선택하며, 향후 online/dynamic window selection과 deep time-series model 입력 설계로 확장 가능하다고 제시한다.
+
 ## 요점
 - 플랫폼: computing platform, RTOS, PREEMPT_RT 환경은 확인 필요. 실험 데이터는 roll-to-roll tension data와 rotating bearing vibration data를 사용한다.
 - 도메인: autonomous manufacturing, time-series anomaly detection, fault diagnosis

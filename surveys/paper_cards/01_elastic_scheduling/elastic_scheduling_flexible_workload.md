@@ -8,6 +8,14 @@
 - **가변 변수**: periodic task의 execution rate/period. workload management를 위해 task period를 조절한다.
 - **트리거**: current workload, overload, underload, deadline miss 또는 measured execution time 기반 utilization 변화.
 
+## Abstract 3줄 요약
+- multimedia와 adaptive control 같은 real-time application은 고정 period 중심의 classical real-time theory보다 더 큰 유연성을 요구한다.
+- 논문은 task를 elastic coefficient를 가진 spring처럼 모델링해, 각 periodic task의 execution rate와 period를 조절하는 scheduling framework를 제안한다.
+- overload 상황에서는 task period를 조절해 system utilization을 낮추고, current load에 따라 performance와 QoS를 제어한다.
+
+## Conclusion 요약
+- 결론은 elastic coefficient가 solution selection policy를 암묵적으로 인코딩하며, feasible configuration이 존재하면 task period를 조절해 underload 상태를 유지할 수 있다고 정리한다. 이 모델은 multimedia와 control application의 동적 rate tuning에 유용하고, fixed 또는 dynamic priority kernel 위에 구현 가능하다고 제시한다.
+
 ## 요점
 - 플랫폼: 일반 real-time scheduling framework. 논문 초반 기준 특정 embedded board 중심은 아님.
 - 도메인: real-time scheduling, overload management, rate adaptation.

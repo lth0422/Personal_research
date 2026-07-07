@@ -8,6 +8,14 @@
 - **가변 변수**: TFLite model optimization, number of interpreter threads.
 - **트리거**: 없음 또는 offline configuration. thread 수와 optimized/non-optimized model을 실험적으로 비교하지만 runtime adaptation은 확인되지 않는다.
 
+## Abstract 3줄 요약
+- Raspberry Pi Zero 2 W에서 TFLite CNN으로 bottlenose dolphin whistle을 real-time detection하는 저비용 TinyML 시스템을 다룬다.
+- TensorFlow CNN을 TFLite로 변환하고 최적화해 model size를 줄인 뒤, 0.8 s spectrogram segment를 입력으로 사용한다.
+- thread 수에 따른 latency, throughput, CPU load, temperature, memory를 평가하며, Pi Zero 2W에서 sustained inference 가능성을 보인다.
+
+## Conclusion 요약
+- 결론은 Pi Zero 2W가 TFLite-optimized CNN deployment에 viable platform이라고 정리한다. optimized model은 CPU utilization, memory footprint, thermal profile, latency, throughput에서 개선을 보였으며, future work로 marine-specific dataset과 multi-class classifier 확장을 제안한다.
+
 ## 요점
 - 플랫폼: Raspberry Pi Zero 2 W Rev 1.0, Raspberry Pi OS Lite 64-bit, kernel 6.6.51+rpt-rpi-v8, TFLite_runtime 2.14.0.
 - 도메인: TinyML acoustic detection, dolphin whistle detection.

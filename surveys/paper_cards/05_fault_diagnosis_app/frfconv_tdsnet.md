@@ -8,6 +8,14 @@
 - **가변 변수**: model architecture, receptive field/kernel design, TDS integration. Window/input length는 evaluation에서 fixed 2048 data points.
 - **트리거**: 없음=offline model design/evaluation. machine condition 또는 system slack 기반 runtime adaptation은 확인되지 않음.
 
+## Abstract 3줄 요약
+- noisy industrial environment와 resource-constrained edge device에서 real-time machine fault diagnosis가 어렵다는 문제를 다룬다.
+- full-receptive-field convolution과 time-domain statistics를 결합한 lightweight CNN인 FRFconv-TDSNet을 제안한다.
+- 평가에서는 noisy data accuracy와 edge inference time 측면에서 비교 모델 대비 우수성을 보였다고 보고한다.
+
+## Conclusion 요약
+- 결론은 FRF convolution이 전체 입력 범위의 global feature를 추출하고 TDS integration이 noisy data에서 오분류를 줄이는 역할을 한다고 설명한다. Raspberry Pi 4B에서 10k 미만 parameter와 5 ms 미만 inference time을 보고하지만, 본 연구 원고에서 수치를 쓸 때는 Figure 6 조건을 재확인해야 한다.
+
 ## 요점
 - 플랫폼: Raspberry Pi 4B, PyTorch Mobile, XNNPACK backend.
 - 도메인: vibration 기반 bearing/gear fault diagnosis under noisy environments.
