@@ -226,19 +226,39 @@ run_id, kernel, load, repeat, window_idx, t_sensor, t_infer_start, t_infer_end, 
 - [x] 파이프라인 코드 작성
   - `experiments/pipeline/`: config.py, inference.py, logger.py, main.py, inspect_model.py
 - [x] Pi에 GitHub 클론 + venv 세팅 + ai-edge-litert 설치
+- [x] **vanilla 커널 inference latency R1 측정 완료** (5개 부하 조건 × 100회)
+  - 결과: `experiments/results/pipeline/inference_latency.csv`
+  - input shape 확인: [1, 512, 1], float32, XNNPACK 백엔드
 
 ### 진행 중 — **현재 단계**
 
-- [ ] Pi에서 모델 shape 검증 (`python inspect_model.py ../model/UOS_SHAFT_8k_model_512_int8.tflite`)
-- [ ] 첫 추론 테스트 (`python main.py --kernel rt --load idle`)
+- [ ] PREEMPT_RT 커널로 전환 후 동일 5개 조건 측정
 
 ### 미완료
 
-- [ ] 예비 실험 (부하 파라미터 조정)
-- [ ] 본 실험 30 run (2 커널 × 5 부하 × 3 반복)
-- [ ] cyclictest R2, R3 반복 (통계 신뢰도)
+- [ ] RT inference latency R1 측정 (5개 부하 조건)
+- [ ] vanilla/RT R2, R3 반복 (통계 신뢰도)
+- [ ] cyclictest R2, R3 반복
 - [ ] 분석 스크립트 작성 (`experiments/results/analysis/`)
 - [ ] manuscript Figure/Table 생성
+
+---
+
+### vanilla R1 결과 요약 (inference latency, ms)
+
+| 부하 | Min | Avg | P95 | P99 | Max |
+|---|---|---|---|---|---|
+| idle | 1.52 | 1.56 | 1.61 | 1.63 | 1.75 |
+| cpu | 1.68 | 2.66 | 3.28 | 3.42 | 3.47 |
+| io | 1.87 | 2.72 | 3.54 | 4.02 | 4.12 |
+| combined | 1.95 | 2.81 | 3.51 | 4.61 | 6.63 |
+| **memory** | **3.35** | **6.43** | **14.60** | **18.11** | **18.28** |
+
+**관찰:**
+- memory 부하가 inference latency 기준 최악 — Avg 6.43ms, Max 18.28ms
+- cyclictest에서는 I/O가 최악(26x)이었던 것과 대조적
+- 원인: cyclictest는 OS 스케줄링 지연 측정 → I/O의 non-preemptible 경로가 지배. inference latency는 캐시·메모리 대역폭 경합 → memory stress가 가중치 캐시를 오염시켜 지배
+- 두 지표가 서로 다른 병목을 드러낸다는 점이 논문 기여의 일부
 
 ---
 
