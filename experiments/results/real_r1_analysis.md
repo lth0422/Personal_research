@@ -165,9 +165,58 @@ I/O: 26x 차이      →  I/O: 1000x 차이 (7517ms)
 
 ---
 
-## 6. 남은 질문 (R2/R3 확인 항목)
+## 6. 실제 데이터가 더미 데이터보다 I/O spike가 큰 이유 — 심층 고찰
 
-- memory/combined에서 vanilla가 더 좋은 경향이 지속되는가, 아니면 R1 노이즈인가
+### 6-1. 오해: "추론 중 SD카드를 직접 읽어서" (틀린 설명)
+
+현재 파이프라인에서 `np.load(npz_path)`는 **main.py 시작 시 1회만** 실행된다. 이후 추론 루프는 RAM에 올라온 배열에서 데이터를 꺼낸다. 즉, **추론 중에 SD카드를 직접 읽지 않는다.**
+
+### 6-2. 올바른 설명: page cache 크기 차이
+
+더미 데이터와 실제 데이터의 차이는 **page cache 점유량**이다.
+
+```
+더미 데이터:   100 × 512 × 4 bytes ≈ 200KB  (tiny, 캐시 압박 없음)
+실제 데이터:   4000 × 512 × 4 bytes ≈ 8MB   (page cache 점유 증가)
+              + 모델 가중치 ~93KB
+              + Python 런타임, venv 라이브러리 수백 MB
+```
+
+stress-ng `--io`의 `sync()` 시스템 콜은 **page cache 전체를 SD카드로 flush**한다. flush 대상이 클수록 커널이 I/O 경로(non-preemptible)에 머무는 시간이 길어진다. 실제 데이터를 쓰면 flush 대상이 더 많아 → vanilla 커널에서 추론 스레드가 더 오래 블록된다.
+
+### 6-3. UART 스트리밍 방식 제안 — 객관적 평가
+
+KCC 실험 흐름처럼 **PC → UART → Pi → 추론**으로 구성하면 어떨까?
+
+**제안의 타당성:**
+
+장점:
+- 데이터가 SD카드 page cache에 없음 → sync() flush 대상에서 완전 제외
+- 실제 임베디드 시나리오와 일치 (KCC와 동일 흐름)
+- UART는 character device → block device(SD카드)와 다른 커널 경로 → io stress 영향 분리 가능
+- 데이터 소스가 외부(PC)이므로 실험 환경이 더 독립적
+
+단점 및 제약:
+- Pi Zero 2W의 UART (`/dev/ttyAMA0`, GPIO 14/15) + PC측 USB-UART 어댑터 필요
+- PC측 전송 스크립트 작성 필요 (UOS dataset → UART 스트리밍)
+- 전송 속도 제약: W=512 at 8kHz = 64ms 주기마다 512×4=2048 bytes → 최소 256Kbps 필요
+- Baud rate 460800 이상 설정 권장
+- 타이밍 동기화 복잡도 증가
+
+**평가 결론:**
+
+UART 방식은 더 엄밀하고 실제적인 실험이지만, **KSC 2026 논문 범위에서는 현재 방식도 충분히 유효하다.** 다만 아래 한계를 논문에 명시해야 한다:
+
+> "실험에서 입력 데이터는 파일(npz)로 사전 로드되어 RAM에 저장된 후 순차적으로 공급되었다. 실제 센서 스트리밍 환경과 달리 데이터 수신 경로(UART 등)가 I/O 스트레스와 상호작용하는 효과는 측정되지 않았다."
+
+UART 방식은 **학위논문 또는 추후 실험**에서 확장 항목으로 적합하다.
+
+---
+
+## 7. 남은 질문 (R2/R3 확인 항목)
+
+- memory/combined에서 vanilla 우세가 지속되는가, 아니면 R1 노이즈인가
 - RT combined Max 22.48ms는 재현되는가
 - io deadline miss는 R2/R3에서도 반복되는가 (재현성)
 - 300샘플 pooling 후 Wilcoxon 검정 p-value
+- UART 스트리밍 방식 도입 시 io 조건 결과가 달라지는가 (향후 과제)

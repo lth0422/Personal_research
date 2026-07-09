@@ -298,6 +298,51 @@ run_id, kernel, load, repeat, window_idx, t_sensor, t_infer_start, t_infer_end, 
 
 ---
 
+### SD카드 confound 분석 및 UART 파이프라인 고찰
+
+#### 실제 데이터 I/O spike의 정확한 원인
+
+"SD카드에서 추론 중 직접 데이터를 읽어서 느린 것"이라는 설명은 틀렸다. 현재 파이프라인에서 `np.load()`는 실행 시작 시 **1회만** 실행되고, 이후 4000개 배열은 전부 RAM에 상주한다. 추론 루프 중 SD카드를 직접 읽는 동작은 없다.
+
+올바른 메커니즘은 다음과 같다:
+
+```
+[실제 원인 경로]
+np.load() → 8MB 배열이 page cache에 상주
+stress-ng --io: sync() 반복 호출
+  → 커널이 page cache 전체를 SD카드로 flush
+  → 8MB 데이터도 flush 대상에 포함
+  → vanilla 커널: I/O 경로에서 spinlock → preempt_disable()
+  → 추론 스레드가 flush 완료까지 블록 → 수천ms spike 발생
+```
+
+더미 데이터(200KB)보다 실제 데이터(8MB)의 page cache 점유량이 40배 크므로, sync() flush 대상도 커진다. 이것이 더미 R1 vs 실제 R1에서 io 조건 spike 크기가 다른 직접 원인이다.
+
+#### UART 스트리밍 방식 제안 — 객관적 평가
+
+KCC 2026과 같이 PC에서 UART로 윈도 데이터를 Pi에 전송하는 방식을 도입하면 어떤 차이가 생기는가:
+
+**장점:**
+- 입력 데이터가 SD카드 page cache에 존재하지 않음 → sync() flush 대상에서 완전 제외
+- 실제 임베디드 센서 스트리밍 환경과 일치 (KCC 흐름 재현)
+- UART는 character device 경로 → block device I/O stress와 독립적인 커널 경로
+
+**단점 및 제약:**
+- Pi Zero 2W UART (`/dev/ttyAMA0`, GPIO 14/15) + PC측 USB-UART 어댑터 필요 (추가 하드웨어)
+- PC측 UOS dataset 스트리밍 스크립트 작성 필요
+- 전송 속도: W=512 at 8kHz = 64ms 주기당 512×4=2048 bytes → baud rate 460800 이상 권장
+- 타이밍 동기화 구현 복잡도 증가 (TX 타이밍 vs inference 타이밍)
+
+**KSC 2026 범위 판단:**
+
+현재 파일 기반 방식도 충분히 유효하다. 다만 논문에 아래 한계를 명시해야 한다:
+
+> "본 실험에서 입력 데이터는 npz 파일로 사전 로드하여 RAM에 저장한 뒤 순차 공급하였다. 실제 센서 스트리밍 환경에서 UART 수신 경로가 I/O 스트레스와 상호작용하는 효과는 본 실험 범위에 포함되지 않는다."
+
+UART 방식은 학위논문 또는 R4+ 확장 실험 항목으로 보류한다.
+
+---
+
 ### R2/R3 계획
 
 **목적**: R1 n=100의 통계적 불안정성 해소. 특히 memory/combined 역전 현상이 실제인지 노이즈인지 판별.
