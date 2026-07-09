@@ -228,40 +228,40 @@ run_id, kernel, load, repeat, window_idx, t_sensor, t_infer_start, t_infer_end, 
 - [x] Pi에 GitHub 클론 + venv 세팅 + ai-edge-litert 설치
 - [x] 더미 데이터 inference latency R1 (vanilla + RT, 5조건 × 100회)
   - 결과: `experiments/results/pipeline/inference_latency.csv`
-- [x] **실제 데이터(UOS SHAFT 8k W=512) RT R1 측정 완료**
-  - 결과: `experiments/results/pipeline/rt_real_r1.csv`
-  - deadline miss: 전 조건 0 (기준 64ms)
-  - 주의: 데이터셋이 클래스순 정렬 → 셔플 추가 (main.py 수정)
+- [x] **실제 데이터 RT R1 + vanilla R1 측정 완료** (UOS SHAFT 8k W=512, 셔플, 정확도 100%)
+  - 결과: `rt_real_r1.csv`, `vanilla_real_r1.csv`
+  - **핵심 발견: vanilla I/O 부하 시 Max 7517ms, deadline miss 1회**
 
 ### 진행 중 — **현재 단계**
 
-- [ ] vanilla 실제 데이터 R1 측정 (`vanilla_real_r1.csv`)
+- [ ] R2, R3 반복 (통계 신뢰도 확보)
 
 ### 미완료
 
-- [ ] vanilla/RT real R2, R3 반복 (통계 신뢰도)
+- [ ] real R2, R3 반복 (vanilla + RT, 각 5조건 × 100회)
 - [ ] cyclictest R2, R3 반복
-- [ ] 정확도 검증 (셔플 후 재측정 필요)
 - [ ] 분석 스크립트 작성 (`experiments/results/analysis/`)
 - [ ] manuscript Figure/Table 생성
 
 ---
 
-### RT real R1 결과 (UOS SHAFT 8k W=512, n=100, cpu는 2번째 run 기준)
+### real R1 비교표 (UOS SHAFT 8k W=512, n=100, 정확도 100%)
 
-| 부하 | Avg | Std | P2P | P99 | Max | D-miss |
-|---|---|---|---|---|---|---|
-| idle | 1.96 | 0.047 | 0.30 | 2.06 | 2.16 | 0 |
-| cpu | 3.87 | 0.245 | 1.40 | 4.45 | 4.46 | 0 |
-| io | 5.20 | 0.735 | 3.11 | 7.41 | 7.52 | 0 |
-| **combined** | **6.75** | **4.496** | **19.99** | **22.08** | **22.48** | **0** |
-| **memory** | **7.31** | **3.236** | **12.52** | **15.42** | **15.72** | **0** |
+| 부하 | V_Avg | RT_Avg | V_Std | RT_Std | V_Max | RT_Max | D-miss(V/RT) |
+|---|---|---|---|---|---|---|---|
+| idle | 1.53 | 1.96 | 0.033 | 0.047 | 1.62 | 2.16 | 0/0 |
+| cpu | 2.99 | 3.87 | 2.041 | 0.245 | 10.43 | 4.46 | 0/0 |
+| memory | 4.85 | 7.31 | 1.800 | 3.236 | 10.72 | 15.72 | 0/0 |
+| **io** | **79.38** | **5.20** | **747.6** | **0.735** | **7517.86** | **7.52** | **1/0** |
+| combined | 4.13 | 6.75 | 1.164 | 4.496 | 9.07 | 22.48 | 0/0 |
 
-**더미 R1 대비 변화:**
-- idle: 거의 동일 (1.95→1.96ms)
-- io: 크게 증가 (3.55→5.20ms) — 실제 데이터 메모리 접근 패턴 영향
-- combined Max: 7.96→22.48ms — 실제 데이터 + 복합 부하 시 tail 급증
-- 정확도: cpu 중복 측정 및 클래스 셔플 미적용으로 신뢰도 낮음 → 재측정 필요
+**핵심 관찰:**
+- **I/O 부하**: vanilla Max 7517ms(7.5초), deadline miss 1회 vs RT Max 7.52ms — **1000x 차이. 논문 핵심 근거**
+- cyclictest에서 I/O 26x 차이가 실제 추론에서 1000x로 증폭됨 — OS 스케줄링 지연이 실제 태스크 레이턴시에 직접 전파됨을 실증
+- **cpu**: RT가 Std 기준 8배 안정적 (2.041→0.245ms). vanilla는 가끔 큰 spike 발생
+- **memory**: 이번 R1에서는 RT가 오히려 Max 높음 (15.72 vs 10.72). R2/R3 필요
+- **combined**: vanilla Max 9.07 vs RT Max 22.48 — RT가 오히려 높음. 반복 측정 필요
+- **정확도**: 전 조건 100% (셔플 적용, UOS SHAFT 8k W=512 INT8 모델)
 
 ---
 
