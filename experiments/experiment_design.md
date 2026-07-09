@@ -259,9 +259,68 @@ run_id, kernel, load, repeat, window_idx, t_sensor, t_infer_start, t_infer_end, 
 - **I/O 부하**: vanilla Max 7517ms(7.5초), deadline miss 1회 vs RT Max 7.52ms — **1000x 차이. 논문 핵심 근거**
 - cyclictest에서 I/O 26x 차이가 실제 추론에서 1000x로 증폭됨 — OS 스케줄링 지연이 실제 태스크 레이턴시에 직접 전파됨을 실증
 - **cpu**: RT가 Std 기준 8배 안정적 (2.041→0.245ms). vanilla는 가끔 큰 spike 발생
-- **memory**: 이번 R1에서는 RT가 오히려 Max 높음 (15.72 vs 10.72). R2/R3 필요
-- **combined**: vanilla Max 9.07 vs RT Max 22.48 — RT가 오히려 높음. 반복 측정 필요
+- **memory/combined**: R1에서 RT가 오히려 Max 높음 → 표본 오차 가능성, R2/R3 필요
 - **정확도**: 전 조건 100% (셔플 적용, UOS SHAFT 8k W=512 INT8 모델)
+
+---
+
+### 더미 데이터 vs 실제 데이터 결과 차이 고찰
+
+**더미 → 실제로 바꿨을 때 가장 크게 달라진 것: io 조건**
+
+더미(vanilla io): Avg 2.72ms, Max 4.12ms
+실제(vanilla io): Avg 79.38ms, Max 7517ms, deadline miss 1회
+
+**왜 이렇게 차이가 나는가:**
+
+1. **메모리 사용량 증가**
+   - 더미: `np.random.randn(100, 512)` 소량 생성
+   - 실제: 4000 × 512 × 4 bytes = 8MB npz + 모델 가중치 + stress-ng 프로세스
+   - 실제 데이터 사용 시 전체 메모리 점유가 높아져 I/O stress와 함께 캐시 경쟁 심화
+
+2. **I/O stress + vanilla 커널의 치명적 조합**
+   - vanilla Linux는 I/O 경로(블록 장치 접근, page cache flush)가 non-preemptible
+   - stress-ng hdd 스트레스 워커가 디스크 I/O를 집중적으로 유발
+   - 추론 스레드가 I/O 락이 해제될 때까지 수 초간 블록됨 → 7517ms spike 발생
+   - 더미 데이터에서는 I/O 관련 메모리 접근이 단순하여 이 경로가 덜 자주 발생
+   - PREEMPT_RT는 I/O 경로를 선점 가능하게 패치 → 추론 스레드가 즉시 재개
+
+3. **모델 연산 경로 차이**
+   - 실제 진동 신호(정규화된 float32)와 가우시안 노이즈는 INT8 양자화 후 값 분포가 다름
+   - 실제 신호 패턴에서 더 많은 연산 활성화 → 실행 시간 소폭 증가
+
+4. **memory/combined 역전 현상 (RT > vanilla Max)**
+   - R1 n=100은 tail behavior를 신뢰있게 측정하기 부족
+   - RT 커널의 선점 인프라 오버헤드가 특정 샘플에서 spike로 나타났을 가능성
+   - R2/R3 반복으로 수렴 여부 확인 필요
+
+**결론**: 더미 데이터는 I/O stress의 위험성을 과소평가했고, 실제 데이터에서 비로소 vanilla Linux의 실시간성 한계가 드러났다.
+
+---
+
+### R2/R3 계획
+
+**목적**: R1 n=100의 통계적 불안정성 해소. 특히 memory/combined 역전 현상이 실제인지 노이즈인지 판별.
+
+**방법**: 동일 조건 2회 반복 → 조건당 총 300샘플
+
+파일 명명:
+```
+rt_real_r2.csv, rt_real_r3.csv
+vanilla_real_r2.csv, vanilla_real_r3.csv
+```
+
+**우선순위 분석 조건:**
+- io: R1 결과가 명확하므로 재확인 용도
+- memory: R1에서 RT가 오히려 나빠서 역전 여부 확인 필수
+- combined: 동일 이유
+
+**분석 방법 (R1+R2+R3 통합):**
+- 각 조건 300샘플 pooling 후 Avg/Std/P99/Max 계산
+- Wilcoxon rank-sum test (p < 0.05) — vanilla vs RT 유의미한 차이 검증
+- deadline miss rate = miss 횟수 / 300
+
+**커밋 규칙**: 각 run 완료 후 즉시 커밋 (`git add experiments/results/pipeline/`)
 
 ---
 
