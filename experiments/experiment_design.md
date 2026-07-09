@@ -211,7 +211,7 @@ run_id, kernel, load, repeat, window_idx, t_sensor, t_infer_start, t_infer_end, 
 
 ---
 
-## 11. 현재 상태 (2026-07-07 기준)
+## 11. 현재 상태 (2026-07-09 기준)
 
 ### 완료
 
@@ -226,20 +226,42 @@ run_id, kernel, load, repeat, window_idx, t_sensor, t_infer_start, t_infer_end, 
 - [x] 파이프라인 코드 작성
   - `experiments/pipeline/`: config.py, inference.py, logger.py, main.py, inspect_model.py
 - [x] Pi에 GitHub 클론 + venv 세팅 + ai-edge-litert 설치
-- [x] **vanilla 커널 inference latency R1 측정 완료** (5개 부하 조건 × 100회)
+- [x] 더미 데이터 inference latency R1 (vanilla + RT, 5조건 × 100회)
   - 결과: `experiments/results/pipeline/inference_latency.csv`
-  - input shape 확인: [1, 512, 1], float32, XNNPACK 백엔드
+- [x] **실제 데이터(UOS SHAFT 8k W=512) RT R1 측정 완료**
+  - 결과: `experiments/results/pipeline/rt_real_r1.csv`
+  - deadline miss: 전 조건 0 (기준 64ms)
+  - 주의: 데이터셋이 클래스순 정렬 → 셔플 추가 (main.py 수정)
 
 ### 진행 중 — **현재 단계**
 
-- [ ] R2, R3 반복 측정 (통계 신뢰도 확보)
+- [ ] vanilla 실제 데이터 R1 측정 (`vanilla_real_r1.csv`)
 
 ### 미완료
 
-- [ ] vanilla/RT R2, R3 반복 (각 조건 100회 × 3반복 목표)
+- [ ] vanilla/RT real R2, R3 반복 (통계 신뢰도)
 - [ ] cyclictest R2, R3 반복
+- [ ] 정확도 검증 (셔플 후 재측정 필요)
 - [ ] 분석 스크립트 작성 (`experiments/results/analysis/`)
 - [ ] manuscript Figure/Table 생성
+
+---
+
+### RT real R1 결과 (UOS SHAFT 8k W=512, n=100, cpu는 2번째 run 기준)
+
+| 부하 | Avg | Std | P2P | P99 | Max | D-miss |
+|---|---|---|---|---|---|---|
+| idle | 1.96 | 0.047 | 0.30 | 2.06 | 2.16 | 0 |
+| cpu | 3.87 | 0.245 | 1.40 | 4.45 | 4.46 | 0 |
+| io | 5.20 | 0.735 | 3.11 | 7.41 | 7.52 | 0 |
+| **combined** | **6.75** | **4.496** | **19.99** | **22.08** | **22.48** | **0** |
+| **memory** | **7.31** | **3.236** | **12.52** | **15.42** | **15.72** | **0** |
+
+**더미 R1 대비 변화:**
+- idle: 거의 동일 (1.95→1.96ms)
+- io: 크게 증가 (3.55→5.20ms) — 실제 데이터 메모리 접근 패턴 영향
+- combined Max: 7.96→22.48ms — 실제 데이터 + 복합 부하 시 tail 급증
+- 정확도: cpu 중복 측정 및 클래스 셔플 미적용으로 신뢰도 낮음 → 재측정 필요
 
 ---
 

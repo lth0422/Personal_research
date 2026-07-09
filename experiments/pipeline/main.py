@@ -25,7 +25,10 @@ def load_data(data_path: str | None) -> tuple:
         npz = np.load(data_path)
         windows = npz["data"].astype(np.float32)   # (N, 1, 512, 1)
         labels  = npz["label"].astype(np.int64)
-        print(f"데이터 로드: {windows.shape[0]}개 샘플, {data_path}")
+        # 클래스순 정렬 방지: 항상 셔플
+        idx = np.random.permutation(len(windows))
+        windows, labels = windows[idx], labels[idx]
+        print(f"데이터 로드: {windows.shape[0]}개 샘플 (셔플됨), {data_path}")
         return windows, labels
 
     if data_path and data_path.endswith(".npy"):
