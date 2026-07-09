@@ -1,0 +1,63 @@
+# 한글 논문 비교표
+
+이 문서는 교수님 보고와 서베이 방향 정리를 위한 한글 비교표이다.
+상세한 논문별 내부 표는 `surveys/comparison_table.md`를 유지하고, 이 문서는 연구 방향 판단에 필요한 축만 압축한다.
+
+## 1. Real-Time Fault Diagnosis 분류표
+
+| 논문 | 연도 | 도메인 | RTOS 유무 | 실시간성 접근 | 플랫폼 | 진짜 실시간성 판단 | 본 연구와의 연결 |
+| --- | ---: | --- | --- | --- | --- | --- | --- |
+| Choi et al., Low-Cost MCU Shaft FD | 2025 | 회전기계 축 결함 진단 | 확인 필요 | sensing, inference, output 실행시간 측정 | STM32F401RET6 | 근실시간에 가까움. deadline, jitter, schedulability는 확인되지 않음 | KSC 2025 기반 시스템. KCC Zephyr RTOS 작업의 선행 baseline |
+| Thota et al., TinyML Bearing Fault Classification | 2025 | motor bearing fault classification | 없음 또는 확인 필요 | TinyML, quantization, model size와 latency 평가 | ESP32 계열 | best-effort 근실시간. deadline miss와 RTOS scheduling은 확인되지 않음 | 경량화 계열 비교군. 본 연구와 달리 runtime scheduling은 없음 |
+| Ma et al., Lightweight Architecture Search FD | 2023 | rotating machinery fault diagnosis | 없음 또는 확인 필요 | architecture search에 계산 시간 objective 포함 | CPU evaluation 중심 | best-effort 근실시간. per-task deadline이나 RTOS는 확인되지 않음 | `M` 후보를 offline으로 가볍게 설계하는 비교군 |
+| Lee and Kim, FRFconv-TDSNet | 2024 | vibration machine fault diagnosis | 없음 | Raspberry Pi 4B edge inference time 평가 | Raspberry Pi 4B | edge inference 가능성은 보이나 deadline scheduling은 없음 | KCC 모델 배경, noise robustness, `M` 후보 |
+| Jalonen et al., Real-Time Vibration-Based Bearing FD | 2024 | time-varying speed bearing FD | 없음 또는 확인 필요 | acquisition duration 대비 processing time 평가 | MacBook Pro M1 Pro | 실시간 processing 가능성 평가. RTOS/deadline miss는 없음 | `W` 또는 segment length가 real-time processing과 연결된 사례 |
+| 본 연구 KCC 2026 | 2026 | shaft fault diagnosis | Zephyr RTOS | deadline, jitter, task pipeline 측정 | STM32F407 | deadline 기반 실시간성에 가까움 | `W` 축소와 `C(W)` 측정의 출발점 |
+| 본 연구 방향 2 | TBD | vibration FD runtime mode selection | RTOS/PREEMPT_RT 고려 | `W/H/M` mode feasibility와 schedulability 보장 | MCU/SBC | 검증해야 할 핵심 주장 | machine condition + system slack 기반 mode selection |
+
+## 2. Elastic Scheduling 가정 비교표
+
+| 논문/계열 | 응용 도메인 | 가변 변수 | 주된 가정 | 우리에게 적용 가능? | 가정이 깨지는 지점 |
+| --- | --- | --- | --- | --- | --- |
+| Buttazzo et al., Elastic Task Model / Elastic Scheduling | multimedia, adaptive control, general real-time | period/rate `T` | execution time `C`는 대체로 고정, period를 바꿔 utilization 조절 | `H/T`를 elastic variable로 보는 데 직접 유용 | 본 연구는 `C=C(W,M)`도 mode에 따라 바뀜 |
+| Chantem et al., Generalized Elastic Scheduling | control-oriented periodic tasks | period, utilization, deadline | task model과 performance metric 사이 최적화 | utility와 schedulability를 함께 보는 틀로 유용 | fault diagnosis utility, window `W`, model `M`은 없음 |
+| Tian and Gui, QoC Elastic Scheduling | process control | control period, task utilization | QoC feedback과 workload constraint | diagnosis utility 개념과 비교 가능 | QoC는 control 성능이며 anomaly score와 다름 |
+| Orr et al., Discrete Utilizations | parallel real-time / RTHS | discrete utilization, workload, period | 후보 utilization mode 집합 | `(W,H,M)`을 discrete mode set으로 보는 근거 | mode가 vibration signal semantics를 갖지는 않음 |
+| Sudvarg et al., Harmonic/Subtask Elastic 계열 | FIMS, SLAM, multicore DAG | period, subtask workload, core allocation | schedulability bound와 resource allocation 중심 | 최신 elastic scheduling 비교군 | machine condition과 diagnostic utility는 없음 |
+| 본 연구 | vibration FD | `W`, `H`, `M` | `C(W,M)`과 `T=H/fs`가 함께 변함 | 기존 elastic scheduling의 확장 대상 | schedulability guarantee를 새로 정리해야 함 |
+
+## 3. Deadline-Aware DNN / Model Selection 비교표
+
+| 논문 | 도메인 | 가변 변수 | 트리거 | 실시간 제약 | 본 연구와의 연결 | 한계 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Yao et al., Imprecise DL Services | edge DNN service | mandatory/optional stage, depth | deadline, confidence/utility | deadline miss rate | `M` 또는 computation quality 조절 비교군 | vision/object classification 중심 |
+| Li et al., AMS Heart Disease | ECG anomaly detection | model complexity, anytime exit | heart rate, `D(HR)` | HR-dependent deadline, deadline miss | condition 기반 `M` 선택의 강한 비교군 | vibration `W/H`, PREEMPT_RT는 없음 |
+| EdgeServing | edge multi-DNN serving | model, exit, batch | SLO, queue, latency budget | SLO violation, p95 latency | deadline-aware model/exit/batch 선택 비교군 | GPU serving 중심 |
+| Pantheon | mobile edge GPU | chunk preemption, early-exit variant | task deadline, priority | deadline miss rate | deadline 기반 DNN variant 조절 비교군 | GPU preemption이며 RTOS/PREEMPT_RT와 다름 |
+| FLEX | autonomous driving perception | batch, fusion configuration | criticality, GPU time budget | EDF/CEDF schedulability | slack/deadline 기반 configuration 선택 비교군 | vibration FD가 아님 |
+| 본 연구 | vibration FD | `W/H/M` | machine condition + system slack | utilization, p99/max response time, deadline miss | 세 축을 동시에 묶는 목표 | 아직 검증 필요 |
+
+## 4. PREEMPT_RT와 부하 설계 참고표
+
+| 논문 | 플랫폼 | 부하 또는 측정 방법 | 측정 지표 | 우리 실험에 주는 근거 | 주의 |
+| --- | --- | --- | --- | --- | --- |
+| Adam et al., PREEMPT_RT on ARM | Raspberry Pi 3, BeagleBone AI | cyclictest, response/periodic task measurement | user/kernel latency, worst-case latency | cyclictest만이 아니라 response task 관점도 볼 수 있음 | Pi Zero 2W 직접 결과는 아님 |
+| Dewit et al., Raspberry Pi 5 RT Linux | Raspberry Pi 5 | stress-ng, iperf3, cyclictest | scheduling latency max/tail | 부하 조건을 문헌 기반으로 정해야 한다는 근거 | Pi 5 결과를 Pi Zero 2W로 일반화 금지 |
+| Vaghasiya thesis | Raspberry Pi COTS | object detection workload, Xenomai/PREEMPT_RT 비교 | latency, jitter, responsiveness | inference workload와 OS timing을 함께 보는 참고 | thesis status와 세부 조건 확인 필요 |
+| De Marco et al., Dolphin Whistle Pi Zero 2W | Raspberry Pi Zero 2W | TFLite thread 수 변화, 장시간 stress | latency, throughput, CPU load, temperature, memory | Pi Zero 2W에서 TFLite 측정 항목 선정 참고 | acoustic detection이며 PREEMPT_RT 비교는 아님 |
+| 본 연구 방향 1 | Pi Zero 2W | idle/CPU/mem/IO/combined 후보 | cyclictest, pipeline latency, p99/max, deadline miss | 방향 2의 실험 환경과 원인 분석 기반 | 부하 조건은 추가 문헌 확인 뒤 확정 |
+
+## 5. 카드화 보강 체크리스트
+
+각 paper card에는 기존 항목에 더해 다음을 확인한다.
+
+| 항목 | 질문 |
+| --- | --- |
+| 실시간성 수준 | RTOS, deadline, jitter, p99/max, deadline miss를 다루는가? |
+| 실행시간 가정 | `C`가 고정인가, profiling 기반인가, input/model에 따라 동적으로 변하는가? |
+| 주기 가정 | period 또는 hop size `H/T`를 조절하는가? |
+| 입력 변수 | window/input size가 diagnostic utility와 연결되는가? |
+| 모델 변수 | model, exit, depth, quantization, pruning 중 무엇을 조절하는가? |
+| 트리거 | system load/slack인가, machine condition인가, confidence인가, offline profile인가? |
+| 보장 방식 | utilization bound, schedulability test, admission control, fallback, empirical p99/max 중 무엇인가? |
+| 본 연구 연결 | `W`, `H`, `M`, `q`, `S`, PREEMPT_RT 중 어디에 연결되는가? |

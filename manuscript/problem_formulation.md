@@ -122,6 +122,47 @@ A_feasible(k) = { a in A | U_total(a) <= U_bound and R_a_tail <= D_a }
 If `A_feasible(k)` is empty, the runtime must execute a predefined fallback mode or report overload.
 This fallback rule must be specified explicitly in the algorithm section.
 
+After the 2026-07-08 meeting, this feasibility condition becomes the first research question rather than a secondary detail:
+
+```text
+When the machine condition becomes suspicious and the runtime prefers a more precise mode,
+is that mode still schedulable, and how is that guaranteed?
+```
+
+The policy should therefore be defined as a feasibility-first policy:
+
+```text
+1. Build a mode bank A from profiled modes.
+2. Reject modes that do not satisfy utilization and tail-response constraints.
+3. Select the diagnostically best mode only inside A_feasible(k).
+```
+
+This means that "switching to a precise mode" is allowed only when the precise mode is in the feasible mode set.
+If the most precise mode is infeasible, the runtime chooses the best feasible fallback.
+
+## 3.1 KCC Utilization Motivation
+
+Using the KCC measurements with non-overlapping windows:
+
+```text
+f_s = 8 kHz
+T = W / f_s
+```
+
+and max observed latency:
+
+| W | C max | T | U=C/T |
+| ---: | ---: | ---: | ---: |
+| 512 | 40.3 ms | 64 ms | 0.63 |
+| 1024 | 129.8 ms | 128 ms | 1.01 |
+| 2048 | 460.3 ms | 256 ms | 1.80 |
+
+This shows the conflict directly.
+Larger windows may provide more diagnostic context, but the execution cost grows faster than the period in this measurement.
+Therefore, a precise mode can become infeasible unless the hop size or period is also adjusted.
+
+The same table should be recomputed using average, p95, p99, and max execution times when the measurement logs are finalized.
+
 ## 4. Machine Condition and Diagnostic Utility
 
 Let:

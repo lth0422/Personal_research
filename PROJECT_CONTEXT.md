@@ -34,6 +34,13 @@
 | 학위논문 (중기) | (W,H,M) 기반 elastic scheduling | 핵심 |
 | 장기 | 추론 + OTTA 학습을 동일 RT 스케줄링에 통합 | 본인 코어 |
 
+2026-07-08 교수님 면담 이후 우선순위는 다음과 같이 정리한다.
+
+- 방향 2, 즉 `(W,H,M)` 기반 elastic scheduling이 유일한 코어이다.
+- 방향 1, 즉 Pi Zero 2W Linux vs PREEMPT_RT 비교는 독립 논문보다 방향 2를 위한 기초 환경과 원인 분석 훈련으로 둔다.
+- 방향 3은 방향 2가 정리된 뒤 참고한다.
+- 2-3주 동안 서베이 표 4종과 KCC 데이터 기반 utilization 계산을 우선 만든다.
+
 ---
 
 ## 4. KCC 2026 핵심 결과 (중기 연구의 근거)
@@ -68,6 +75,22 @@ feasibility (elastic utilization):
 ```
 
 기호: W=window size, H=hop size/진단 주기, M=model, C=실행시간, T=주기, U_lub=이용률 상한, D=deadline, S=slack
+
+0708 면담 이후 첫 번째 정식화 질문은 다음이다.
+
+> 이상 징후 시 정밀 mode로 전환해도 static하게 schedulable한가, 그리고 그 보장을 어떻게 제시할 것인가?
+
+따라서 정책은 단순히 정밀 mode를 고르는 것이 아니라, 사전 profiling 또는 admission을 통과한 feasible mode set 안에서만 diagnostic utility가 큰 mode를 고르는 구조로 정리한다.
+
+KCC 데이터에서 비중첩 window를 가정하면 `T=W/fs`이고, max latency 기준 utilization은 다음과 같이 계산된다.
+
+| W | C max | T at 8 kHz | U=C/T |
+| ---: | ---: | ---: | ---: |
+| 512 | 40.3 ms | 64 ms | 0.63 |
+| 1024 | 129.8 ms | 128 ms | 1.01 |
+| 2048 | 460.3 ms | 256 ms | 1.80 |
+
+이 값은 정밀 mode로 갈수록 `C`가 증가하고, `T`가 충분히 커지지 않으면 utilization이 1을 넘을 수 있음을 보여주는 motivation으로 사용한다. 평균, p99, max 기준 곡선을 모두 계산해야 한다.
 
 ---
 
@@ -120,6 +143,8 @@ personal-research/
 │   ├── claim_bank.md
 │   ├── related_work_map.md
 │   ├── comparison_table.md
+│   ├── comparison_table_ko.md
+│   ├── survey_plan_0708_feedback.md
 │   ├── paper_inventory.md
 │   └── paper_cards/          # 논문별 카드 (그룹 01~08)
 ├── papers/                   # PDF 원본 (그룹 1~8)
@@ -143,6 +168,7 @@ personal-research/
 └── decisions/                # 미결 질문 + 연구 전략
     ├── open_questions.md
     ├── session_log.md
+    ├── personal_research_summary_0708.md
     └── rtas_rtcsa_dual_track_runtime_mode_selection_plan.md
 ```
 

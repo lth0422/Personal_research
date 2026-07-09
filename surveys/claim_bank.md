@@ -4,6 +4,16 @@
 
 ## Claims
 
+- 0708 면담 이후 본 연구의 핵심 claim은 "정밀 mode를 선택한다"가 아니라 "feasible mode set 안에서 가장 진단적으로 유용한 mode를 선택한다"로 정리한다.
+  - 근거 후보: `decisions/personal_research_summary_0708.md`, `manuscript/problem_formulation.md`.
+  - 본 연구 연결: schedulability guarantee를 문제 정식화의 1번 질문으로 둔다.
+  - 주의: 아직 formal guarantee와 empirical feasibility 중 어디까지 주장할지는 확정되지 않았다.
+
+- 기존 elastic scheduling은 대체로 execution time `C`를 고정하고 period 또는 utilization을 조절한다. 본 연구의 확장 지점은 diagnosis mode에 따라 `C(W,M)`도 함께 바뀐다는 점이다.
+  - 근거 후보: Buttazzo et al. 1998/2002; Chantem et al. 2009; Orr et al. 2020; Sudvarg 계열.
+  - 본 연구 연결: `τ_diag = (C(W,M), T=H/f_s)`로 확장해 `W/H/M` mode bank를 admission 또는 feasibility filtering 대상으로 본다.
+  - 주의: "기존 연구가 전혀 없다"가 아니라, 현재 보유 문헌 범위에서 `C(W,M)`와 vibration diagnosis utility를 함께 다룬 사례가 확인되지 않았다는 식으로 써야 한다.
+
 - classic elastic scheduling은 periodic task의 period/rate를 조절해 overload나 workload 변화에서 schedulability를 유지하는 시스템 축의 대표 관련연구다.
   - 근거 후보: Buttazzo et al. RTSS 1998, Buttazzo et al. IEEE Transactions on Computers 2002, Chantem et al. IEEE Transactions on Computers 2009, Tian and Gui Real-Time Systems 2011.
   - 본 연구 연결: 본 연구의 `H` 또는 diagnosis period를 elastic variable로 정식화할 때 기본 비교군으로 활용 가능하다.
@@ -15,9 +25,9 @@
   - 주의: 이 계열의 trigger는 overload, available utilization, schedulability/resource constraint 중심이며, machine condition과 fault-diagnosis utility를 함께 쓰는 구조는 현재 카드 기준 확인되지 않았다.
 
 - real-time DNN serving 계열에서도 runtime에 batch 구성과 model 내부 처리량을 조절해 deadline과 perception quality의 trade-off를 다루는 연구가 있다.
-  - 근거 후보: Yao et al. RTCSA 2020, Imprecise DL Services; Xu et al. RTSS 2024, FLEX; Cao et al. arXiv 2026, EdgeServing; Han et al. MobiSys 2024, Pantheon; Laskaridis et al. EMDL 2021; He et al. arXiv 2023; Zhang et al. arXiv 2023 BCEdge; Raj et al. arXiv 2025; Rahmath P et al. ACM Computing Surveys 2024.
+  - 근거 후보: Yao et al. RTCSA 2020, Imprecise DL Services; Xu et al. RTSS 2024, FLEX; Li et al. RTCSA 2025, AMS Heart Disease; Cao et al. arXiv 2026, EdgeServing; Han et al. MobiSys 2024, Pantheon; Laskaridis et al. EMDL 2021; He et al. arXiv 2023; Zhang et al. arXiv 2023 BCEdge; Raj et al. arXiv 2025; Rahmath P et al. ACM Computing Surveys 2024.
   - 본 연구 연결: system slack/deadline 조건으로 runtime mode를 선택한다는 점은 본 연구의 `S -> (W,H,M)` 정책과 비교 가능하다.
-  - 주의: Yao et al.은 DNN stage/depth를 imprecise computation으로 조절하고, FLEX는 batch/fusion configuration, EdgeServing은 model/exit/batch, Pantheon은 GPU runtime preemption과 early-exit variant adaptation, He et al.은 layer-wise batching/offloading, BCEdge는 batch/concurrency, Raj et al.은 edge/cloud placement와 dropping/migration, early-exit survey들은 exit/depth policy를 다룬다. 이 계열은 vibration fault diagnosis의 window W, diagnosis period H, anomaly score trigger, PREEMPT_RT 커널 실시간성은 다루지 않는다.
+  - 주의: Yao et al.은 DNN stage/depth를 imprecise computation으로 조절하고, FLEX는 batch/fusion configuration, Li et al.은 heart rate 기반 model complexity/anytime exit path를 선택하며, EdgeServing은 model/exit/batch, Pantheon은 GPU runtime preemption과 early-exit variant adaptation, He et al.은 layer-wise batching/offloading, BCEdge는 batch/concurrency, Raj et al.은 edge/cloud placement와 dropping/migration, early-exit survey들은 exit/depth policy를 다룬다. 이 계열은 vibration fault diagnosis의 window W, diagnosis period H, anomaly score trigger, PREEMPT_RT 커널 실시간성은 다루지 않는다.
 
 - embedded DNN inference에서는 memory footprint도 latency/deadline과 함께 고려해야 할 resource constraint가 될 수 있다.
   - 근거 후보: Ji et al., RTSS 2022 Demand Layering.

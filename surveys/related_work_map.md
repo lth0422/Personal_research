@@ -6,10 +6,12 @@
 
 ### Survey Coverage Status
 
-- 현재 인벤토리 기준 중복 제거 후 보유 PDF는 49편이며, 49편 모두 paper card가 작성되었다.
+- 현재 인벤토리 기준 중복 제거 후 보유 PDF는 50편이며, 50편 모두 paper card가 작성되었다.
 - `Subtask-Level_Elastic_Scheduling_copy2_needs_check.pdf`는 `copy1`과 정규화 본문 해시가 같아 중복본으로 삭제했다.
 - 핵심 related work 축은 `Elastic Scheduling`, `Input-Adaptive Fault Diagnosis`, `Real-Time DNN Serving`, `Platform and PREEMPT_RT`로 정리한다.
 - `Miscellaneous Real-Time Scheduling`은 원고 핵심 주장이 아니라 end-to-end latency, EDF overhead, self-suspension 해석을 보조하는 배경으로 둔다.
+- 0708 면담 이후 서베이 산출물은 `real-time fault diagnosis 분류표`, `elastic scheduling 실전 응용 가정표`, `부하 설계 전략`, `고전 실시간 개념 노트`로 재정렬한다.
+- 교수님 보고용 한글 비교표는 `surveys/comparison_table_ko.md`에 둔다.
 
 ### Elastic Scheduling
 
@@ -25,6 +27,7 @@
 - Sudvarg, PhD dissertation 2024와 Sudvarg et al., LITES 2025는 위 elastic extensions를 묶는 배경과 improved algorithm complexity를 제공한다.
 - 공통점: system load, utilization, schedulability bound를 중심으로 rate/workload를 조절한다.
 - 차이점: 이 계열은 general real-time scheduling 중심이며, vibration fault diagnosis의 window size W, model M, anomaly score 기반 machine condition, PREEMPT_RT/SBC 실시간성은 다루지 않는다.
+- 0708 면담 이후 핵심 확인점: 기존 elastic scheduling이 `C` 고정 가정에 얼마나 의존하는지, 그리고 본 연구처럼 `C(W,M)`가 mode에 따라 바뀌는 경우 어떤 보장 조건이 필요한지 정리해야 한다.
 
 ### Input-Adaptive Visual Perception
 
@@ -38,6 +41,7 @@
 - Yao et al., RTCSA 2020은 DNN workflow를 mandatory/optional stages가 있는 imprecise computation으로 보고, deadline 안에서 confidence/accuracy utility가 높은 stage를 선택한다.
 - Xu et al., RTSS 2024 FLEX는 multi-modal multi-view machine perception에서 elastic fusion과 adaptive batching을 결합한다.
 - FLEX의 가변 변수는 batch 구성과 modality fusion configuration이며, trigger는 view criticality, runtime sensing context, GPU time budget, deadline/schedulability 조건이다.
+- Li et al., RTCSA 2025 AMS Heart Disease는 real-time ECG anomaly detection에서 instantaneous heart rate와 `D(HR)`를 기준으로 advanced, moderate, lightweight model 또는 anytime exit path를 선택한다.
 - Cao et al., arXiv 2026 EdgeServing은 single shared GPU에서 model/service queue, early-exit point, batch size를 함께 선택해 per-request SLO violation과 tail latency를 줄이는 방향의 scheduler를 제안한다.
 - Han et al., MobiSys 2024 Pantheon은 mobile edge GPU에서 concurrent real-time DNN task 간 chunk-level preemption과 early-exit variant adaptation을 결합한다.
 - Laskaridis et al., EMDL 2021은 early-exit network의 architecture, training, exit policy, hardware co-design 요소를 정리한다.
@@ -47,7 +51,7 @@
 - Ji et al., RTSS 2022 Demand Layering은 model parameter를 layer 단위로 load/execute해 embedded GPU DNN inference의 memory usage를 줄이고 memory-delay trade-off를 다룬다.
 - Rahmath P et al., ACM Computing Surveys 2024는 early-exit DNN의 architecture, training, deployment, application, challenge를 포괄적으로 정리한다.
 - 본 연구와의 연결: runtime에 제한된 계산 자원을 어떤 perception task와 configuration에 배분할지 정한다는 점에서 system slack 기반 mode selection 비교군으로 활용 가능하다.
-- 차이점: 이 계열은 GPU serving과 perception workload 중심이며, vibration window W, diagnosis period H, model M의 공동 선택과 PREEMPT_RT 실시간성은 다루지 않는다.
+- 차이점: 이 계열은 GPU serving, perception workload, ECG/health monitoring 중심이며, vibration window W, diagnosis period H, model M의 공동 선택과 PREEMPT_RT 실시간성은 다루지 않는다.
 
 ### Weakly-Hard and Bounded Deadline Miss
 
@@ -89,6 +93,7 @@
 - Jeya Agastin K et al., IRJAEM 2025는 Raspberry Pi Zero 2W에서 YOLOv5n INT8/TFLite object detection pipeline을 제시한다.
 - 본 연구와의 연결: KSC 2026 실험에서 `cyclictest -> pipeline latency -> deadline miss` 순서로 실시간성을 검증하는 구조를 뒷받침한다.
 - 차이점: PREEMPT_RT 문헌은 kernel benchmark 중심이고, Pi Zero 2W TFLite 문헌은 acoustic detection 중심이므로 vibration FD pipeline 결과는 본 연구에서 별도로 측정해야 한다.
+- 0708 면담 이후 방향 1의 역할: 독립 논문 목표보다 방향 2를 위한 platform characterization과 원인 분석 자료로 둔다. 부하 조건은 문헌의 stress design을 확인한 뒤 확정한다.
 
 ### Miscellaneous Real-Time Scheduling
 

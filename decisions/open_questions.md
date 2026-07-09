@@ -4,6 +4,12 @@
 
 ## Questions
 
+- 0708 면담 기준 최우선 질문: 이상 징후 시 정밀 mode로 전환해도 static하게 schedulable한가, 그리고 그 보장을 formal하게 제시할 것인가 empirical p99/max feasibility로 제시할 것인가?
+- 모든 candidate mode가 사전 admission을 통과해야 하는가, 아니면 infeasible high-fidelity mode를 허용하되 runtime fallback으로 처리할 것인가?
+- 기존 elastic scheduling의 `C` 고정 가정을 본 연구의 `C(W,M)` 가변 실행시간으로 확장할 때 필요한 최소 가정은 무엇인가?
+- KCC 데이터의 utilization 계산을 average, p95, p99, max 기준으로 각각 수행하려면 어떤 원본 로그를 기준으로 삼을 것인가?
+- 방향 1의 Pi Zero 2W vanilla vs PREEMPT_RT 실험은 독립 논문으로 유지할지, 방향 2의 timing characterization 장으로 흡수할지 결과를 본 뒤 결정해야 한다.
+- 부하 조건 idle/CPU/mem/IO/combined는 임시 후보이다. PREEMPT_RT/SBC 문헌의 부하 설계 사례를 검토한 뒤 확정해야 한다.
 - classic elastic scheduling 두 편의 정량 결과를 manuscript에서 사용할 경우, HARTIK 실험과 IEEE TC 2002 후반 evaluation 수치를 별도로 재확인해야 한다.
 - Chantem et al. IEEE TC 2009의 heuristic 성능, feasible solution 비율, global optimal 비율을 원고에 사용할 경우 utilization level, workload, iteration 조건을 재확인해야 한다.
 - Tian and Gui Real-Time Systems 2011의 QoC examples를 사용할 경우 plant/control task 설정과 QoC metric을 Section 7에서 재확인해야 한다.
@@ -25,6 +31,9 @@
 - Pantheon의 preemption은 GPU/DNN runtime preemption이다. PREEMPT_RT 커널 preemption 또는 RTOS scheduling과 혼동하지 않도록 원고 표현을 구분해야 한다.
 - Yao et al. RTCSA 2020의 `10%~20%` accuracy improvement와 deadline miss 관련 수치를 manuscript에 인용하려면 Figure별 workload, baseline, dataset 조건을 재확인해야 한다.
 - Yao et al. RTCSA 2020은 object classification service 중심이다. vibration fault diagnosis와 연결할 때 domain 차이와 utility 정의 차이를 명시해야 한다.
+- Li et al. RTCSA 2025 AMS Heart Disease의 91.5% accuracy, 1.33 ms average latency, zero deadline miss 수치는 PhysioNet 2021, Raspberry Pi 4, two-cycle AMS/Anytime 조건과 연결되어 있으므로 Table II/III 및 실험 설정을 확인한 뒤 인용해야 한다.
+- Li et al. RTCSA 2025의 trigger는 heart rate와 `D(HR)`이며, 본 연구의 vibration anomaly score 또는 system slack과 동일한 의미로 쓰면 안 된다.
+- Li et al. RTCSA 2025는 Raspberry Pi 4 기반 ECG monitoring 논문이므로 Pi Zero 2W/PREEMPT_RT 또는 vibration FD pipeline 결과와 직접 비교하지 않아야 한다.
 - Laskaridis et al. EMDL 2021은 survey/design paper이므로 정량 성능 근거가 아니라 early-exit 설계 축 배경으로 사용해야 한다.
 - He et al. Adaptive Scheduling for Edge-Assisted DNN Serving은 현재 로컬 PDF 기준 arXiv v2 2023이다. manuscript 인용 전 출판 venue 여부를 확인해야 한다.
 - He et al.의 system capacity, completion time, on-time ratio 개선 수치는 DNN model, request rate, deadline, batch size bound, binary/partial offloading 조건별로 달라지므로 Figure 5, 8, 11 조건을 재확인해야 한다.
