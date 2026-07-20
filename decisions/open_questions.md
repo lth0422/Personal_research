@@ -10,6 +10,9 @@
 - KCC 데이터의 utilization 계산을 average, p95, p99, max 기준으로 각각 수행하려면 어떤 원본 로그를 기준으로 삼을 것인가?
 - 방향 1의 Pi Zero 2W vanilla vs PREEMPT_RT 실험은 독립 논문으로 유지할지, 방향 2의 timing characterization 장으로 흡수할지 결과를 본 뒤 결정해야 한다.
 - 부하 조건 idle/CPU/mem/IO/combined는 임시 후보이다. PREEMPT_RT/SBC 문헌의 부하 설계 사례를 검토한 뒤 확정해야 한다.
+- 본 연구의 `H/fs`로 정해지는 task arrival period, end-to-end diagnosis deadline, inference에 배정하는 local budget을 각각 어떻게 정의하고 연결할 것인가?
+- mode 전환 시 독립 모델을 모두 상주시킬지, 필요할 때 load할지, shared-prefix 구조를 사용할지 결정하기 전에 peak RAM, load/switch latency, cache 영향까지 비교할 필요가 있는가?
+- independent model과 Anytime/early-exit의 직접 비교는 핵심 연구 질문에 필요한 최소 실험인가, 아니면 `(W,H,M)` feasibility-first 정책이 확립된 뒤 수행할 후속 ablation인가? 현재는 후속 ablation 후보로 둔다.
 - classic elastic scheduling 두 편의 정량 결과를 manuscript에서 사용할 경우, HARTIK 실험과 IEEE TC 2002 후반 evaluation 수치를 별도로 재확인해야 한다.
 - Chantem et al. IEEE TC 2009의 heuristic 성능, feasible solution 비율, global optimal 비율을 원고에 사용할 경우 utilization level, workload, iteration 조건을 재확인해야 한다.
 - Tian and Gui Real-Time Systems 2011의 QoC examples를 사용할 경우 plant/control task 설정과 QoC metric을 Section 7에서 재확인해야 한다.
@@ -34,6 +37,8 @@
 - Li et al. RTCSA 2025 AMS Heart Disease의 91.5% accuracy, 1.33 ms average latency, zero deadline miss 수치는 PhysioNet 2021, Raspberry Pi 4, two-cycle AMS/Anytime 조건과 연결되어 있으므로 Table II/III 및 실험 설정을 확인한 뒤 인용해야 한다.
 - Li et al. RTCSA 2025의 trigger는 heart rate와 `D(HR)`이며, 본 연구의 vibration anomaly score 또는 system slack과 동일한 의미로 쓰면 안 된다.
 - Li et al. RTCSA 2025는 Raspberry Pi 4 기반 ECG monitoring 논문이므로 Pi Zero 2W/PREEMPT_RT 또는 vibration FD pipeline 결과와 직접 비교하지 않아야 한다.
+- Li et al. RTCSA 2025의 `D(HR)`와 Table II의 1.5--2.0 ms inference threshold 관계, 그리고 threshold의 system-level 도출 근거를 다시 확인해야 한다.
+- Li et al. RTCSA 2025의 fallback은 deadline 초과 후 재실행을 포함한다. 이미 소비한 비용과 fallback 비용을 포함한 보장인지 확인하기 전에는 deadline-safe recovery로 표현하지 않아야 한다.
 - Laskaridis et al. EMDL 2021은 survey/design paper이므로 정량 성능 근거가 아니라 early-exit 설계 축 배경으로 사용해야 한다.
 - He et al. Adaptive Scheduling for Edge-Assisted DNN Serving은 현재 로컬 PDF 기준 arXiv v2 2023이다. manuscript 인용 전 출판 venue 여부를 확인해야 한다.
 - He et al.의 system capacity, completion time, on-time ratio 개선 수치는 DNN model, request rate, deadline, batch size bound, binary/partial offloading 조건별로 달라지므로 Figure 5, 8, 11 조건을 재확인해야 한다.

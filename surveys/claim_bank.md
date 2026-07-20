@@ -29,6 +29,11 @@
   - 본 연구 연결: system slack/deadline 조건으로 runtime mode를 선택한다는 점은 본 연구의 `S -> (W,H,M)` 정책과 비교 가능하다.
   - 주의: Yao et al.은 DNN stage/depth를 imprecise computation으로 조절하고, FLEX는 batch/fusion configuration, Li et al.은 heart rate 기반 model complexity/anytime exit path를 선택하며, EdgeServing은 model/exit/batch, Pantheon은 GPU runtime preemption과 early-exit variant adaptation, He et al.은 layer-wise batching/offloading, BCEdge는 batch/concurrency, Raj et al.은 edge/cloud placement와 dropping/migration, early-exit survey들은 exit/depth policy를 다룬다. 이 계열은 vibration fault diagnosis의 window W, diagnosis period H, anomaly score trigger, PREEMPT_RT 커널 실시간성은 다루지 않는다.
 
+- condition-aware mode selection만으로는 실시간 실행 가능성을 보장할 수 없으며, 같은 기계 상태에서도 가용 system slack에 따라 feasible mode가 달라질 수 있다.
+  - 근거 후보: Li et al. RTCSA 2025 AMS Heart Disease의 HR 기반 model selection과 EDF 정식화에 대한 비판적 검토.
+  - 본 연구 연결: `A_feasible(S_k)`를 먼저 계산하고, 그 안에서 machine condition에 대한 diagnostic utility가 가장 높은 `(W,H,M)`을 선택하는 feasibility-first 정책으로 확장한다.
+  - 주의: Li et al.이 system slack을 고려하지 않는다는 사실만으로 본 연구의 novelty가 확정되지는 않는다. 다른 condition-aware 및 slack-aware mode-selection 문헌을 추가 확인해야 한다.
+
 - embedded DNN inference에서는 memory footprint도 latency/deadline과 함께 고려해야 할 resource constraint가 될 수 있다.
   - 근거 후보: Ji et al., RTSS 2022 Demand Layering.
   - 본 연구 연결: Pi Zero 2W 또는 SBC 환경에서 model size, memory, loading 방식이 실시간 inference에 영향을 줄 수 있음을 설명하는 배경으로 활용 가능하다.

@@ -19,7 +19,7 @@
 
 | 논문/계열 | 응용 도메인 | 가변 변수 | 주된 가정 | 우리에게 적용 가능? | 가정이 깨지는 지점 |
 | --- | --- | --- | --- | --- | --- |
-| Buttazzo et al., Elastic Task Model / Elastic Scheduling | multimedia, adaptive control, general real-time | period/rate `T` | execution time `C`는 대체로 고정, period를 바꿔 utilization 조절 | `H/T`를 elastic variable로 보는 데 직접 유용 | 본 연구는 `C=C(W,M)`도 mode에 따라 바뀜 |
+| Buttazzo et al., Elastic Task Model / Elastic Scheduling | multimedia, adaptive control, general real-time | period/rate `T` | RTSS 1998 원형과 IEEE TC 2002 확장판. `C` 고정, `T` 가변이며 2002년판은 SRP/resource constraint를 보강 | `H/T`를 elastic variable로 보는 데 직접 유용 | 본 연구는 `C=C(W,M)`도 mode에 따라 바뀜. 두 논문은 별도 독립 기법으로 중복 집계하지 않음 |
 | Chantem et al., Generalized Elastic Scheduling | control-oriented periodic tasks | period, utilization, deadline | task model과 performance metric 사이 최적화 | utility와 schedulability를 함께 보는 틀로 유용 | fault diagnosis utility, window `W`, model `M`은 없음 |
 | Tian and Gui, QoC Elastic Scheduling | process control | control period, task utilization | QoC feedback과 workload constraint | diagnosis utility 개념과 비교 가능 | QoC는 control 성능이며 anomaly score와 다름 |
 | Orr et al., Discrete Utilizations | parallel real-time / RTHS | discrete utilization, workload, period | 후보 utilization mode 집합 | `(W,H,M)`을 discrete mode set으로 보는 근거 | mode가 vibration signal semantics를 갖지는 않음 |
@@ -31,7 +31,7 @@
 | 논문 | 도메인 | 가변 변수 | 트리거 | 실시간 제약 | 본 연구와의 연결 | 한계 |
 | --- | --- | --- | --- | --- | --- | --- |
 | Yao et al., Imprecise DL Services | edge DNN service | mandatory/optional stage, depth | deadline, confidence/utility | deadline miss rate | `M` 또는 computation quality 조절 비교군 | vision/object classification 중심 |
-| Li et al., AMS Heart Disease | ECG anomaly detection | model complexity, anytime exit | heart rate, `D(HR)` | HR-dependent deadline, deadline miss | condition 기반 `M` 선택의 강한 비교군 | vibration `W/H`, PREEMPT_RT는 없음 |
+| Li et al., AMS Heart Disease | ECG anomaly detection | model complexity, anytime exit | heart rate, `D(HR)` | HR-dependent inference threshold, EDF 식, deadline miss | condition 기반 `M` 선택의 강한 비교군 | condition-only 정책이며 system slack, vibration `W/H`, PREEMPT_RT가 없음. 평균 latency 중심이고 threshold 도출 및 fallback 보장은 불명확 |
 | EdgeServing | edge multi-DNN serving | model, exit, batch | SLO, queue, latency budget | SLO violation, p95 latency | deadline-aware model/exit/batch 선택 비교군 | GPU serving 중심 |
 | Pantheon | mobile edge GPU | chunk preemption, early-exit variant | task deadline, priority | deadline miss rate | deadline 기반 DNN variant 조절 비교군 | GPU preemption이며 RTOS/PREEMPT_RT와 다름 |
 | FLEX | autonomous driving perception | batch, fusion configuration | criticality, GPU time budget | EDF/CEDF schedulability | slack/deadline 기반 configuration 선택 비교군 | vibration FD가 아님 |

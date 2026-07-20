@@ -89,6 +89,20 @@
 
 ## 우선순위
 
+### 현재 정독 및 재검토 큐
+
+1. Buttazzo et al., `Elastic Scheduling for Flexible Workload Management`, IEEE Transactions on Computers 2002
+   - 다음 정독 대상이다.
+   - `C` 고정, `T` 가변, elastic coefficient, feasible utilization 조정이라는 기본 가정을 먼저 이해한다.
+   - 본 연구의 `H/T` 축과 `C(W,M)` 확장 지점을 구분하기 위한 이론적 바닥으로 사용한다.
+2. Hu et al., `On Exploring Image Resizing for Optimizing Criticality-based Machine Perception`, RTCSA 2021
+   - input size와 model size를 criticality 및 deadline과 연결하는 직접 비교군이다.
+   - dedicated smaller model과 resized input/model 조합의 품질-시간 trade-off를 AMS의 Anytime 구조와 대조한다.
+3. Sudvarg et al., `Elastic Scheduling for Harmonic Task Systems`, RTAS 2024
+   - 최신 elastic scheduling에서 mode feasibility와 application evaluation을 어떻게 연결하는지 확인한다.
+
+완료: Li et al., `Adaptive Model Selection for Real-Time Heart Disease Detection on Embedded Systems`, RTCSA 2025는 paper card와 비판적 검토 메모까지 작성했다.
+
 ### 최우선
 
 - real-time fault diagnosis 문헌 중 RTOS/deadline을 실제로 다루는지 확인할 수 있는 논문

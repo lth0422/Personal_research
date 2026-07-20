@@ -15,8 +15,9 @@
 
 ### Elastic Scheduling
 
-- Buttazzo et al., RTSS 1998은 periodic task의 period/rate를 elastic variable로 두고, overload 또는 task rate 변경 시 다른 task period를 조절해 schedulability를 유지하는 모델을 제안한다.
-- Buttazzo et al., IEEE Transactions on Computers 2002는 elastic scheduling을 flexible workload management framework로 정리하고, current workload에 따른 rate adaptation과 overload management를 다룬다.
+- Buttazzo et al., RTSS 1998은 periodic task의 period/rate를 elastic variable로 두고, overload 또는 task rate 변경 시 다른 task period를 조절해 schedulability를 유지하는 elastic task model을 최초 제안한다.
+- Buttazzo et al., IEEE Transactions on Computers 2002는 1998년 원형의 journal extension 계열이다. 같은 핵심 모델과 HARTIK 실험을 바탕으로 decompression/rescaling, SRP 기반 resource constraint와 blocking, 안전한 period transition을 보강한다. 두 논문을 별개의 독립 방법으로 중복 집계하지 않는다.
+- 두 논문의 현재 방법은 모두 execution time `C`를 고정하고 period `T`를 조절한다. 2002년 결론의 measured execution-time estimator는 future work이므로 현재 기법의 trigger나 가정으로 쓰지 않는다.
 - Chantem et al., IEEE Transactions on Computers 2009는 elastic scheduling을 schedulability와 performance metric 사이의 optimization problem으로 일반화하고, deadline < period task와 deadline selection까지 확장한다.
 - Tian and Gui, Real-Time Systems 2011은 real-time process control에서 QoC measurement와 workload constraint를 함께 고려해 control period를 조절한다.
 - Sudvarg et al., Real-Time Systems 2021은 elastic scheduling의 online admission control을 linear time으로 줄이는 구현을 제시한다.
@@ -42,6 +43,7 @@
 - Xu et al., RTSS 2024 FLEX는 multi-modal multi-view machine perception에서 elastic fusion과 adaptive batching을 결합한다.
 - FLEX의 가변 변수는 batch 구성과 modality fusion configuration이며, trigger는 view criticality, runtime sensing context, GPU time budget, deadline/schedulability 조건이다.
 - Li et al., RTCSA 2025 AMS Heart Disease는 real-time ECG anomaly detection에서 instantaneous heart rate와 `D(HR)`를 기준으로 advanced, moderate, lightweight model 또는 anytime exit path를 선택한다.
+- 이 논문의 직접적인 비교 가치는 condition에 따라 `M`을 고른다는 점이다. 다만 task arrival/period와 inference threshold의 관계, 평균 latency 기반 평가, deadline 초과 후 fallback 비용, independent-model AMS 대비 Anytime AMS의 runtime memory 및 tail-latency 우위는 충분히 분리되어 있지 않다.
 - Cao et al., arXiv 2026 EdgeServing은 single shared GPU에서 model/service queue, early-exit point, batch size를 함께 선택해 per-request SLO violation과 tail latency를 줄이는 방향의 scheduler를 제안한다.
 - Han et al., MobiSys 2024 Pantheon은 mobile edge GPU에서 concurrent real-time DNN task 간 chunk-level preemption과 early-exit variant adaptation을 결합한다.
 - Laskaridis et al., EMDL 2021은 early-exit network의 architecture, training, exit policy, hardware co-design 요소를 정리한다.
@@ -51,7 +53,7 @@
 - Ji et al., RTSS 2022 Demand Layering은 model parameter를 layer 단위로 load/execute해 embedded GPU DNN inference의 memory usage를 줄이고 memory-delay trade-off를 다룬다.
 - Rahmath P et al., ACM Computing Surveys 2024는 early-exit DNN의 architecture, training, deployment, application, challenge를 포괄적으로 정리한다.
 - 본 연구와의 연결: runtime에 제한된 계산 자원을 어떤 perception task와 configuration에 배분할지 정한다는 점에서 system slack 기반 mode selection 비교군으로 활용 가능하다.
-- 차이점: 이 계열은 GPU serving, perception workload, ECG/health monitoring 중심이며, vibration window W, diagnosis period H, model M의 공동 선택과 PREEMPT_RT 실시간성은 다루지 않는다.
+- 차이점: 이 계열은 GPU serving, perception workload, ECG/health monitoring 중심이며, vibration window W, diagnosis period H, model M의 공동 선택과 PREEMPT_RT 실시간성은 다루지 않는다. 특히 AMS Heart Disease는 condition-aware이지만 현재 system slack을 함께 쓰는 정책으로 확인되지는 않았다.
 
 ### Weakly-Hard and Bounded Deadline Miss
 

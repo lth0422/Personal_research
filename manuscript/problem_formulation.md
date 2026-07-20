@@ -39,6 +39,16 @@ The diagnosis period induced by hop size is:
 T_a = H_a / f_s
 ```
 
+This arrival period is distinct from the end-to-end diagnosis deadline and the local inference budget:
+
+```text
+T_arrival(a) = H_a / f_s
+D_e2e(a)     = end-to-end diagnosis deadline
+B_infer(a)   = execution budget allocated to inference
+```
+
+Their relationship must be stated explicitly for each experiment. A model-selection threshold must not be treated as the task period or the end-to-end deadline unless the system model actually makes them equal.
+
 This definition intentionally keeps `W` and `H` separate.
 In vibration diagnosis, the amount of signal context and the frequency of diagnosis are different design choices.
 
@@ -121,6 +131,14 @@ A_feasible(k) = { a in A | U_total(a) <= U_bound and R_a_tail <= D_a }
 
 If `A_feasible(k)` is empty, the runtime must execute a predefined fallback mode or report overload.
 This fallback rule must be specified explicitly in the algorithm section.
+
+If fallback requires aborting or re-executing inference, its feasibility must include already consumed execution and transition cost:
+
+```text
+C_spent + C_abort + C_fallback <= B_infer
+```
+
+Detecting a deadline miss and then restarting a lighter model is not itself a timing guarantee. The initial implementation should therefore prefer offline-profiled admissible modes; re-execution is optional unless its budget is explicitly reserved.
 
 After the 2026-07-08 meeting, this feasibility condition becomes the first research question rather than a secondary detail:
 

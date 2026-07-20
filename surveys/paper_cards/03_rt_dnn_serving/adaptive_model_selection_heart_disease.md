@@ -25,7 +25,14 @@
 ## 0708 면담 기준 보강
 - **실시간성 수준**: HR-dependent deadline, EDF schedulability model, deadline miss를 다룬다. RTOS/PREEMPT_RT 실험은 확인되지 않았다.
 - **실행시간 가정**: model variant 또는 anytime exit path에 따라 `C(M)`이 달라지는 mode-dependent execution time 구조다.
-- **보장 방식**: `T_proc(M_i) <= D(HR)` 제약, `U(E_i)=C_i(HR)/D_i(HR)`, shallower model fallback/watchdog를 사용한다. 다만 본 연구의 vibration `C(W,M)`와는 domain과 trigger가 다르다.
+- **보장 방식**: `T_proc(M_i) <= D(HR)` 제약, `U(E_i)=C_i(HR)/D_i(HR)`, shallower model fallback/watchdog를 사용한다. 다만 평균 inference latency 중심의 Raspberry Pi 4 평가이므로 end-to-end tail latency 또는 WCET 보장으로 해석하면 안 된다.
+
+## 비판적 검토 요약
+- 가장 유용한 기여는 Anytime 구조 자체보다 `physiological condition -> deadline budget -> model mode`를 연결한 condition-aware mode selection이다.
+- 이론의 task arrival/period와 실험의 1.5--2.0 ms inference threshold가 어떻게 연결되는지 명확하지 않다. `T_arrival`, `D_e2e`, `B_infer`를 구분해 읽어야 한다.
+- 세 독립 모델과 Anytime 모델의 peak RAM, 전환 비용, tail latency를 같은 조건에서 직접 비교하지 않아 parameter sharing의 runtime 우위를 확정하기 어렵다.
+- deadline을 넘긴 뒤 shallower path를 재실행하는 fallback은 이미 소비한 실행시간과 fallback 비용까지 예약하지 않으면 해당 job의 deadline을 보장하지 못한다.
+- 상세 검토: `surveys/critical_reviews/ams_critical_review_and_research_application.md`
 
 ## 내 연구 관점
 - 한 줄 gap (이 논문이 안 한 것): physiological condition인 heart rate와 model selection은 다루지만, vibration fault diagnosis의 window size `W`, hop/diagnosis period `H`, machine anomaly score, PREEMPT_RT kernel timing은 다루지 않는다.
@@ -36,3 +43,4 @@
 - 확인 필요: 91.5% accuracy, 1.33 ms average latency, zero deadline miss 수치는 PhysioNet 2021, Raspberry Pi 4, two-cycle AMS/Anytime 조건과 연결되어 있으므로 원고 인용 전 Table II/III 및 실험 설정을 재확인해야 한다.
 - 확인 필요: heart rate threshold 70/90 bpm은 training distribution percentile 기반이며, vibration anomaly score threshold와 동일한 의미로 쓰면 안 된다.
 - 확인 필요: 논문은 Raspberry Pi 4 기반이며 Pi Zero 2W 또는 PREEMPT_RT 실험은 아니다.
+- 확인 필요: Table II의 1.5--2.0 ms threshold가 end-to-end deadline에서 도출된 inference budget인지, 평가용 threshold인지 근거를 원고 인용 전에 다시 확인해야 한다.
