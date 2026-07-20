@@ -50,7 +50,7 @@ Input-adaptive perception studies show that changing input size can trade accura
 
 ### Paragraph 3: Deadline-Aware DNN Serving
 
-Deadline-aware DNN serving systems adapt model execution to meet SLOs or deadlines by selecting exits, stages, batch sizes, fusion configurations, or offloading targets. These systems are useful comparisons because they demonstrate runtime selection of inference quality under resource constraints. However, they mainly target vision, edge GPU serving, or cloud-edge inference workloads. They do not directly handle vibration fault diagnosis where the input window `W`, diagnosis period `H`, and model `M` jointly affect both diagnostic utility and real-time feasibility.
+Deadline-aware DNN serving systems adapt model execution to meet SLOs or deadlines by selecting exits, stages, batch sizes, fusion configurations, or offloading targets. DNN-SAM further connects system slack to input and model selection, while SCENIC co-designs controller capability, heterogeneous mapping, and scheduling using environment and timing parameters offline. These systems are useful comparisons because they demonstrate quality-aware configuration under resource constraints. However, the surveyed systems mainly target vision, edge GPU serving, cloud-edge inference, or intelligent control rather than vibration fault diagnosis where the temporal window `W`, diagnosis period `H`, and model `M` jointly affect diagnostic utility and real-time feasibility.
 
 ### Paragraph 4: PREEMPT_RT and Edge Platform Studies
 
@@ -58,7 +58,7 @@ PREEMPT_RT and single-board-computer studies show that Linux kernel configuratio
 
 ### Paragraph 5: Positioning
 
-In contrast to these lines of work, this study focuses on runtime mode selection for vibration fault diagnosis where `W`, `H`, and `M` are selected using both machine condition and system slack. The intended contribution is a system-level policy that connects diagnostic fidelity with real-time schedulability on resource-constrained edge devices, rather than a new neural network architecture alone.
+Building on these lines of work, this study investigates runtime mode selection for vibration fault diagnosis where `W`, `H`, and `M` are selected using both machine condition and system slack. The intended contribution to be validated is a system-level policy that connects diagnostic fidelity with real-time schedulability on resource-constrained edge devices, rather than a claim that condition-aware or slack-aware adaptation is itself new.
 
 ## Korean Related Work Draft
 
@@ -72,7 +72,7 @@ Input-adaptive perception 연구는 input size를 바꾸면 accuracy 또는 util
 
 ### Paragraph 3: Deadline-Aware DNN Serving
 
-Deadline-aware DNN serving system은 SLO 또는 deadline을 만족시키기 위해 exit, stage, batch size, fusion configuration, offloading target 등을 선택하여 model execution을 조절한다. 이 계열의 연구는 resource constraint 아래에서 inference quality를 runtime에 선택한다는 점에서 유용한 비교 대상이다. 그러나 주요 대상은 vision, edge GPU serving, cloud-edge inference workload에 가깝다. 이들은 input window `W`, diagnosis period `H`, model `M`이 diagnostic utility와 real-time feasibility에 동시에 영향을 주는 vibration fault diagnosis 문제를 직접 다루지는 않는다.
+Deadline-aware DNN serving system은 SLO 또는 deadline을 만족시키기 위해 exit, stage, batch size, fusion configuration, offloading target 등을 선택하여 model execution을 조절한다. DNN-SAM은 system slack을 input 및 model selection과 연결하고, SCENIC은 environment와 timing parameter를 사용하여 controller capability, heterogeneous mapping, scheduling을 offline에서 공동 설계한다. 이 계열은 resource constraint 아래의 quality-aware configuration을 보여주는 유용한 비교 대상이다. 그러나 조사한 시스템의 주요 대상은 vision, edge GPU serving, cloud-edge inference 또는 intelligent control이며, temporal window `W`, diagnosis period `H`, model `M`이 diagnostic utility와 real-time feasibility에 동시에 영향을 주는 vibration fault diagnosis 문제와는 구분된다.
 
 ### Paragraph 4: PREEMPT_RT and Edge Platform Studies
 
@@ -80,7 +80,7 @@ PREEMPT_RT 및 single-board-computer 관련 연구는 Linux kernel configuration
 
 ### Paragraph 5: Positioning
 
-이러한 연구 흐름과 달리, 본 연구는 machine condition과 system slack을 함께 사용하여 `W`, `H`, `M`을 선택하는 vibration fault diagnosis runtime mode selection에 초점을 둔다. 본 연구의 의도된 기여는 새로운 neural network architecture 자체가 아니라, 제한된 edge device에서 diagnostic fidelity와 real-time schedulability를 연결하는 system-level policy이다.
+이러한 연구 흐름을 바탕으로, 본 연구는 machine condition과 system slack을 함께 사용하여 `W`, `H`, `M`을 선택하는 vibration fault diagnosis runtime mode selection을 검토한다. 검증할 기여 후보는 새로운 neural network architecture나 condition-aware/slack-aware adaptation 자체가 아니라, 제한된 edge device에서 diagnostic fidelity와 real-time schedulability를 연결하는 system-level policy이다.
 
 ## Table Reference
 

@@ -24,6 +24,12 @@
 - Salman et al., ETFA 2021은 elastic task model과 reservation-based compositional scheduling을 결합해 application-level period adaptation과 system-level bandwidth adaptation을 분리한다.
 - Orr et al., RTNS 2020은 finite candidate utilization을 갖는 discrete elastic task model을 제안해 period와 computational workload를 함께 조절할 수 있게 한다.
 - Sudvarg et al., RTAS 2024는 harmonic period constraint가 있는 implicit-deadline task system에서 offline lookup table과 online search로 period를 재할당한다.
+- Xu et al., RTCSA 2023은 서로 다른 control-task sampling period를 common period로 boosting 또는 compressing하고, 일부 deadline miss를 허용하는 weakly-hard schedule을 plant safety margin 아래에서 합성한다.
+- Xu et al.의 방법은 `H/T`와 application safety를 연결하는 직접 비교군이지만, fixed WCET와 offline model-based synthesis를 사용한다. Vibration diagnosis의 `W/M`, anomaly score와 runtime slack은 다루지 않는다.
+- Li et al., RTCSA 2025 ATER은 ROS 2 executor 사이의 publish/subscribe-rate mismatch를 runtime에 관측하고, message drop과 execution-time distribution을 이용해 task-chain 선두의 sensor sampling rate를 높이거나 낮춘다.
+- ATER은 본 연구의 diagnosis period `H`와 pipeline-state feedback을 연결하는 최신 비교군이다. 다만 formal schedulability/admission, fault-diagnosis utility, `W/M`, anomaly-based machine condition과 PREEMPT_RT 실측은 제공하지 않는다.
+- Gifford et al., RTAS 2024 Decntr는 multi-mode CPS에서 safe controller와 sampling period, task-to-core mapping, cache/memory-bandwidth allocation 및 transition deadline relaxation을 공동 합성한다.
+- Decntr는 known mode-change event에 precomputed feasible allocation을 적용하고 mode와 transition 모두의 schedulability를 검사한다는 점에서 본 연구 구조와 가깝다. 다만 linear control invariant safety가 중심이며 vibration `W`, diagnosis utility, anomaly-score feedback과 PREEMPT_RT execution은 다루지 않는다.
 - Sudvarg et al., RTSS 2024는 multicore federated scheduling에서 parallel DAG task의 subtask workload와 core allocation을 elastic하게 조절한다.
 - Sudvarg, PhD dissertation 2024와 Sudvarg et al., LITES 2025는 위 elastic extensions를 묶는 배경과 improved algorithm complexity를 제공한다.
 - 공통점: system load, utilization, schedulability bound를 중심으로 rate/workload를 조절한다.
@@ -36,10 +42,16 @@
 - Hu et al., Real-Time Systems 2022는 LiDAR 기반 segmentation의 불완전성을 고려해 resizing과 segment merge를 함께 scheduling한다.
 - Liu et al., Real-Time Systems 2023은 self-cueing, intermittent inspection, image resizing, batching을 결합해 object별 inspection quality와 frequency를 조절한다.
 - Hu et al., RTAS 2024는 canvas-based attention scheduling에서 arbitrary object size, resizing, deadline, packing을 함께 다루며 spatiotemporal schedulability 관점을 제공한다.
+- Soyyigit et al., RTCSA 2025 MURAL은 single shared-weight LiDAR DNN에서 pillar resolution을 runtime에 바꾸고, 현재 input의 resolution별 execution time을 예측해 deadline 안에 가능한 최고 resolution을 선택한다.
+- MURAL은 input-fidelity selection과 mode-dependent cost의 강한 비교군이지만, trigger는 machine condition이 아니라 주어진 deadline과 predicted execution time이다. Diagnosis period `H`, model `M` 공동 선택, multi-task slack, PREEMPT_RT는 다루지 않는다.
 
 ### Real-Time DNN Serving
 
 - Yao et al., RTCSA 2020은 DNN workflow를 mandatory/optional stages가 있는 imprecise computation으로 보고, deadline 안에서 confidence/accuracy utility가 높은 stage를 선택한다.
+- Kang et al., RTAS 2022 DNN-SAM은 object-detection inference를 critical RoI mandatory subtask와 scaled full-image optional subtask로 분리하고, actual mandatory cost 이후 남은 slack으로 optional scale을 선택한다.
+- DNN-SAM은 `system slack + input fidelity`를 이미 직접 결합하고 sufficient non-preemptive EDF condition을 제시한다. 본 연구와의 차이는 vibration temporal `W`, machine condition과 slack의 동시 trigger, `H/M` 공동 선택 및 PREEMPT_RT 환경에 있다.
+- Chen et al., RTSS 2024 SCENIC은 DNN complexity, heterogeneous layer mapping, task priority와 WCRT를 environment-aware physical control capability에 연결하고 configuration을 offline co-design한다.
+- SCENIC은 단순 ML accuracy 대신 application performance를 mode utility로 사용한다는 점에서 직접적이다. 그러나 runtime에는 fixed configuration을 실행하며 online condition-aware mode switch는 future work다.
 - Xu et al., RTSS 2024 FLEX는 multi-modal multi-view machine perception에서 elastic fusion과 adaptive batching을 결합한다.
 - FLEX의 가변 변수는 batch 구성과 modality fusion configuration이며, trigger는 view criticality, runtime sensing context, GPU time budget, deadline/schedulability 조건이다.
 - Li et al., RTCSA 2025 AMS Heart Disease는 real-time ECG anomaly detection에서 instantaneous heart rate와 `D(HR)`를 기준으로 advanced, moderate, lightweight model 또는 anytime exit path를 선택한다.
@@ -58,6 +70,8 @@
 ### Weakly-Hard and Bounded Deadline Miss
 
 - Chen et al., RTSS 2025 WiP는 Linux `SCHED_DEADLINE`의 Constant Bandwidth Server를 이용해 `(m,K)` weakly-hard task를 kernel modification 없이 실행하는 user-space API framework를 제안한다.
+- Braun and Altmeyer, RTAS 2025는 STM32와 ThreadX에 rotary-pendulum controller를 구현하고, temporary overload에서 Kill, Skip-Next, Queue와 actuation timing을 비교한다. 전략 효과가 utilization, overload model과 task organization에 민감하며 보편적으로 최적인 조합은 없다고 보고한다.
+- Braun and Altmeyer의 결과는 deadline miss 이후 fallback을 실제 구현에서 비교한다는 점이 중요하다. 다만 proactive schedulability/admission이나 vibration inference의 late-result semantics는 다루지 않으므로 특정 전략의 우위를 본 연구로 일반화하지 않는다.
 - Agrawal et al., RTSS 2024는 time-series input stream에서 연속 입력 간 dependence를 학습해 IDK cascade의 expected response time을 줄이는 runtime algorithm을 제안한다.
 - Baruah et al., RTAS 2024는 classifier가 잘못된 real class를 반환할 수 있는 fault model을 고려해 fault-tolerant IDK cascade를 offline으로 합성한다.
 - Hawila et al., ECRTS 2025는 cascade control task의 period assignment를 stability와 fixed-priority schedulability 제약 아래에서 함께 최적화한다.

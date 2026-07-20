@@ -13,6 +13,28 @@
 - 본 연구의 `H/fs`로 정해지는 task arrival period, end-to-end diagnosis deadline, inference에 배정하는 local budget을 각각 어떻게 정의하고 연결할 것인가?
 - mode 전환 시 독립 모델을 모두 상주시킬지, 필요할 때 load할지, shared-prefix 구조를 사용할지 결정하기 전에 peak RAM, load/switch latency, cache 영향까지 비교할 필요가 있는가?
 - independent model과 Anytime/early-exit의 직접 비교는 핵심 연구 질문에 필요한 최소 실험인가, 아니면 `(W,H,M)` feasibility-first 정책이 확립된 뒤 수행할 후속 ablation인가? 현재는 후속 ablation 후보로 둔다.
+- MURAL처럼 mode cost를 `C(mode,input)`으로 예측해야 하는가, 아니면 현재 vibration DNN에서는 `C(W,M)`의 p99/max profile만으로 충분한가?
+- 본 연구의 deadline은 MURAL처럼 runtime에 외부에서 주어지는 값인가, `H/f_s`와 application requirement에서 사전에 정해지는 값인가?
+- MURAL의 measured WCET와 dynamic latency predictor에 적용된 safety margin 또는 conservative correction을 확인한 뒤, 본 연구의 feasible mode filtering과 비교해야 한다.
+- DNN-SAM이 `system slack -> input scale`을 이미 다루므로 본 연구 novelty를 단순한 slack 기반 `W` 선택으로 표현하지 않아야 한다. Machine condition, temporal signal semantics와 `W/H/M` 공동 선택 중 무엇을 핵심 claim으로 검증할 것인가?
+- DNN-SAM처럼 actual execution 이후 slack을 reclaim할 것인가, 아니면 p99/max profile로 다음 diagnosis mode를 보수적으로 고를 것인가?
+- 측정 maximum을 `C(W,M)` bound로 사용할 경우 unseen workload에서 bound가 깨질 가능성과 safety margin을 어떻게 처리할 것인가?
+- Decntr와 구분하려면 본 연구의 mode를 machine condition mode, diagnosis configuration `(W,H,M)`, platform/resource mode 중 어떤 계층으로 나눠 정의해야 하는가?
+- Decntr의 offline mode/transition synthesis처럼 모든 anomaly-state transition에 대한 feasible set을 미리 계산할 것인가, 아니면 runtime slack으로 admission을 반복할 것인가?
+- Control invariant set에 대응하는 vibration diagnosis의 application constraint를 detection delay, false-negative risk, minimum update rate 중 무엇으로 정의할 것인가?
+- Mode 전환 시 이전 `W/H/M` job의 carry-over inference를 완료, 취소 또는 deadline 연장할지 transition protocol을 정의해야 하는가?
+- SCENIC처럼 model별 accuracy와 response time을 실제 application performance에 연결하려면 vibration diagnosis utility를 어떤 실험으로 학습하거나 표로 구성할 것인가?
+- Scheduler는 model 내부와 독립적으로 `C(W,M)`과 utility table만 사용하고, model이 바뀔 때 profile/table만 교체하는 구조로 일반성을 주장할 수 있는가?
+- Environment 또는 anomaly condition별 utility table을 offline으로 만들 때 unseen condition에서의 extrapolation을 허용할 것인가, 보수적인 discrete state만 사용할 것인가?
+- Safety-Aware RTCSA 2023처럼 일부 diagnosis deadline miss를 허용할 것인가, 아니면 모든 inference deadline을 hard constraint로 둘 것인가?
+- Weakly-hard miss를 허용한다면 control trajectory의 `d_safe`에 대응하는 vibration diagnosis의 application-level risk 또는 utility bound를 무엇으로 정의할 것인가?
+- Safety-Aware 논문의 finite analysis horizon `H`와 본 연구의 diagnosis period/hop size `H`가 충돌하므로 원고 기호를 구분해야 한다.
+- ATER처럼 message backlog/drop 또는 observed processing rate를 system slack `S`의 관측치로 포함할 것인가, 아니면 schedulability 식에서 계산한 slack과 구분할 것인가?
+- Diagnosis period `H`를 늘려 overload를 줄일 때 감소하는 sensing freshness와 anomaly-detection utility를 어떤 지표로 제한할 것인가?
+- ATER의 empirical threshold 방식과 본 연구의 feasible-mode admission을 비교하려면 rate-control stability, oscillation, adaptation overhead를 별도 평가해야 하는가?
+- Vibration inference가 deadline을 넘겼을 때 late result를 사용할지, 해당 job을 drop할지, 이전 diagnosis를 유지할지 명시해야 한다. 각 정책의 data age와 detection risk를 어떻게 평가할 것인가?
+- Braun and Altmeyer RTAS 2025처럼 fallback 결과가 base utilization과 overload pattern에 민감한지 확인하려면 constant overload와 sporadic overload를 모두 실험해야 하는가?
+- KSC/학위논문 실험에서 deadline miss rate 외에 result age, diagnosis update rate, adaptation/fallback jitter를 함께 기록할 필요가 있는가?
 - classic elastic scheduling 두 편의 정량 결과를 manuscript에서 사용할 경우, HARTIK 실험과 IEEE TC 2002 후반 evaluation 수치를 별도로 재확인해야 한다.
 - Chantem et al. IEEE TC 2009의 heuristic 성능, feasible solution 비율, global optimal 비율을 원고에 사용할 경우 utilization level, workload, iteration 조건을 재확인해야 한다.
 - Tian and Gui Real-Time Systems 2011의 QoC examples를 사용할 경우 plant/control task 설정과 QoC metric을 Section 7에서 재확인해야 한다.

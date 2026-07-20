@@ -22,7 +22,22 @@
 - 최신 elastic scheduling 계열은 task 단위 period 조절을 넘어 discrete utilization, harmonic period assignment, parallel DAG subtask workload와 core allocation까지 확장된다.
   - 근거 후보: Orr et al. RTNS 2020; Salman et al. ETFA 2021; Sudvarg PhD dissertation 2024; Sudvarg et al. RTAS 2024; Sudvarg et al. RTSS 2024; Sudvarg et al. LITES 2025.
   - 본 연구 연결: system slack과 schedulability 제약을 보고 workload 또는 period를 조절하는 최신 비교군으로 사용할 수 있다. 특히 discrete candidate mode는 본 연구의 `(W,H,M)` mode set 정식화와 연결 가능하다.
+
+- Period 조절을 정당화하려면 schedulability뿐 아니라 application-level consequence를 함께 정의할 필요가 있다.
+  - 근거 후보: Xu et al. RTCSA 2023은 common sampling period와 weakly-hard hit/miss pattern을 control-system safety margin으로 제한한다.
+  - 본 연구 연결: diagnosis period `H`와 miss allowance를 조절하려면 vibration fault diagnosis에 맞는 detection utility 또는 risk constraint를 별도로 정의해야 한다.
+  - 주의: 이 논문의 plant trajectory safety는 vibration anomaly score나 diagnosis utility와 동일하지 않으며, 방법은 runtime adaptation이 아닌 offline schedule synthesis다.
   - 주의: 이 계열의 trigger는 overload, available utilization, schedulability/resource constraint 중심이며, machine condition과 fault-diagnosis utility를 함께 쓰는 구조는 현재 카드 기준 확인되지 않았다.
+
+- Runtime sensor sampling rate는 pipeline의 production/consumption mismatch를 줄이는 feedback variable로 사용할 수 있다.
+  - 근거 후보: Li et al. RTCSA 2025 ATER은 ROS 2 task chain의 message drop, publish/subscribe rate와 execution-time distribution을 관측해 timer sampling rate를 조절한다.
+  - 본 연구 연결: Diagnosis period `H`를 단순한 offline parameter가 아니라 runtime pipeline state에 따라 조절하는 구현 비교군이다.
+  - 주의: ATER은 formal deadline feasibility나 sensing utility를 보장하지 않는다. 본 연구에서는 rate를 낮췄을 때의 fault-detection utility와 deadline-feasible mode set을 함께 검증해야 한다.
+
+- Multi-mode CPS에서 controller implementation, sampling period와 multi-core resource allocation을 safety/schedulability 아래 공동 설계하는 선행연구가 존재한다.
+  - 근거 후보: Gifford et al. RTAS 2024 Decntr.
+  - 본 연구 연결: Offline feasible set을 합성하고 runtime mode-change event에 적용하는 구조, allocation-dependent `C`와 transition carry-over demand를 함께 고려하는 방법론의 직접 비교군이다.
+  - 주의: 따라서 `period + mode + resource` 조합 자체를 novelty로 주장할 수 없다. 본 연구의 차별점은 vibration temporal `W`, fault-diagnosis utility/anomaly score, inference `M`의 의미, runtime slack 및 PREEMPT_RT 실측에서 검증해야 한다.
 
 - real-time DNN serving 계열에서도 runtime에 batch 구성과 model 내부 처리량을 조절해 deadline과 perception quality의 trade-off를 다루는 연구가 있다.
   - 근거 후보: Yao et al. RTCSA 2020, Imprecise DL Services; Xu et al. RTSS 2024, FLEX; Li et al. RTCSA 2025, AMS Heart Disease; Cao et al. arXiv 2026, EdgeServing; Han et al. MobiSys 2024, Pantheon; Laskaridis et al. EMDL 2021; He et al. arXiv 2023; Zhang et al. arXiv 2023 BCEdge; Raj et al. arXiv 2025; Rahmath P et al. ACM Computing Surveys 2024.
@@ -34,15 +49,31 @@
   - 본 연구 연결: `A_feasible(S_k)`를 먼저 계산하고, 그 안에서 machine condition에 대한 diagnostic utility가 가장 높은 `(W,H,M)`을 선택하는 feasibility-first 정책으로 확장한다.
   - 주의: Li et al.이 system slack을 고려하지 않는다는 사실만으로 본 연구의 novelty가 확정되지는 않는다. 다른 condition-aware 및 slack-aware mode-selection 문헌을 추가 확인해야 한다.
 
+- input fidelity는 하나의 DNN 안에서도 runtime scheduling variable이 될 수 있으며, mode execution cost는 configuration뿐 아니라 현재 input 구조에도 의존할 수 있다.
+  - 근거 후보: Soyyigit et al. RTCSA 2025 MURAL.
+  - 본 연구 연결: vibration mode cost를 우선 `C(W,M)` profile로 시작하되, machine condition이나 signal sparsity에 따라 cost variance가 생기는지 검증할 필요가 있다.
+  - 주의: MURAL의 LiDAR sparse point-cloud cost variability를 dense vibration time-series inference에 그대로 일반화하지 않는다.
+
+- System slack으로 input fidelity를 runtime에 선택하면서 deadline schedulability를 유지하는 선행연구가 존재한다.
+  - 근거 후보: Kang et al. RTAS 2022 DNN-SAM은 actual mandatory execution 이후 reclaim한 slack으로 optional image scale을 선택한다.
+  - 본 연구 연결: `S -> W`만으로는 novelty가 될 수 없다. 차별점 후보는 vibration temporal window의 signal semantics, machine condition과 slack의 결합, `W/H/M` 공동 선택, MCU/SBC와 PREEMPT_RT 검증이다.
+  - 주의: DNN-SAM의 sufficient condition은 non-preemptive EDF task model과 측정 기반 maximum execution-time bound에 의존한다. 이를 본 연구의 보장으로 직접 사용할 수 없다.
+
+- Model accuracy와 latency를 따로 최적화하기보다 condition과 physical/application performance를 포함한 capability function으로 mode utility를 정의할 수 있다.
+  - 근거 후보: Chen et al. RTSS 2024 SCENIC은 controller complexity, response time, plant와 environment condition을 실제 control performance에 연결한다.
+  - 본 연구 연결: `U_diag(q,W,M,R,H)` 또는 이에 준하는 diagnosis utility를 정의하고, model-independent scheduler와 model-specific profile/utility를 분리하는 근거다.
+  - 주의: SCENIC configuration은 offline에서 최적화되며 runtime condition adaptation은 구현하지 않았다. 회귀한 control capability를 vibration fault-detection utility로 직접 사용할 수 없다.
+
 - embedded DNN inference에서는 memory footprint도 latency/deadline과 함께 고려해야 할 resource constraint가 될 수 있다.
   - 근거 후보: Ji et al., RTSS 2022 Demand Layering.
   - 본 연구 연결: Pi Zero 2W 또는 SBC 환경에서 model size, memory, loading 방식이 실시간 inference에 영향을 줄 수 있음을 설명하는 배경으로 활용 가능하다.
   - 주의: Demand Layering은 Jetson AGX Xavier + integrated GPU + NVMe SSD 구조에 최적화된 방법이므로 MCU 또는 Pi Zero 2W CPU inference에 직접 적용한다고 쓰면 안 된다.
 
 - weakly-hard real-time 문헌은 deadline miss를 무조건 실패가 아니라 `(m,K)` bounded miss constraint로 다루는 비교축을 제공한다.
-  - 근거 후보: Chen et al., RTSS 2025 WiP.
+  - 근거 후보: Chen et al., RTSS 2025 WiP; Braun and Altmeyer, RTAS 2025.
   - 본 연구 연결: KSC 2026의 deadline miss rate와 학위논문의 utility/deadline trade-off를 설명할 때 hard deadline, soft deadline, weakly-hard deadline을 구분하는 배경으로 활용 가능하다.
-  - 주의: 해당 논문은 Linux `SCHED_DEADLINE`과 CBS parameter mapping 중심이며, vibration FD utility, W/H/M runtime selection, PREEMPT_RT 비교는 다루지 않는다.
+  - 추가 관찰: Braun and Altmeyer는 같은 deadline-miss strategy도 utilization, overload likelihood, task organization과 actuation timing에 따라 control 결과가 달라짐을 실제 MCU에서 보인다. 따라서 miss count만으로 application consequence를 판단하기 어렵다.
+  - 주의: Chen et al.은 Linux `SCHED_DEADLINE`과 CBS parameter mapping 중심이고, Braun and Altmeyer는 한 rotary-pendulum control system의 empirical evaluation이다. 둘 다 vibration FD utility와 `W/H/M` runtime selection을 직접 다루지 않는다.
 
 - IDK cascade 계열은 classification을 빠른 classifier부터 시도하고 confidence가 부족하면 더 강한 classifier로 넘어가는 방식으로 latency/accuracy trade-off를 다룬다.
   - 근거 후보: Agrawal et al., RTSS 2024; Baruah et al., RTAS 2024.

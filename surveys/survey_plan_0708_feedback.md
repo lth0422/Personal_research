@@ -2,6 +2,18 @@
 
 이 문서는 `decisions/personal_research_summary_0708.md`의 교수님 피드백을 서베이 작업 단위로 바꾼 실행 계획이다.
 
+## 2026-07-21 진행 점검
+
+상세 점검 결과는 `decisions/survey_alignment_review_0721.md`에 기록했다.
+부족한 근거와 완료 기준은 `surveys/survey_gap_backlog.md`에서 관리한다.
+
+- `papers/` PDF 57편과 paper card 57개의 대응은 완료됐다.
+- Elastic scheduling 응용 가정 비교는 상당 부분 보강됐다.
+- Real-Time Fault Diagnosis 분류와 PREEMPT_RT 부하 설계 근거는 아직 부분 완료다.
+- 고전 실시간 개념 노트는 미완료다.
+- KCC 이용률은 max 기준만 정리됐고 average, p95, p99 계산이 남았다.
+- MURAL, DNN-SAM, Decntr, SCENIC 등을 고려하면 input adaptation, slack 기반 선택, period/mode co-design, condition/model/timing 결합 각각을 단독 novelty로 주장해서는 안 된다.
+
 ## 핵심 방향
 
 - 방향 2, 즉 `W/H/M` 기반 elastic scheduling을 연구의 코어로 둔다.
@@ -17,6 +29,15 @@
 5. 부하 조건은 유사 논문들이 어떻게 설계했는지 보고 정해야 한다.
 
 ## 산출물
+
+### 최근 실시간 학회 후보 백로그
+
+위치: `surveys/recent_top_conference_relevance_backlog.md`
+
+목표:
+- `wiki/analyses/`의 RTAS 2022--2025, RTCSA 2023--2025, RTSS 2024--2025 조사 결과를 현재 `W/H/M` 연구 기준으로 재분류한다.
+- abstract 수준 후보와 PDF 원문 검토가 끝난 논문을 구분한다.
+- 신규 PDF 다운로드와 정독 순서를 관리한다.
 
 ### 1. Real-Time Fault Diagnosis 분류표
 
@@ -89,7 +110,9 @@
 
 ## 우선순위
 
-### 현재 정독 및 재검토 큐
+### 기존 정독 및 재검토 큐
+
+아래 목록은 0708 직후 설정한 이론 보강 큐다. 현재는 신규 카드 수를 늘리기보다 미완료 산출물을 먼저 마무리한다.
 
 1. Buttazzo et al., `Elastic Scheduling for Flexible Workload Management`, IEEE Transactions on Computers 2002
    - 다음 정독 대상이다.
@@ -122,8 +145,10 @@
 
 ## 다음 2-3주 작업 순서
 
-1. KCC 데이터로 `U=C/T`를 max, average, p99 기준으로 계산한다.
-2. `surveys/comparison_table_ko.md`의 real-time fault diagnosis 표를 보강한다.
-3. elastic scheduling 응용 문헌의 가정표를 보강한다.
-4. mode change와 imprecise computation 노트를 만든다.
-5. 교수님께 보낼 요약 문서 또는 PPT 골격을 만든다.
+1. `surveys/classic_rt_concepts_note.md`를 만들고 mode change, imprecise computation, weakly-hard, EDF/SCHED_DEADLINE/CBS를 연결한다.
+2. `surveys/comparison_table_ko.md`의 real-time fault diagnosis 표를 RTOS, deadline, tail metric 기준으로 보강한다.
+3. PREEMPT_RT 및 SBC 문헌의 workload와 measurement를 부하 설계 근거표로 정리한다.
+4. KCC 데이터로 `U=C/T`를 average, p95, p99, max 기준으로 계산한다.
+5. 위 결과를 교수님 보고용 요약 문서 또는 PPT 골격으로 압축한다.
+
+신규 paper card는 위 산출물의 빈칸을 직접 채우는 논문에 우선한다. 넓은 인접 분야 후보의 일괄 카드화는 보류한다.

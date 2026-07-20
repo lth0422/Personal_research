@@ -24,20 +24,32 @@
 | Tian and Gui, QoC Elastic Scheduling | process control | control period, task utilization | QoC feedback과 workload constraint | diagnosis utility 개념과 비교 가능 | QoC는 control 성능이며 anomaly score와 다름 |
 | Orr et al., Discrete Utilizations | parallel real-time / RTHS | discrete utilization, workload, period | 후보 utilization mode 집합 | `(W,H,M)`을 discrete mode set으로 보는 근거 | mode가 vibration signal semantics를 갖지는 않음 |
 | Sudvarg et al., Harmonic/Subtask Elastic 계열 | FIMS, SLAM, multicore DAG | period, subtask workload, core allocation | schedulability bound와 resource allocation 중심 | 최신 elastic scheduling 비교군 | machine condition과 diagnostic utility는 없음 |
+| Xu et al., Safety-Aware Period Boosting/Compressing | safety-critical feedback control | sampling period, common scheduling slot, controller gain 선택 | WCET와 plant safety margin 기반 offline schedule synthesis | `H/T` 변경과 weakly-hard deadline miss를 application safety로 제한하는 직접 비교군 | `C_i` 고정, offline 방식이며 vibration `W/M`, anomaly trigger, runtime slack, PREEMPT_RT는 없음 |
+| Li et al., ATER | ROS 2 autonomous-system task chain | sensor sampling rate, timer period, downstream activation rate | message drop, publish/subscribe rate, execution-time distribution | runtime `H/T` 조절과 pipeline 처리율 정렬의 직접 비교군 | empirical feedback이며 deadline/schedulability 보장과 application utility가 없음. Vibration `W/M`, anomaly trigger, explicit slack, PREEMPT_RT도 없음 |
+| Gifford et al., Decntr | multi-mode CPS control | controller, safe sampling period, task/core/cache/BW allocation, transition deadline | mode-change request와 offline safety/resource model | Feasible mode set 합성과 mode 전환 적용의 가장 가까운 구조적 비교군 | Control invariant safety와 known mode graph 중심. Vibration `W`, diagnosis utility/anomaly score, inference `M`, PREEMPT_RT 실측은 없음 |
 | 본 연구 | vibration FD | `W`, `H`, `M` | `C(W,M)`과 `T=H/fs`가 함께 변함 | 기존 elastic scheduling의 확장 대상 | schedulability guarantee를 새로 정리해야 함 |
 
-## 3. Deadline-Aware DNN / Model Selection 비교표
+## 3. Deadline-Miss 대응 비교표
+
+| 논문 | 도메인 | 대응 변수 | 트리거 | 실시간 평가 | 본 연구와의 연결 | 한계 |
+| --- | --- | --- | --- | --- | --- | --- |
+| Braun and Altmeyer, Handling System Overloads | embedded feedback control | Kill, Skip-Next, Queue, actuation timing | temporary overload에 따른 deadline miss | STM32+ThreadX, 2 ms implicit deadline, utilization, jitter, data age | 예상하지 못한 overload 이후 inference fallback 설계 비교군 | 한 control system의 empirical 결과이며 proactive `W/H/M` admission과 PREEMPT_RT는 없음 |
+
+## 4. Deadline-Aware DNN / Model Selection 비교표
 
 | 논문 | 도메인 | 가변 변수 | 트리거 | 실시간 제약 | 본 연구와의 연결 | 한계 |
 | --- | --- | --- | --- | --- | --- | --- |
 | Yao et al., Imprecise DL Services | edge DNN service | mandatory/optional stage, depth | deadline, confidence/utility | deadline miss rate | `M` 또는 computation quality 조절 비교군 | vision/object classification 중심 |
 | Li et al., AMS Heart Disease | ECG anomaly detection | model complexity, anytime exit | heart rate, `D(HR)` | HR-dependent inference threshold, EDF 식, deadline miss | condition 기반 `M` 선택의 강한 비교군 | condition-only 정책이며 system slack, vibration `W/H`, PREEMPT_RT가 없음. 평균 latency 중심이고 threshold 도출 및 fallback 보장은 불명확 |
+| Soyyigit et al., MURAL | LiDAR 3D object detection | input resolution/pillar size | deadline, input별 predicted execution time | deadline-aware resolution scheduling, deadline miss | deadline 안에서 최고 input fidelity를 선택하는 `W` 축 직접 비교군 | LiDAR spatial resolution이며 vibration `W/H/M`, machine condition, multi-task slack은 없음. 측정 기반 WCET 표현 주의 |
+| Kang et al., DNN-SAM | autonomous-driving object detection | optional full-image scale, mandatory critical-RoI crop | actual mandatory cost 이후 deadline slack, RoI time-to-collision | non-preemptive EDF sufficient condition, implicit deadline | `system slack -> input fidelity`의 강한 직접 비교군 | Spatial vision/GPU 중심이며 vibration temporal `W`, `H/M`, anomaly trigger, PREEMPT_RT는 없음. 측정 최대를 WCET로 사용 |
+| Chen et al., SCENIC | intelligent quadcopter control | DNN depth/width, layer CPU/GPU mapping, fixed priority | runtime trigger 없음. Environment/plant condition과 resource profile 기반 offline optimization | fixed-priority WCRT, deadline, CPU/GPU utilization | condition, model capability와 response time을 application utility로 연결하는 직접 비교군 | Online adaptation과 vibration `W/H`, diagnosis utility, PREEMPT_RT는 없음. Profile safety margin에 조건부 |
 | EdgeServing | edge multi-DNN serving | model, exit, batch | SLO, queue, latency budget | SLO violation, p95 latency | deadline-aware model/exit/batch 선택 비교군 | GPU serving 중심 |
 | Pantheon | mobile edge GPU | chunk preemption, early-exit variant | task deadline, priority | deadline miss rate | deadline 기반 DNN variant 조절 비교군 | GPU preemption이며 RTOS/PREEMPT_RT와 다름 |
 | FLEX | autonomous driving perception | batch, fusion configuration | criticality, GPU time budget | EDF/CEDF schedulability | slack/deadline 기반 configuration 선택 비교군 | vibration FD가 아님 |
 | 본 연구 | vibration FD | `W/H/M` | machine condition + system slack | utilization, p99/max response time, deadline miss | 세 축을 동시에 묶는 목표 | 아직 검증 필요 |
 
-## 4. PREEMPT_RT와 부하 설계 참고표
+## 5. PREEMPT_RT와 부하 설계 참고표
 
 | 논문 | 플랫폼 | 부하 또는 측정 방법 | 측정 지표 | 우리 실험에 주는 근거 | 주의 |
 | --- | --- | --- | --- | --- | --- |
@@ -47,7 +59,7 @@
 | De Marco et al., Dolphin Whistle Pi Zero 2W | Raspberry Pi Zero 2W | TFLite thread 수 변화, 장시간 stress | latency, throughput, CPU load, temperature, memory | Pi Zero 2W에서 TFLite 측정 항목 선정 참고 | acoustic detection이며 PREEMPT_RT 비교는 아님 |
 | 본 연구 방향 1 | Pi Zero 2W | idle/CPU/mem/IO/combined 후보 | cyclictest, pipeline latency, p99/max, deadline miss | 방향 2의 실험 환경과 원인 분석 기반 | 부하 조건은 추가 문헌 확인 뒤 확정 |
 
-## 5. 카드화 보강 체크리스트
+## 6. 카드화 보강 체크리스트
 
 각 paper card에는 기존 항목에 더해 다음을 확인한다.
 
