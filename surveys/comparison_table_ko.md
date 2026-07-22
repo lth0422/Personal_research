@@ -3,6 +3,8 @@
 이 문서는 교수님 보고와 서베이 방향 정리를 위한 한글 비교표이다.
 상세한 논문별 내부 표는 `surveys/comparison_table.md`를 유지하고, 이 문서는 연구 방향 판단에 필요한 축만 압축한다.
 
+Real-Time Fault Diagnosis의 체계적 판정 규칙과 O/△/X 예비 matrix는 `surveys/realtime_fault_diagnosis_survey_protocol.md`를 사용한다. 원고용 압축본은 `manuscript/realtime_fault_diagnosis_related_work_table.md`에 분리한다.
+
 ## 1. Real-Time Fault Diagnosis 분류표
 
 | 논문 | 연도 | 도메인 | RTOS 유무 | 실시간성 접근 | 플랫폼 | 진짜 실시간성 판단 | 본 연구와의 연결 |

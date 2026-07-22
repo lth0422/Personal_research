@@ -16,7 +16,7 @@
 
 | ID | 부족한 서베이 | 현재 상태 | 필요한 근거 | 완료 기준 | 반영 위치 |
 | --- | --- | --- | --- | --- | --- |
-| GAP-01 | Real-time fault diagnosis의 실시간성 수준 | 관련 카드 5편이 있으나 RTOS, deadline, miss, tail latency가 확인된 직접 비교군이 적음 | Fault diagnosis application이 RTOS task, deadline, jitter, p95/p99/max, deadline miss 또는 schedulability를 실제로 다루는지 보여주는 원문 근거 | 각 논문을 `보장형`, `측정형`, `best-effort`로 구분하고 최소한 RTOS/deadline/평가 지표를 확인 | `comparison_table_ko.md` 1절, `related_work_map.md` |
+| GAP-01 | Real-time fault diagnosis의 실시간성 수준 | 판정 프로토콜과 보유 5편의 예비 matrix를 작성했으나 RTOS, deadline, miss, tail latency가 확인된 직접 비교군이 적음 | Fault diagnosis application이 RTOS task, deadline, jitter, p95/p99/max, deadline miss 또는 schedulability를 실제로 다루는지 보여주는 원문 근거 | `realtime_fault_diagnosis_survey_protocol.md`에 따라 각 논문을 H/W/E/B로 분류하고 O/△/X/? 셀에 원문 위치 근거를 연결 | `realtime_fault_diagnosis_survey_protocol.md`, `comparison_table_ko.md` 1절, `related_work_map.md` |
 | GAP-02 | `C(W,M)`와 `H/T` 동시 변화의 schedulability | 기존 elastic 문헌은 `C` 고정과 `T` 가변 가정이 중심이며 인접 연구는 일부 축만 결합 | 실행시간과 period가 mode에 따라 함께 변할 때 사용하는 feasibility test, admission rule 또는 mode-transition 분석 | 본 연구가 기존 식을 그대로 쓸 수 있는 범위와 새로 정식화해야 하는 범위를 구분 | `problem_formulation.md`, `classic_rt_concepts_note.md` |
 | GAP-03 | KCC mode별 실행시간 분포 | 현재 max 기반 이용률만 문서화됨 | 같은 실험 조건에서 각 `W/M`의 average, p95, p99, max execution/response time | 값의 출처 로그, 단위, 부하 조건을 연결하고 `U=C/T`를 동일 기준으로 계산 | `problem_formulation.md`, 향후 교수님 보고 자료 |
 | GAP-04 | Mode transition의 보장과 fallback | Decntr, Safety-Aware, overload 대응 논문은 있으나 vibration diagnosis mode 전환 규칙은 미정 | 전환 중 deadline, queue/backlog, stale data, fallback mode, hysteresis를 다루는 이론 또는 시스템 근거 | 정상/의심/결함 mode 전환 시 허용 가능한 실행과 실패 대응을 명시 | `classic_rt_concepts_note.md`, `open_questions.md` |

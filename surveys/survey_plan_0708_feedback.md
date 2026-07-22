@@ -43,6 +43,10 @@
 
 위치: `surveys/comparison_table_ko.md`
 
+판정 프로토콜: `surveys/realtime_fault_diagnosis_survey_protocol.md`
+
+원고용 압축 표: `manuscript/realtime_fault_diagnosis_related_work_table.md`
+
 목표:
 - 최근 real-time fault diagnosis 문헌을 RTOS 유무, deadline 유무, platform, 실시간성 접근 방식으로 분류한다.
 - TinyML, quantization, pruning, lightweight architecture search를 `best-effort 근실시간`과 구분한다.
@@ -50,6 +54,8 @@
 핵심 판정 기준:
 - `진짜 실시간`: RTOS, deadline, jitter, p95/p99/max latency, deadline miss, schedulability 중 일부를 명시적으로 다룸.
 - `근실시간`: 평균 inference time 또는 model size만 줄이고 deadline guarantee나 scheduling 분석이 없음.
+
+최종 판정에서는 이를 H/W/E/B로 세분한다. RTOS 사용만으로 H로 분류하지 않고, explicit deadline, execution-time bound와 schedulability/admission 근거를 함께 확인한다.
 
 ### 2. Elastic Scheduling 실전 응용 가정표
 

@@ -3,6 +3,8 @@
 이 파일은 `surveys/comparison_table.md`의 내부 상세 비교표를 원고용으로 압축한 초안이다.
 개별 논문 50편을 모두 나열하지 않고, 관련연구 계열별 핵심 차이만 보여준다.
 
+이 표는 관련연구 **계열** 비교용이다. Real-Time Fault Diagnosis 개별 논문의 O/△/X 비교는 `manuscript/realtime_fault_diagnosis_related_work_table.md`에서 관리한다. 최종 원고에서는 두 표의 역할과 지면을 보고 하나만 본문에 두거나 다른 하나를 부록으로 이동한다.
+
 원고에 넣을 때는 venue/year 표기를 manuscript 스타일에 맞춰 줄이고, 정량 수치는 본문에서 검증된 경우에만 사용한다.
 
 | Category | Representative works | Main variable | Adaptation trigger | RT/platform consideration | Limitation vs. this work |

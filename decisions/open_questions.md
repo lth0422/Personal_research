@@ -4,6 +4,10 @@
 
 ## Questions
 
+- 첫 완결 연구에서 `M`을 고정하고 `(W,H)` mode selection과 `q+S` trigger에 집중할 것인가, 아니면 두 개 정도의 사전 profiling된 model variant까지 포함할 것인가?
+  - 이유: `W/H/M`을 모두 독립 변수로 두면 mode 수와 baseline이 급격히 증가한다. 모델 경량화는 별도 contribution으로 주장하지 않고 scheduling question을 선명하게 유지할 필요가 있다.
+  - 판단 기준: `(W,H)`만으로 diagnosis utility와 schedulability trade-off가 충분히 나타나는지, 두 모델의 `C(W,M)` 곡선 차이가 핵심 주장에 실제로 필요한지 실험 전 profile로 판단한다.
+
 - 0708 면담 기준 최우선 질문: 이상 징후 시 정밀 mode로 전환해도 static하게 schedulable한가, 그리고 그 보장을 formal하게 제시할 것인가 empirical p99/max feasibility로 제시할 것인가?
 - 모든 candidate mode가 사전 admission을 통과해야 하는가, 아니면 infeasible high-fidelity mode를 허용하되 runtime fallback으로 처리할 것인가?
 - 기존 elastic scheduling의 `C` 고정 가정을 본 연구의 `C(W,M)` 가변 실행시간으로 확장할 때 필요한 최소 가정은 무엇인가?
