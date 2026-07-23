@@ -5,17 +5,21 @@
 
 Real-Time Fault Diagnosis의 체계적 판정 규칙과 O/△/X 예비 matrix는 `surveys/realtime_fault_diagnosis_survey_protocol.md`를 사용한다. 원고용 압축본은 `manuscript/realtime_fault_diagnosis_related_work_table.md`에 분리한다.
 
+2026-07-21 LINER·Claude 검색에서 신규 fault-diagnosis 후보 14편이 추가됐지만 원문 미확인 상태다. 후보와 강한 주장에 대한 검토는 `surveys/liner_claude_survey_review_0723.md`를 사용하며, 아래 표에는 full text 판정이 끝난 논문만 추가한다.
+
+MCU/RTOS와 SoC/Linux는 우선순위가 아니라 플랫폼 태그로 구분한다. 아래 논문은 플랫폼과 관계없이 real-time의 정의, 적응 변수, trigger와 guarantee를 기준으로 비교한다.
+
 ## 1. Real-Time Fault Diagnosis 분류표
 
-| 논문 | 연도 | 도메인 | RTOS 유무 | 실시간성 접근 | 플랫폼 | 진짜 실시간성 판단 | 본 연구와의 연결 |
+| 논문 | 연도 | 도메인 | 플랫폼 | 실행 환경 | 실시간성 접근 | 진짜 실시간성 판단 | 본 연구와의 연결 |
 | --- | ---: | --- | --- | --- | --- | --- | --- |
-| Choi et al., Low-Cost MCU Shaft FD | 2025 | 회전기계 축 결함 진단 | 확인 필요 | sensing, inference, output 실행시간 측정 | STM32F401RET6 | 근실시간에 가까움. deadline, jitter, schedulability는 확인되지 않음 | KSC 2025 기반 시스템. KCC Zephyr RTOS 작업의 선행 baseline |
-| Thota et al., TinyML Bearing Fault Classification | 2025 | motor bearing fault classification | 없음 또는 확인 필요 | TinyML, quantization, model size와 latency 평가 | ESP32 계열 | best-effort 근실시간. deadline miss와 RTOS scheduling은 확인되지 않음 | 경량화 계열 비교군. 본 연구와 달리 runtime scheduling은 없음 |
-| Ma et al., Lightweight Architecture Search FD | 2023 | rotating machinery fault diagnosis | 없음 또는 확인 필요 | architecture search에 계산 시간 objective 포함 | CPU evaluation 중심 | best-effort 근실시간. per-task deadline이나 RTOS는 확인되지 않음 | `M` 후보를 offline으로 가볍게 설계하는 비교군 |
-| Lee and Kim, FRFconv-TDSNet | 2024 | vibration machine fault diagnosis | 없음 | Raspberry Pi 4B edge inference time 평가 | Raspberry Pi 4B | edge inference 가능성은 보이나 deadline scheduling은 없음 | KCC 모델 배경, noise robustness, `M` 후보 |
-| Jalonen et al., Real-Time Vibration-Based Bearing FD | 2024 | time-varying speed bearing FD | 없음 또는 확인 필요 | acquisition duration 대비 processing time 평가 | MacBook Pro M1 Pro | 실시간 processing 가능성 평가. RTOS/deadline miss는 없음 | `W` 또는 segment length가 real-time processing과 연결된 사례 |
-| 본 연구 KCC 2026 | 2026 | shaft fault diagnosis | Zephyr RTOS | deadline, jitter, task pipeline 측정 | STM32F407 | deadline 기반 실시간성에 가까움 | `W` 축소와 `C(W)` 측정의 출발점 |
-| 본 연구 방향 2 | TBD | vibration FD runtime mode selection | RTOS/PREEMPT_RT 고려 | `W/H/M` mode feasibility와 schedulability 보장 | MCU/SBC | 검증해야 할 핵심 주장 | machine condition + system slack 기반 mode selection |
+| Choi et al., Low-Cost MCU Shaft FD | 2025 | 회전기계 축 결함 진단 | STM32F401RET6 | Bare metal + X-CUBE-AI | sensing, inference, output 실행시간 측정 | 근실시간에 가까움. deadline, jitter, schedulability는 확인되지 않음 | KSC 2025 기반 시스템. KCC Zephyr RTOS 작업의 선행 baseline |
+| Thota et al., TinyML Bearing Fault Classification | 2025 | motor bearing fault classification | ESP32 계열 MCU | MCU runtime/RTOS 확인 필요 | TinyML, quantization, model size와 latency 평가 | best-effort 근실시간. deadline miss와 RTOS scheduling은 확인되지 않음 | 경량화 계열 비교군. 본 연구와 달리 runtime scheduling은 없음 |
+| Ma et al., Lightweight Architecture Search FD | 2023 | rotating machinery fault diagnosis | Desktop CPU | 일반 OS, 세부 확인 필요 | architecture search에 계산 시간 objective 포함 | best-effort 근실시간. per-task deadline이나 RTOS는 확인되지 않음 | `M` 후보를 offline으로 가볍게 설계하는 비교군 |
+| Lee and Kim, FRFconv-TDSNet | 2024 | vibration machine fault diagnosis | Raspberry Pi 4B SoC/SBC | Linux 계열, RT extension 확인 필요 | edge inference time 평가 | edge inference 가능성은 보이나 deadline scheduling은 없음 | KCC 모델 배경, noise robustness, `M` 후보 |
+| Jalonen et al., Real-Time Vibration-Based Bearing FD | 2024 | time-varying speed bearing FD | MacBook Pro M1 Pro | Desktop OS, 세부 확인 필요 | acquisition duration 대비 processing time 평가 | 실시간 processing 가능성 평가. RTOS/deadline miss는 없음 | `W` 또는 segment length가 real-time processing과 연결된 사례 |
+| 본 연구 KCC 2026 | 2026 | shaft fault diagnosis | STM32F407 MCU | Zephyr RTOS | deadline, jitter, task pipeline 측정 | deadline 기반 실시간성에 가까움 | `W` 축소와 `C(W)` 측정의 출발점 |
+| 본 연구 방향 2 | TBD | vibration FD runtime mode selection | Pi Zero 2W SoC/SBC | Linux + PREEMPT_RT 계획 | `W/H/M` mode feasibility와 schedulability 보장 | 검증해야 할 핵심 주장 | machine condition + system slack 기반 mode selection |
 
 ## 2. Elastic Scheduling 가정 비교표
 

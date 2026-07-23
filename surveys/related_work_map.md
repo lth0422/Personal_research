@@ -6,12 +6,13 @@
 
 ### Survey Coverage Status
 
-- 현재 인벤토리 기준 중복 제거 후 보유 PDF는 50편이며, 50편 모두 paper card가 작성되었다.
+- 현재 인벤토리 기준 보유 PDF는 57편이며, 57편 모두 paper card가 작성되었다.
 - `Subtask-Level_Elastic_Scheduling_copy2_needs_check.pdf`는 `copy1`과 정규화 본문 해시가 같아 중복본으로 삭제했다.
-- 핵심 related work 축은 `Elastic Scheduling`, `Input-Adaptive Fault Diagnosis`, `Real-Time DNN Serving`, `Platform and PREEMPT_RT`로 정리한다.
+- 연구 질문 중심 분류는 `surveys/research_aligned_literature_taxonomy_0723.md`의 S1~S6를 기준으로 한다. 현재 아래 절은 기존 보관 그룹을 탐색하기 위한 상세 view로 유지한다.
 - `Miscellaneous Real-Time Scheduling`은 원고 핵심 주장이 아니라 end-to-end latency, EDF overhead, self-suspension 해석을 보조하는 배경으로 둔다.
 - 0708 면담 이후 서베이 산출물은 `real-time fault diagnosis 분류표`, `elastic scheduling 실전 응용 가정표`, `부하 설계 전략`, `고전 실시간 개념 노트`로 재정렬한다.
 - 교수님 보고용 한글 비교표는 `surveys/comparison_table_ko.md`에 둔다.
+- 2026-07-21 LINER·Claude 검색 자료는 원문이 아닌 후보 입력이다. 신규 fault-diagnosis 14편과 elastic-scheduling 5편은 `surveys/liner_claude_survey_review_0723.md`에서 관리하고, full text 확인 후에만 관련연구 map에 편입한다.
 
 ### Elastic Scheduling
 
@@ -122,9 +123,11 @@
 
 ### Comparison Axes for Manuscript
 
+- `Section`: S1 real-time FD, S2 diagnostic fidelity, S3 elastic rate/workload, S4 deadline-aware inference, S5 guarantee/transition, S6 platform characterization.
 - `Variable`: 입력 크기, window/input length, inspection frequency, batching, model.
 - `Trigger`: criticality, uncertainty, anomaly deviation, bearing parameter, workload, deadline.
 - `Runtime/Offline`: runtime scheduling인지 offline selection인지 구분한다.
 - `RT Constraint`: deadline, latency, jitter, schedulability, RTOS/PREEMPT_RT 고려 여부를 분리한다.
+- `Platform Tag`: MCU/RTOS, SBC/Linux, heterogeneous SoC, server/GPU, desktop을 별도 기록하며 관련성 우선순위로 사용하지 않는다.
 - 이 축은 `surveys/comparison_table.md`와 맞춰 유지한다.
 - 원고용 압축 표 초안은 `manuscript/table1_related_work.md`에 둔다. 기존 `surveys/comparison_table.md`는 내부 상세표로 유지한다.

@@ -14,6 +14,15 @@
 - KCC 이용률은 max 기준만 정리됐고 average, p95, p99 계산이 남았다.
 - MURAL, DNN-SAM, Decntr, SCENIC 등을 고려하면 input adaptation, slack 기반 선택, period/mode co-design, condition/model/timing 결합 각각을 단독 novelty로 주장해서는 안 된다.
 
+## 2026-07-23 외부 서베이 입력 검토
+
+- LINER·Claude 자료에서 fault-diagnosis 후보 16편과 elastic-scheduling 후보 8편을 수집했다.
+- 기존 카드와 중복을 제외하면 fault-diagnosis 14편, elastic-scheduling 5편이 신규 후보이다.
+- 신규 후보는 abstract/selection rationale 단계이므로 paper card 완료로 집계하지 않는다.
+- “scheduling 기반 vibration FD 0편”, “최초 적용”, `SCHED_FIFO` 확정과 같은 강한 결론은 원문 검증 전까지 보류한다.
+- MCU/RTOS와 SoC/Linux 중 하나를 최상위 우선순위로 두지 않는다. 연구 질문은 S1~S6 섹션으로 분류하고, 플랫폼은 별도 태그로 관리한다. 기준은 `surveys/research_aligned_literature_taxonomy_0723.md`다.
+- 원본과 후보 우선순위는 `surveys/source_reports/2026-07-21_liner_claude/`와 `surveys/liner_claude_survey_review_0723.md`에서 관리한다.
+
 ## 핵심 방향
 
 - 방향 2, 즉 `W/H/M` 기반 elastic scheduling을 연구의 코어로 둔다.

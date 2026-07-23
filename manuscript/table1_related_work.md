@@ -5,6 +5,8 @@
 
 이 표는 관련연구 **계열** 비교용이다. Real-Time Fault Diagnosis 개별 논문의 O/△/X 비교는 `manuscript/realtime_fault_diagnosis_related_work_table.md`에서 관리한다. 최종 원고에서는 두 표의 역할과 지면을 보고 하나만 본문에 두거나 다른 하나를 부록으로 이동한다.
 
+원고의 related-work 절 구성은 `surveys/research_aligned_literature_taxonomy_0723.md`의 RW1~RW4를 따른다. 아래 category는 보관 그룹과 세부 비교를 위한 행이며, MCU/SoC 같은 플랫폼은 독립적인 우선순위가 아니라 비교 태그다.
+
 원고에 넣을 때는 venue/year 표기를 manuscript 스타일에 맞춰 줄이고, 정량 수치는 본문에서 검증된 경우에만 사용한다.
 
 | Category | Representative works | Main variable | Adaptation trigger | RT/platform consideration | Limitation vs. this work |

@@ -4,6 +4,13 @@
 
 ## Questions
 
+- LINER·Claude 종합 문서가 제안한 `SCHED_FIFO` 우선과 `SCHED_DEADLINE` 배제를 Pi Zero 2W의 결론으로 받아들일 수 있는가?
+  - 현재 판단: 보류. 다른 platform/framework의 variation 결과를 직접 일반화하지 않고, 본 연구 task model과 실험 결과로 선택한다.
+- Offline feasible-mode admission만으로 mode transition의 deadline까지 보장되는가?
+  - 현재 판단: 보장되지 않는다. Carry-over job, model-switch cost, queue/backlog와 다른 task interference를 포함한 transition condition이 필요하다.
+- 첫 정식화에서 implicit deadline `D=T`를 사용할 application 근거는 무엇인가?
+  - 현재 판단: Elastic 문헌에서 흔하다는 이유만으로 확정하지 않는다. Diagnosis freshness, detection delay와 late-result 처리 정책으로 정당화한다.
+
 - 첫 완결 연구에서 `M`을 고정하고 `(W,H)` mode selection과 `q+S` trigger에 집중할 것인가, 아니면 두 개 정도의 사전 profiling된 model variant까지 포함할 것인가?
   - 이유: `W/H/M`을 모두 독립 변수로 두면 mode 수와 baseline이 급격히 증가한다. 모델 경량화는 별도 contribution으로 주장하지 않고 scheduling question을 선명하게 유지할 필요가 있다.
   - 판단 기준: `(W,H)`만으로 diagnosis utility와 schedulability trade-off가 충분히 나타나는지, 두 모델의 `C(W,M)` 곡선 차이가 핵심 주장에 실제로 필요한지 실험 전 profile로 판단한다.

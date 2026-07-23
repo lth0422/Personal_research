@@ -1,6 +1,7 @@
 # Real-Time Fault Diagnosis 체계적 서베이 프로토콜
 
 - 작성일: 2026-07-21
+- 최근 검색 입력 검토: 2026-07-23
 - 근거: `decisions/personal_research_summary_0708.md`
 - 목적: “real-time”이라는 표현을 모델 경량화, 경험적 시간 충족, deadline-aware execution, schedulability guarantee로 분리하고, fault diagnosis를 scheduling 문제로 다룬 선행연구가 실제로 드문지 검증한다.
 
@@ -9,7 +10,7 @@
 | ID | 질문 | 답 형식 |
 | --- | --- | --- |
 | RQ1 | 실제 장치에서 fault diagnosis를 수행하는가? | O/△/X/? + 플랫폼 |
-| RQ2 | RTOS 또는 real-time Linux를 사용하는가? | O/△/X/? + OS 이름/버전 |
+| RQ2 | 실행 환경이 bare metal, RTOS, 일반 Linux, PREEMPT_RT 중 무엇인가? | 환경 종류 + OS/kernel 이름과 version |
 | RQ3 | deadline 또는 task period를 명시하는가? | O/△/X/? + 수치/정의 |
 | RQ4 | real-time을 무엇으로 달성하는가? | 모델 경량화 / 시스템 최적화 / scheduling / 혼합 |
 | RQ5 | latency를 average만 측정하는가, tail/jitter/miss까지 측정하는가? | 측정 지표 목록 |
@@ -17,6 +18,20 @@
 | RQ7 | runtime에 window, period, model을 조절하는가? 무엇이 trigger인가? | `W/H/M`, `q/S/load/deadline/offline` |
 
 RQ6과 RQ7이 교수님 피드백의 핵심이다. RTOS 사용 여부나 짧은 평균 latency만으로 hard real-time이라고 판정하지 않는다.
+
+### 플랫폼 태그
+
+문헌의 주 섹션과 우선순위는 연구 질문으로 정하고, 플랫폼은 별도 태그로 기록한다. MCU/RTOS는 KCC 선행 결과와 deterministic execution을, SoC/SBC/Linux는 현재 Pi Zero 2W 실험과 OS interference를 설명한다. 어느 한 플랫폼만을 조사 대상으로 제한하지 않는다.
+
+| 태그 | 예시 | 주로 제공하는 근거 |
+| --- | --- | --- |
+| `PL-MCU` | STM32, ESP32, Cortex-M | Task 구조와 resource constraint |
+| `PL-SBC-SOC` | Raspberry Pi, ARM Cortex-A SBC | OS scheduling, interference, tail latency |
+| `PL-HET-SOC` | Jetson 등 CPU/GPU SoC | Heterogeneous runtime과 resource contention |
+| `PL-SERVER-GPU` | x86와 discrete GPU | DNN scheduling mechanism |
+| `PL-DESKTOP` | Desktop/laptop evaluation | Algorithm timing 참고 |
+
+실행환경은 `ENV-BAREMETAL`, `ENV-RTOS`, `ENV-LINUX`, `ENV-PREEMPT_RT`, `ENV-OTHER`로 별도 기록한다. 세부 분류는 `surveys/research_aligned_literature_taxonomy_0723.md`를 따른다.
 
 ## 2. 조사 범위
 
@@ -65,9 +80,19 @@ AND (vibration OR bearing OR motor OR gearbox OR "rotating machinery")
 
 ```text
 (RTOS OR "real-time operating system" OR Zephyr OR FreeRTOS OR ThreadX
- OR "PREEMPT_RT" OR "SCHED_DEADLINE")
+ OR "PREEMPT_RT" OR "SCHED_FIFO" OR "SCHED_DEADLINE")
 AND ("fault diagnosis" OR "condition monitoring")
 AND (vibration OR bearing OR motor OR "rotating machinery")
+```
+
+### Q2-SOC. Application-class SoC/SBC 직접 비교군
+
+```text
+("embedded Linux" OR "real-time Linux" OR PREEMPT_RT OR Raspberry Pi
+ OR Jetson OR "single-board computer" OR SBC OR "ARM Cortex-A" OR "edge SoC")
+AND ("fault diagnosis" OR "fault detection" OR "condition monitoring")
+AND (vibration OR bearing OR motor OR gearbox OR "rotating machinery")
+AND (deadline OR latency OR jitter OR scheduling OR "real-time")
 ```
 
 ### Q3. Scheduling으로 접근한 fault diagnosis
@@ -98,6 +123,16 @@ AND (deadline OR scheduling OR runtime OR adaptive)
 ```
 
 권장 검색원은 IEEE Xplore, ACM Digital Library, Scopus 또는 Web of Science다. Google Scholar와 Semantic Scholar는 누락 논문 탐색과 인용 추적에 사용하되, 최종 서지정보와 본문 판정은 출판본 원문에서 확인한다.
+
+### 2026-07-21 LINER 검색 입력
+
+- 원본: `surveys/source_reports/2026-07-21_liner_claude/`
+- 검색원 표기: Semantic Scholar
+- Fault-diagnosis CSV: 16편. 기존 카드 2편, 신규 후보 14편
+- Elastic-scheduling CSV: 8편. 기존 카드 3편, 신규 후보 5편
+- 비판 검토: `surveys/liner_claude_survey_review_0723.md`
+
+CSV의 abstract와 selection rationale은 후보 선별 자료다. 신규 후보의 original full text가 없으므로 O/△/X/? matrix, paper card와 manuscript 근거에는 아직 반영하지 않는다.
 
 ## 4. 기호와 판정 규칙
 
@@ -134,7 +169,9 @@ RTOS 사용은 H 판정의 충분조건이 아니다. 반대로 범용 OS를 사
 | Citation | title, authors, venue, year, DOI |
 | Domain | bearing/motor/gearbox/shaft, vibration 여부 |
 | Platform | MCU/SBC/CPU/GPU, board와 processor |
-| OS/RTOS | 이름, version, kernel configuration |
+| Platform tag | `PL-MCU` / `PL-SBC-SOC` / `PL-HET-SOC` / `PL-SERVER-GPU` / `PL-DESKTOP` |
+| Execution environment | bare metal / RTOS / general Linux / PREEMPT_RT / other |
+| OS/kernel | 정확한 이름, version, kernel configuration |
 | Task model | periodic/sporadic/pipeline, period, priority, scheduler |
 | Deadline | 정의, 값, implicit/constrained 여부 |
 | Timing evidence | average, p95, p99, max, jitter, miss rate, WCET |
@@ -151,15 +188,15 @@ RTOS 사용은 H 판정의 충분조건이 아니다. 반대로 범용 OS를 사
 
 아래 표는 현재 paper card에서 확인한 범위의 초안이다. 최종 원고 표에 넣기 전 GAP-01 재검토를 거쳐야 한다.
 
-| 논문 | RTOS | Deadline | Tail/jitter/miss | Sched. 분석 | 모델 경량화 | 시스템 scheduling | Runtime 적응 | `W/H/M` 공동 | `q+S` | RT 등급 |
-| --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Ma et al., Lightweight Architecture Search FD | X | X | X | X | O | X | X | X | X | B |
-| Lee and Kim, FRFconv-TDSNet | X | X | X | X | O | X | X | X | X | B |
-| Jalonen et al., Time-Varying Speed FD | X | X | X | X | O | X | X | X | X | B |
-| Thota et al., TinyML Bearing FD | ? | X | ? | X | O | X | X | X | X | B |
-| Choi et al., Low-Cost MCU Shaft FD | X | X | X | X | O | X | X | X | X | B |
-| 본 연구 KCC 2026 | O | O | O | △ | O | O | X | X | X | E |
-| 제안 연구 | P | P | P | P | - | P | P | P | P | 목표 H 또는 조건부 H |
+| 논문 | 플랫폼 | 실행 환경 | RTOS | PREEMPT_RT | Deadline | Tail/jitter/miss | Sched. 분석 | 모델 경량화 | 시스템 scheduling | Runtime 적응 | `W/H/M` 공동 | `q+S` | RT 등급 |
+| --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Ma et al., Lightweight Architecture Search FD | `PL-DESKTOP` | `ENV-OTHER` | X | X | X | X | X | O | X | X | X | X | B |
+| Lee and Kim, FRFconv-TDSNet | `PL-SBC-SOC` | Linux 계열 확인 필요 | X | X | X | X | X | O | X | X | X | X | B |
+| Jalonen et al., Time-Varying Speed FD | `PL-DESKTOP` | `ENV-OTHER` | X | X | X | X | X | O | X | X | X | X | B |
+| Thota et al., TinyML Bearing FD | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | ? | X | O | X | X | X | X | B |
+| Choi et al., Low-Cost MCU Shaft FD | `PL-MCU` | `ENV-BAREMETAL` | X | X | X | X | X | O | X | X | X | X | B |
+| 본 연구 KCC 2026 | `PL-MCU` | Zephyr `ENV-RTOS` | O | X | O | O | △ | O | O | X | X | X | E |
+| 제안 연구 | `PL-SBC-SOC` | Linux + `ENV-PREEMPT_RT` | X | P | P | P | P | - | P | P | P | P | 목표 H 또는 조건부 H |
 
 해석할 때 `모델 경량화 O`는 real-time guarantee가 강하다는 뜻이 아니다. 현재 대조군은 대부분 모델을 가볍게 만들고 latency를 측정하지만, scheduling과 deadline guarantee는 확인되지 않는다는 가설을 보여준다. 이 가설은 추가 문헌으로 검증해야 한다.
 
@@ -170,7 +207,8 @@ RTOS 사용은 H 판정의 충분조건이 아니다. 반대로 범용 OS를 사
 
 - 포함 집합: A Direct RT-FD / B Embedded best-effort FD / C Scheduling bridge
 - Real-time이라는 용어의 의미:
-- RTOS/OS와 task 구성:
+- 실행 환경: bare metal / RTOS / general Linux / PREEMPT_RT / other
+- 정확한 OS/kernel와 task 구성:
 - Deadline 정의:
 - 모델을 가볍게 만든 방법:
 - 시스템 또는 scheduling을 바꾼 방법:
@@ -192,7 +230,7 @@ RTOS 사용은 H 판정의 충분조건이 아니다. 반대로 범용 OS를 사
 
 연구 질문:
 1. 실제 embedded/edge 장치에서 fault diagnosis를 수행했는가?
-2. RTOS 또는 real-time Linux를 사용했는가? 정확한 OS와 version은 무엇인가?
+2. 실행 환경은 bare metal, RTOS, 일반 Linux, PREEMPT_RT 중 무엇인가? 정확한 OS/kernel와 version은 무엇인가?
 3. task period 또는 deadline을 명시했는가?
 4. real-time 성능을 모델 경량화, 시스템 최적화, scheduling 중 무엇으로 달성했는가?
 5. average latency만 측정했는가, 아니면 p95/p99/max, jitter, deadline miss도 측정했는가?
@@ -217,7 +255,7 @@ D. fault diagnosis + window size/input length/hop size/model selection
 - preprint와 출판본 중복
 
 각 논문을 다음 표로 출력하라.
-ID | Full citation | DOI/URL | Corpus A/B/C | Domain | Platform | OS/RTOS | Task/period | Deadline | Timing metrics | Model optimization | System/scheduling intervention | Runtime variable | Trigger | Guarantee method | RT grade H/W/E/B/? | Evidence section/page | Uncertainty
+ID | Full citation | DOI/URL | Corpus A/B/C | Domain | Platform | Execution environment | OS/kernel/version | Task/period | Deadline | Timing metrics | Model optimization | System/scheduling intervention | Runtime variable | Trigger | Guarantee method | RT grade H/W/E/B/? | Evidence section/page | Uncertainty
 
 판정 규칙:
 - O는 원문에 명시적 근거가 있을 때만 사용한다.

@@ -4,6 +4,16 @@
 
 ## Claims
 
+- 2026-07-21 LINER·Claude 후보 집합은 embedded fault diagnosis가 model optimization과 평균 latency 중심일 가능성을 강화하지만, “scheduling 기반 vibration fault diagnosis는 0편” 또는 “본 연구가 최초”라는 주장을 확정하지는 않는다.
+  - 근거 후보: `surveys/source_reports/2026-07-21_liner_claude/`, `surveys/liner_claude_survey_review_0723.md`.
+  - 본 연구 연결: Direct RT-FD와 embedded best-effort FD를 구분하는 검색·판정 근거로 사용한다.
+  - 주의: 신규 14편은 abstract/selection rationale 단계다. P0 원문 검토 전에는 원고 인용이나 O/X 판정에 사용하지 않는다.
+
+- MCU/RTOS와 SoC/Linux 문헌은 서로 다른 timing evidence를 제공하며, 플랫폼은 문헌의 주제 우선순위가 아니라 별도 검증 축으로 관리해야 한다.
+  - 근거 후보: `surveys/research_aligned_literature_taxonomy_0723.md`.
+  - 본 연구 연결: MCU 문헌은 KCC 계보와 low-level task determinism을, SoC/SBC 문헌은 OS scheduling, process/thread interference와 tail latency를 설명한다.
+  - 주의: 이론적 직접성은 플랫폼 일치보다 `W/H/M`, `q/S`, deadline과 guarantee를 실제로 다루는지로 판단한다.
+
 - 0708 면담 이후 본 연구의 핵심 claim은 "정밀 mode를 선택한다"가 아니라 "feasible mode set 안에서 가장 진단적으로 유용한 mode를 선택한다"로 정리한다.
   - 근거 후보: `decisions/personal_research_summary_0708.md`, `manuscript/problem_formulation.md`.
   - 본 연구 연결: schedulability guarantee를 문제 정식화의 1번 질문으로 둔다.

@@ -11,6 +11,9 @@
 # {논문 제목}
 
 - **그룹**: 1~8 (PROJECT_CONTEXT 10절)
+- **연구 섹션**: S1~S6 (`surveys/research_aligned_literature_taxonomy_0723.md`)
+- **플랫폼 태그**: `PL-MCU` / `PL-SBC-SOC` / `PL-HET-SOC` / `PL-SERVER-GPU` / `PL-DESKTOP`
+- **실행환경 태그**: `ENV-BAREMETAL` / `ENV-RTOS` / `ENV-LINUX` / `ENV-PREEMPT_RT` / `ENV-OTHER`
 - **출처/연도**:
 - **저자**:
 
@@ -59,5 +62,6 @@
 - `Conclusion 요약`은 conclusion 또는 마지막 discussion에서 확인 가능한 결론과 future work만 적는다. 결론 섹션이 확인되지 않으면 `확인 필요`로 둔다.
 - `0708 면담 기준 보강`은 교수님 피드백 반영 항목이다. 특히 real-time fault diagnosis 논문은 RTOS/deadline이 있는지, 단순 경량화 기반 best-effort 근실시간인지 구분한다.
 - Real-Time Fault Diagnosis 논문은 `surveys/realtime_fault_diagnosis_survey_protocol.md`의 O/△/X/? 규칙과 H/W/E/B 등급을 사용한다. 핵심 판정에는 section/page/table/figure 근거를 남긴다.
+- 신규 카드는 기존 보관 그룹과 별도로 S1~S6 연구 섹션, 플랫폼 태그와 실행환경 태그를 기록한다. 플랫폼과 OS/kernel 종류를 한 태그에 합치지 않는다.
 - elastic scheduling 논문은 `C` 고정 가정인지, period/utilization만 조절하는지, 본 연구의 `C(W,M)` 가변 실행시간과 어떤 차이가 있는지 명시한다.
 - paper card 작성 후 남는 불확실한 점은 카드의 `불확실한 점` 섹션에 명시한다.
