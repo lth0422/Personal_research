@@ -12,6 +12,7 @@
 - RTSS 1998 `Elastic Task Model for Adaptive Rate Control`의 journal extension 계열이다. 2002년 논문은 1998년 논문을 직접 인용한다.
 - spring analogy, elastic coefficient, period compression, HARTIK QoS manager와 두 실험의 기본 구조는 상당 부분 이어받는다.
 - 추가된 핵심은 decompression과 uniform rescaling의 체계화, SRP 기반 shared-resource blocking 분석, resource constraint가 있을 때의 compression 및 period-change 규칙이다.
+- Buttazzo and Abeni의 CDC 2000 `Adaptive Rate Control through Elastic Scheduling`은 이 확장 계보와 구분되는 별도 논문이다. CDC 2000 논문은 runtime execution-time estimate를 period adaptation feedback으로 사용하지만 transient와 sporadic deadline miss를 허용한다.
 
 ## Abstract 3줄 요약
 - multimedia와 adaptive control 같은 real-time application은 고정 period 중심의 classical real-time theory보다 더 큰 유연성을 요구한다.

@@ -1,7 +1,7 @@
 # Real-Time Fault Diagnosis 체계적 서베이 프로토콜
 
 - 작성일: 2026-07-21
-- 최근 검색 입력 검토: 2026-07-23
+- 최근 원문 판정: 2026-07-24
 - 근거: `decisions/personal_research_summary_0708.md`
 - 목적: “real-time”이라는 표현을 모델 경량화, 경험적 시간 충족, deadline-aware execution, schedulability guarantee로 분리하고, fault diagnosis를 scheduling 문제로 다룬 선행연구가 실제로 드문지 검증한다.
 
@@ -132,7 +132,7 @@ AND (deadline OR scheduling OR runtime OR adaptive)
 - Elastic-scheduling CSV: 8편. 기존 카드 3편, 신규 후보 5편
 - 비판 검토: `surveys/liner_claude_survey_review_0723.md`
 
-CSV의 abstract와 selection rationale은 후보 선별 자료다. 신규 후보의 original full text가 없으므로 O/△/X/? matrix, paper card와 manuscript 근거에는 아직 반영하지 않는다.
+CSV의 abstract와 selection rationale은 후보 선별 자료다. 신규 fault-diagnosis 14편 중 원문 14편을 확보해 2026-07-24 카드와 아래 matrix에 반영했다. Elastic 후보도 신규 5편의 원문 판정과 카드화를 완료했다.
 
 ## 4. 기호와 판정 규칙
 
@@ -195,10 +195,24 @@ RTOS 사용은 H 판정의 충분조건이 아니다. 반대로 범용 OS를 사
 | Jalonen et al., Time-Varying Speed FD | `PL-DESKTOP` | `ENV-OTHER` | X | X | X | X | X | O | X | X | X | X | B |
 | Thota et al., TinyML Bearing FD | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | ? | X | O | X | X | X | X | B |
 | Choi et al., Low-Cost MCU Shaft FD | `PL-MCU` | `ENV-BAREMETAL` | X | X | X | X | X | O | X | X | X | X | B |
+| Zhang et al., Fast Short-Time Root-MUSIC | `PL-MCU` | FreeRTOS `ENV-RTOS` | O | X | X | X | X | O | X | X | X | X | B |
+| Yang et al., Stacked AE End-Edge | `PL-MCU` | MCU runtime 확인 필요 | ? | X | △ | X | X | O | △ | O | X | X | B |
+| He et al., Cyclostationary Edge FD | `PL-MCU` | OS/RTOS 확인 필요 | ? | X | X | X | X | △ | X | X | X | X | B |
+| Pubalan et al., Simulated 1D-CNN RT-FDD | `PL-DESKTOP` | simulated/other | X | X | X | X | X | O | X | X | X | X | B |
+| Arciniegas et al., TinyML Motor Vibration | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | X | X | O | X | X | X | X | B |
+| Gupta and Shivhare, TinyML ESP32 | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | X | X | O | X | X | X | X | B |
+| Lima, Edge Impulse Motor FD | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | X | X | O | X | X | X | X | B |
+| Alasiry et al., Dual-MCU Monitoring | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | X | X | X | △ | X | X | X | B |
+| Zhan et al., APTL-net | `PL-HET-SOC` | `ENV-LINUX` | X | X | X | X | X | O | X | X | X | X | B |
+| Garay et al., Multimodal TinyML PdM | `PL-MCU` | Arduino Mbed OS `ENV-RTOS` | O | X | X | △ | X | O | X | X | X | X | B |
+| Langarica et al., Industrial Internet FD | `PL-SERVER-GPU` | `ENV-LINUX`/server stack | X | X | X | X | X | X | X | △ | X | X | B |
+| Shan et al., CS-DKELM | `PL-HET-SOC` | `ENV-LINUX` | X | X | X | X | X | O | X | X | X | X | B |
+| Sayghe, Physics-Aware Transformer | `PL-SBC-SOC` | `ENV-LINUX` | X | X | X | X | X | O | X | X | X | X | B |
+| Bhaventhan et al., Vibration PdM Edge AI | `PL-SBC-SOC` | Linux 세부 확인 필요 | X | X | X | X | X | O | X | X | X | X | B |
 | 본 연구 KCC 2026 | `PL-MCU` | Zephyr `ENV-RTOS` | O | X | O | O | △ | O | O | X | X | X | E |
 | 제안 연구 | `PL-SBC-SOC` | Linux + `ENV-PREEMPT_RT` | X | P | P | P | P | - | P | P | P | P | 목표 H 또는 조건부 H |
 
-해석할 때 `모델 경량화 O`는 real-time guarantee가 강하다는 뜻이 아니다. 현재 대조군은 대부분 모델을 가볍게 만들고 latency를 측정하지만, scheduling과 deadline guarantee는 확인되지 않는다는 가설을 보여준다. 이 가설은 추가 문헌으로 검증해야 한다.
+해석할 때 `모델 경량화 O`는 real-time guarantee가 강하다는 뜻이 아니다. 이번 14편 원문 판정에서도 target 평균 latency 또는 online 동작이 주된 근거였고 explicit task deadline, tail/miss와 schedulability의 결합은 확인되지 않았다. 이는 현재 14편 집합에 대한 결과이며 문헌 전체의 부재를 뜻하지 않는다.
 
 ## 7. 논문별 주관식 판정 양식
 

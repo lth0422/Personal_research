@@ -4,10 +4,25 @@
 
 ## Claims
 
-- 2026-07-21 LINER·Claude 후보 집합은 embedded fault diagnosis가 model optimization과 평균 latency 중심일 가능성을 강화하지만, “scheduling 기반 vibration fault diagnosis는 0편” 또는 “본 연구가 최초”라는 주장을 확정하지는 않는다.
-  - 근거 후보: `surveys/source_reports/2026-07-21_liner_claude/`, `surveys/liner_claude_survey_review_0723.md`.
+- 2026-07-21 LINER·Claude에서 추가된 fault-diagnosis 14편의 2026-07-24 원문 판정에서는 model/input optimization과 평균 latency 중심의 `B` 등급이 주류였고, explicit deadline, tail/miss와 schedulability를 결합한 사례는 확인되지 않았다. 그러나 “scheduling 기반 vibration fault diagnosis는 0편” 또는 “본 연구가 최초”라는 주장은 확정하지 않는다.
+  - 근거 후보: 신규 paper card 14편, `surveys/realtime_fault_diagnosis_survey_protocol.md`, `surveys/liner_claude_survey_review_0723.md`.
   - 본 연구 연결: Direct RT-FD와 embedded best-effort FD를 구분하는 검색·판정 근거로 사용한다.
-  - 주의: 신규 14편은 abstract/selection rationale 단계다. P0 원문 검토 전에는 원고 인용이나 O/X 판정에 사용하지 않는다.
+  - 주의: 현재 14편 집합과 검색식 범위의 관찰이며 전체 문헌의 부재 증명이 아니다.
+
+- Vibration diagnosis mode의 최소 입력 정보량은 임의의 latency target만으로 정하면 안 되고 bearing/speed physics로 제한해야 한다.
+  - 근거 후보: Sayghe 2026은 `P*=ceil(f_s/f_min)`으로 patch 크기를 정하고, Pubalan et al. 2025는 one-revolution segment를 사용하며, Zhang et al. 2025는 16 ms frame에서 resolution-speed trade-off를 다룬다.
+  - 본 연구 연결: feasible mode bank를 만들 때 `W_min(q)` 또는 operating-speed별 admissible `W`를 먼저 정하고 그 안에서 system feasibility를 적용하는 설계 후보.
+  - 주의: 세 논문 모두 runtime q+S scheduling을 구현하지 않으며 각 physics rule을 본 연구 데이터에 그대로 적용할 수 없다.
+
+- Fault evidence와 timing constraint를 함께 사용한 diagnosis cascade는 존재하지만, system-wide schedulability와 slack을 함께 보장하지는 않는다.
+  - 근거 후보: Yang et al. 2023은 confidence와 allowable latency로 end/edge diagnosis를 선택하고, Langarica et al. 2020은 detected fault variable로 CNN stage를 trigger한다.
+  - 본 연구 연결: `q`가 정밀 mode 필요성을 나타내고 `S`가 실행 가능성을 제한하는 이중 조건을 설명하는 직접 비교군.
+  - 주의: confidence는 machine condition 자체와 동일하지 않으며 edge offloading policy를 local `(W,H,M)` selection과 동일시하지 않는다.
+
+- Elastic mode의 feasibility는 implicit-deadline utilization만으로 일반화할 수 없고 deadline model과 transition을 별도로 검증해야 한다.
+  - 근거 후보: Baruah 2023은 constrained-deadline elastic tasks에 PDA를 사용하고, Wang et al. 2016은 multiple-period safe sequence를 formal하게 합성한다.
+  - 본 연구 연결: `D<T`이면 demand-bound test 후보를 검토하고 mode endpoint와 carry-over transition의 feasibility를 분리한다.
+  - 주의: 두 논문 모두 fixed `C` 또는 formal task model을 전제로 하므로 measured `C(W,M)` bound의 유효성을 별도로 확보해야 한다.
 
 - MCU/RTOS와 SoC/Linux 문헌은 서로 다른 timing evidence를 제공하며, 플랫폼은 문헌의 주제 우선순위가 아니라 별도 검증 축으로 관리해야 한다.
   - 근거 후보: `surveys/research_aligned_literature_taxonomy_0723.md`.
@@ -19,10 +34,10 @@
   - 본 연구 연결: schedulability guarantee를 문제 정식화의 1번 질문으로 둔다.
   - 주의: 아직 formal guarantee와 empirical feasibility 중 어디까지 주장할지는 확정되지 않았다.
 
-- 기존 elastic scheduling은 대체로 execution time `C`를 고정하고 period 또는 utilization을 조절한다. 본 연구의 확장 지점은 diagnosis mode에 따라 `C(W,M)`도 함께 바뀐다는 점이다.
-  - 근거 후보: Buttazzo et al. 1998/2002; Chantem et al. 2009; Orr et al. 2020; Sudvarg 계열.
+- 기존 elastic scheduling은 대체로 execution time `C`를 고정하고 period 또는 utilization을 조절하며, runtime 측정 `C`를 feedback으로 쓰는 soft real-time 예외도 존재한다. 본 연구의 확장 지점 후보는 diagnosis mode별 `C(W,M)`와 hard feasibility 조건을 분리해 함께 다룬다는 점이다.
+  - 근거 후보: Buttazzo et al. 1998/2002; Buttazzo and Abeni 2000; Chantem et al. 2009; Orr et al. 2020; Sudvarg 계열.
   - 본 연구 연결: `τ_diag = (C(W,M), T=H/f_s)`로 확장해 `W/H/M` mode bank를 admission 또는 feasibility filtering 대상으로 본다.
-  - 주의: "기존 연구가 전혀 없다"가 아니라, 현재 보유 문헌 범위에서 `C(W,M)`와 vibration diagnosis utility를 함께 다룬 사례가 확인되지 않았다는 식으로 써야 한다.
+  - 주의: Buttazzo and Abeni 2000은 observed execution-time estimate로 `T`를 조절하지만 transient/sporadic miss를 허용한다. 따라서 novelty는 measured `C` feedback 자체가 아니라 `C(W,M)`의 mode semantics, vibration utility와 보장 범위에서 찾아야 한다.
 
 - classic elastic scheduling은 periodic task의 period/rate를 조절해 overload나 workload 변화에서 schedulability를 유지하는 시스템 축의 대표 관련연구다.
   - 근거 후보: Buttazzo et al. RTSS 1998, Buttazzo et al. IEEE Transactions on Computers 2002, Chantem et al. IEEE Transactions on Computers 2009, Tian and Gui Real-Time Systems 2011.

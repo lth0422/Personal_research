@@ -8,7 +8,7 @@
 
 ## 현재 분포
 
-점검 시점 기준 PDF와 paper card는 각각 57개다. 카드 그룹은 elastic scheduling 14편, real-time DNN serving 13편, input-adaptive 8편, weakly-hard 6편, platform/PREEMPT_RT 5편, fault diagnosis application 5편, miscellaneous real-time scheduling 4편, Pi Zero 2W platform 2편이다.
+2026-07-24 기준 PDF와 paper card는 각각 76개다. 카드 그룹은 elastic scheduling 19편, real-time DNN serving 13편, input-adaptive 8편, weakly-hard 6편, platform/PREEMPT_RT 5편, fault diagnosis application 19편, miscellaneous real-time scheduling 4편, Pi Zero 2W platform 2편이다.
 
 양적으로는 elastic scheduling과 DNN serving 쪽이 크다. 반면 연구 도메인에 직접 해당하는 fault diagnosis의 deadline/RTOS 근거와 Pi Zero 2W 부하 설계 근거는 상대적으로 부족하다.
 
@@ -16,8 +16,8 @@
 
 | ID | 부족한 서베이 | 현재 상태 | 필요한 근거 | 완료 기준 | 반영 위치 |
 | --- | --- | --- | --- | --- | --- |
-| GAP-01 | Real-time fault diagnosis의 실시간성 수준 | 후보 16편을 확보했지만 runtime variable, trigger, deadline과 schedulability의 원문 판정이 남았다. MCU/RTOS와 SoC/Linux를 모두 포함하되 플랫폼별 근거를 분리해야 한다 | Fault-diagnosis 논문에서 deadline, jitter, p95/p99/max, miss 또는 schedulability를 보여주는 원문 근거 | S1 분류와 플랫폼 태그를 함께 사용해 H/W/E/B와 O/△/X/?를 판정 | `research_aligned_literature_taxonomy_0723.md`, `liner_claude_survey_review_0723.md`, `realtime_fault_diagnosis_survey_protocol.md` |
-| GAP-02 | `C(W,M)`와 `H/T` 동시 변화의 schedulability | 기존 elastic 문헌은 `C` 고정과 `T` 가변 가정이 중심이며 인접 연구는 일부 축만 결합 | 실행시간과 period가 mode에 따라 함께 변할 때 사용하는 feasibility test, admission rule 또는 mode-transition 분석 | 본 연구가 기존 식을 그대로 쓸 수 있는 범위와 새로 정식화해야 하는 범위를 구분 | `problem_formulation.md`, `classic_rt_concepts_note.md` |
+| GAP-01 | Real-time fault diagnosis의 실시간성 수준 | 1차 완료: 신규 14편 원문과 전체 fault-diagnosis card 19편을 분류했다. 신규 14편은 모두 `B`였으며 explicit deadline+tail/miss+schedulability 결합은 확인되지 않았다. 문헌 전체의 부재 주장을 위한 추가 systematic search는 남았다 | Fault-diagnosis 논문에서 deadline, jitter, p95/p99/max, miss 또는 schedulability를 보여주는 원문 근거 | 1차 O/X matrix 완료. 추가 검색과 반례 점검 후 claim 범위 확정 | `research_aligned_literature_taxonomy_0723.md`, `liner_claude_survey_review_0723.md`, `realtime_fault_diagnosis_survey_protocol.md` |
+| GAP-02 | `C(W,M)`와 `H/T` 동시 변화의 schedulability | 기존 elastic 문헌은 `C` 고정과 `T` 가변 가정이 중심이다. Buttazzo and Abeni 2000은 observed execution-time feedback를 쓰지만 transient/sporadic miss를 허용한다 | 실행시간과 period가 mode에 따라 함께 변할 때 사용하는 feasibility test, admission rule 또는 mode-transition 분석 | 본 연구가 기존 식을 그대로 쓸 수 있는 범위와 empirical profile에 추가할 safety condition을 구분 | `problem_formulation.md`, `classic_rt_concepts_note.md` |
 | GAP-03 | KCC mode별 실행시간 분포 | 현재 max 기반 이용률만 문서화됨 | 같은 실험 조건에서 각 `W/M`의 average, p95, p99, max execution/response time | 값의 출처 로그, 단위, 부하 조건을 연결하고 `U=C/T`를 동일 기준으로 계산 | `problem_formulation.md`, 향후 교수님 보고 자료 |
 | GAP-04 | Mode transition의 보장과 fallback | Decntr, Safety-Aware, overload 대응 논문은 있으나 vibration diagnosis mode 전환 규칙은 미정 | 전환 중 deadline, queue/backlog, stale data, fallback mode, hysteresis를 다루는 이론 또는 시스템 근거 | 정상/의심/결함 mode 전환 시 허용 가능한 실행과 실패 대응을 명시 | `classic_rt_concepts_note.md`, `open_questions.md` |
 
@@ -52,8 +52,8 @@
 
 ## 바로 수행할 순서
 
-1. GAP-09 고전 실시간 개념 노트를 작성한다.
-2. GAP-01 fault-diagnosis 카드 5편을 원문 기준으로 재검토하고 분류표의 `확인 필요`를 줄인다.
+1. GAP-02에서 implicit/constrained deadline과 `C(W,M)` mode feasibility test 범위를 정한다.
+2. GAP-04에서 endpoint feasibility와 transition/carry-over protocol을 분리해 정식화한다.
 3. GAP-05 platform 카드에서 부하 도구와 조건을 추출해 부하 설계 표를 보강한다.
 4. GAP-03은 실험 로그가 준비된 뒤 값과 조건을 읽어 계산한다. `experiments/` 파일은 수정하지 않는다.
-5. GAP-02, GAP-04를 바탕으로 schedulability와 mode-transition 정식화 범위를 결정한다.
+5. GAP-01 추가 systematic search로 explicit deadline/scheduling vibration FD 반례를 찾는다.

@@ -129,3 +129,6 @@
 - Tang et al.의 AANTLN, AILWTLN에서 adaptive input length가 online runtime adaptation인지, dataset/task별 input design인지 표현할 때 주의해야 한다.
 - AANTLN, AILWTLN 논문에서 실험 플랫폼, inference latency, deadline, RTOS/PREEMPT_RT 관련 정보는 확인되지 않았다.
 - comparison table의 `Runtime/Offline`과 `RT Constraint` 값은 현재 paper card 기준 정리이다. 원고용으로 사용하기 전 각 논문의 method/evaluation section에서 재확인해야 한다.
+- Buttazzo and Abeni 2000처럼 runtime execution-time estimate를 쓰면 transient와 sporadic deadline miss가 가능하다. 본 연구가 empirical `C(W,M)` profile을 사용할 때 hard bound, probabilistic/tail bound 또는 admission safety margin 중 어떤 보장 수준을 채택할지 결정해야 한다.
+- Diagnosis task를 implicit deadline `D=T`로 둘지 constrained deadline `D<T`로 둘지 application freshness requirement에서 결정해야 한다. `D<T`이면 Baruah 2023의 processor-demand analysis 계열을 우선 검토한다.
+- Physics-derived minimum input length를 mode-bank feasibility 이전의 hard admissibility constraint로 둘지, diagnostic utility penalty로 둘지 결정해야 한다.

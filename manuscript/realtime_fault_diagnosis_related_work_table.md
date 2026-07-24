@@ -2,7 +2,7 @@
 
 이 표는 `surveys/realtime_fault_diagnosis_survey_protocol.md`의 판정 규칙을 사용하는 원고용 초안이다. 현재 paper card 기준의 예비 판정이며, 원문 재검토 후 `?`와 `△`를 확정해야 한다.
 
-2026-07-21 LINER·Claude 검색에서 수집한 신규 후보 14편은 full text 판정 전이므로 아직 행에 포함하지 않았다. 후보 검토는 `surveys/liner_claude_survey_review_0723.md`에서 관리한다.
+2026-07-21 LINER·Claude 검색에서 수집한 신규 fault-diagnosis 후보 14편은 2026-07-24 full-text 판정을 완료해 아래에 추가했다. 최종 원고에는 직접성이 높은 5~8편만 남기고 나머지는 survey 근거로 유지한다.
 
 ## 기호
 
@@ -21,6 +21,20 @@
 | Jalonen et al., Time-Varying Speed FD | Laptop SoC | Other OS | X | X | X | X | X | O | X | X | X | X | B |
 | Thota et al., TinyML Bearing FD | MCU | Runtime ? | ? | X | X | ? | X | O | X | X | X | X | B |
 | Choi et al., Low-Cost MCU Shaft FD | MCU | Bare metal | X | X | X | X | X | O | X | X | X | X | B |
+| Zhang et al., Fast Short-Time Root-MUSIC | STM32H743 | FreeRTOS | O | X | X | X | X | O | X | X | X | X | B |
+| Yang et al., Stacked AE End-Edge | STM32F407-class + edge | Runtime ? | ? | X | △ | X | X | O | △ | O | X | X | B |
+| He et al., Cyclostationary Edge FD | STM32F407 | Runtime ? | ? | X | X | X | X | △ | X | X | X | X | B |
+| Pubalan et al., Simulated 1D-CNN | Simulation | Other | X | X | X | X | X | O | X | X | X | X | B |
+| Arciniegas et al., TinyML Motor Vibration | ESP32S3 | Runtime ? | ? | X | X | X | X | O | X | X | X | X | B |
+| Gupta and Shivhare, TinyML ESP32 | ESP32 | Runtime ? | ? | X | X | X | X | O | X | X | X | X | B |
+| Lima, Edge Impulse Motor FD | nRF52840 | Runtime ? | ? | X | X | X | X | O | X | X | X | X | B |
+| Alasiry et al., Dual-MCU Monitoring | STM32F103 + ESP32 | Runtime ? | ? | X | X | X | X | X | △ | X | X | X | B |
+| Zhan et al., APTL-net | Jetson Xavier NX | Linux | X | X | X | X | X | O | X | X | X | X | B |
+| Garay et al., Multimodal TinyML | Cortex-M4F + gateway | Arduino Mbed OS | O | X | X | △ | X | O | X | X | X | X | B |
+| Langarica et al., Industrial Internet FD | IIoT edge + server | Linux/server stack | X | X | X | X | X | X | X | △ | X | X | B |
+| Shan et al., CS-DKELM | Zynq MPSoC | Linux | X | X | X | X | X | O | X | X | X | X | B |
+| Sayghe, Physics-Aware Transformer | Raspberry Pi 4 | Linux | X | X | X | X | X | O | X | X | X | X | B |
+| Bhaventhan et al., Vibration PdM | Raspberry Pi 4 | Linux ? | X | X | X | X | X | O | X | X | X | X | B |
 | KCC 2026 system | MCU | Zephyr RTOS | O | X | O | O | △ | O | O | X | X | X | E |
 | Proposed work | Pi Zero 2W | Linux + PREEMPT_RT | X | P | P | P | P | - | P | P | P* | P | Target H/conditional H |
 

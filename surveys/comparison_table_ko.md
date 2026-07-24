@@ -5,7 +5,7 @@
 
 Real-Time Fault Diagnosis의 체계적 판정 규칙과 O/△/X 예비 matrix는 `surveys/realtime_fault_diagnosis_survey_protocol.md`를 사용한다. 원고용 압축본은 `manuscript/realtime_fault_diagnosis_related_work_table.md`에 분리한다.
 
-2026-07-21 LINER·Claude 검색에서 신규 fault-diagnosis 후보 14편이 추가됐지만 원문 미확인 상태다. 후보와 강한 주장에 대한 검토는 `surveys/liner_claude_survey_review_0723.md`를 사용하며, 아래 표에는 full text 판정이 끝난 논문만 추가한다.
+2026-07-21 LINER·Claude 검색에서 추가된 fault-diagnosis 후보 14편은 2026-07-24 원문 판정과 카드화를 완료했다. 아래 표의 신규 행은 제목의 `real-time` 표현이 아니라 deadline, tail/miss, scheduling과 실제 실행 환경을 기준으로 판정한다.
 
 MCU/RTOS와 SoC/Linux는 우선순위가 아니라 플랫폼 태그로 구분한다. 아래 논문은 플랫폼과 관계없이 real-time의 정의, 적응 변수, trigger와 guarantee를 기준으로 비교한다.
 
@@ -18,6 +18,20 @@ MCU/RTOS와 SoC/Linux는 우선순위가 아니라 플랫폼 태그로 구분한
 | Ma et al., Lightweight Architecture Search FD | 2023 | rotating machinery fault diagnosis | Desktop CPU | 일반 OS, 세부 확인 필요 | architecture search에 계산 시간 objective 포함 | best-effort 근실시간. per-task deadline이나 RTOS는 확인되지 않음 | `M` 후보를 offline으로 가볍게 설계하는 비교군 |
 | Lee and Kim, FRFconv-TDSNet | 2024 | vibration machine fault diagnosis | Raspberry Pi 4B SoC/SBC | Linux 계열, RT extension 확인 필요 | edge inference time 평가 | edge inference 가능성은 보이나 deadline scheduling은 없음 | KCC 모델 배경, noise robustness, `M` 후보 |
 | Jalonen et al., Real-Time Vibration-Based Bearing FD | 2024 | time-varying speed bearing FD | MacBook Pro M1 Pro | Desktop OS, 세부 확인 필요 | acquisition duration 대비 processing time 평가 | 실시간 processing 가능성 평가. RTOS/deadline miss는 없음 | `W` 또는 segment length가 real-time processing과 연결된 사례 |
+| Zhang et al., Fast Short-Time Root-MUSIC | 2025 | high-speed spindle bearing monitoring | STM32H743 | FreeRTOS 10.4.3 | 16 ms frame의 mean processing time 측정 | RTOS 사용 `O`, deadline/tail/miss `X`; best-effort `B` | Short `W`와 fault-frequency resolution을 함께 보는 직접 사례. timing/memory 불일치 주의 |
+| Yang et al., Stacked AE End-Edge Collaboration | 2023 | bearing anomaly diagnosis | STM32F407급 end + edge server simulation | MCU runtime 세부 미확인 | confidence와 allowable latency로 edge 개입 결정 | Timing-aware heuristic이나 schedulability 없음; `B` | Machine evidence와 timing constraint를 함께 trigger로 쓰는 가장 가까운 FD 비교군 |
+| He et al., Improved Cyclostationary Edge FD | 2023 | acoustic motor-bearing diagnosis | STM32F407 | OS/RTOS 미명시 | pipeline step별 실행시간 측정 | 전체 10.294 s로 acquisition 1 s보다 김; deadline guarantee 없음, `B` | "online/real-time"과 deadline 충족을 구분하는 반례 |
+| Pubalan et al., Simulated 1D-CNN RT-FDD | 2025 | bearing multi-class diagnosis | simulated replay, hardware 미명시 | 실행 환경 미명시 | one-revolution input과 0.03 s prediction | 실제 device/deadline/tail 없음; `B` | 물리 회전으로 `W`를 정하지만 runtime adaptation은 아님 |
+| Arciniegas et al., TinyML Motor Vibration | 2025 | motor anomaly alerting | XIAO ESP32S3 | MCU runtime 미명시 | 25 ms inference, 약 300 ms sensing-to-alert | 평균 latency만 있음; `B` | End-to-end pipeline과 network interference 분해 참고 |
+| Gupta and Shivhare, Embedded TinyML ESP32 | 2025 | four-class vibration FD | ESP32 | MCU runtime 미명시 | 두 model의 on-device latency 비교 | deadline/tail/miss 없음; `B` | Fixed `W=256`, `H=128`, model profile 비교. adaptive sampling 구현은 확인되지 않음 |
+| Lima, Edge Impulse Motor FD | 2025 | broken rotor bar detection | nRF52840 Arduino Nano 33 BLE | MCU runtime 미명시 | W/rate/model/quantization별 target latency | deadline/tail/miss 없음; `B` | `W/H/M` 후보 profile과 subtle-fault utility trade-off 근거 |
+| Alasiry et al., Dual-MCU Monitoring | 2025 | motor multi-sensor threshold monitoring | STM32F103 + ESP32 | MCU runtime 미명시 | sensing/communication 분리, 평균 E2E 402 ms | learned inference와 deadline 정의 없음; `B` | Pipeline interference isolation 참고, 직접 model-selection 비교군은 아님 |
+| Zhan et al., APTL-net | 2026 | edge bearing diagnosis | Jetson Xavier NX | Linux/JetPack/TensorRT | preprocessing 포함 average latency와 online test | deadline/tail/miss 없음; `B` | SoC/Linux `M` profile. Adaptive pruning은 training-time |
+| Garay et al., Multimodal TinyML PdM | 2026 | vibration/acoustic/thermal anomaly detection | Cortex-M4F nodes + gateway/cloud | Arduino Mbed OS | target median latency와 cloud p95/p99 측정 | Local deadline/miss 없음; `B` | Fixed 6 s window와 target-specific model profile, cloud interference 사례 |
+| Langarica et al., Industrial Internet FD | 2020 | industrial motor staged diagnosis | Siemens IoT2040/CMS2000 + server | IoT edge/server stack | 1 Hz DIPCA/RBC 뒤 vibration CNN cascade | stage latency/deadline 없음; `B` | Machine evidence가 expensive stage를 trigger하지만 slack은 보지 않음 |
+| Shan et al., CS-DKELM | 2022 | rotating machinery fault diagnosis | Zynq UltraScale+ MPSoC | Linux | compressed sampling과 average diagnosis time | physical average 0.17 s로 100 ms 주장과 불일치; `B` | Input compression을 fidelity-cost mode로 보는 SoC 비교군 |
+| Sayghe, Physics-Aware Transformer | 2026 | variable-condition bearing FD | Raspberry Pi 4 | Linux/ONNX Runtime | physics-guided patch, average 43.6 ms inference | deadline/tail/miss 없음; `B` | Fault physics가 `W` 후보의 최소 정보량을 제한한다는 직접 근거 |
+| Bhaventhan et al., Vibration PdM Edge AI | 2026 | BLDC motor multi-class FD | Raspberry Pi 4 | OS 세부 미명시 | low latency라고 서술 | 수치 timing/W/H가 없어 실시간성 근거 약함; `B` | Pi/Linux FD background, 직접 timing 비교에는 부적합 |
 | 본 연구 KCC 2026 | 2026 | shaft fault diagnosis | STM32F407 MCU | Zephyr RTOS | deadline, jitter, task pipeline 측정 | deadline 기반 실시간성에 가까움 | `W` 축소와 `C(W)` 측정의 출발점 |
 | 본 연구 방향 2 | TBD | vibration FD runtime mode selection | Pi Zero 2W SoC/SBC | Linux + PREEMPT_RT 계획 | `W/H/M` mode feasibility와 schedulability 보장 | 검증해야 할 핵심 주장 | machine condition + system slack 기반 mode selection |
 
@@ -26,6 +40,7 @@ MCU/RTOS와 SoC/Linux는 우선순위가 아니라 플랫폼 태그로 구분한
 | 논문/계열 | 응용 도메인 | 가변 변수 | 주된 가정 | 우리에게 적용 가능? | 가정이 깨지는 지점 |
 | --- | --- | --- | --- | --- | --- |
 | Buttazzo et al., Elastic Task Model / Elastic Scheduling | multimedia, adaptive control, general real-time | period/rate `T` | RTSS 1998 원형과 IEEE TC 2002 확장판. `C` 고정, `T` 가변이며 2002년판은 SRP/resource constraint를 보강 | `H/T`를 elastic variable로 보는 데 직접 유용 | 본 연구는 `C=C(W,M)`도 mode에 따라 바뀜. 두 논문은 별도 독립 기법으로 중복 집계하지 않음 |
+| Buttazzo and Abeni, Adaptive Rate Control | general periodic real-time systems | period/rate `T`, execution-time estimate parameter `k` | 사전 WCET 대신 runtime mean과 observed maximum 사이의 `Q_i`로 estimated load를 계산 | 관측 `C` feedback으로 `H/T`를 조절하는 직접 비교군 | Transient/sporadic miss를 허용하는 soft 접근. `Q_i`는 formal WCET가 아니며 `C(W,M)`, machine condition, transition bound가 없음 |
 | Chantem et al., Generalized Elastic Scheduling | control-oriented periodic tasks | period, utilization, deadline | task model과 performance metric 사이 최적화 | utility와 schedulability를 함께 보는 틀로 유용 | fault diagnosis utility, window `W`, model `M`은 없음 |
 | Tian and Gui, QoC Elastic Scheduling | process control | control period, task utilization | QoC feedback과 workload constraint | diagnosis utility 개념과 비교 가능 | QoC는 control 성능이며 anomaly score와 다름 |
 | Orr et al., Discrete Utilizations | parallel real-time / RTHS | discrete utilization, workload, period | 후보 utilization mode 집합 | `(W,H,M)`을 discrete mode set으로 보는 근거 | mode가 vibration signal semantics를 갖지는 않음 |
@@ -33,6 +48,10 @@ MCU/RTOS와 SoC/Linux는 우선순위가 아니라 플랫폼 태그로 구분한
 | Xu et al., Safety-Aware Period Boosting/Compressing | safety-critical feedback control | sampling period, common scheduling slot, controller gain 선택 | WCET와 plant safety margin 기반 offline schedule synthesis | `H/T` 변경과 weakly-hard deadline miss를 application safety로 제한하는 직접 비교군 | `C_i` 고정, offline 방식이며 vibration `W/M`, anomaly trigger, runtime slack, PREEMPT_RT는 없음 |
 | Li et al., ATER | ROS 2 autonomous-system task chain | sensor sampling rate, timer period, downstream activation rate | message drop, publish/subscribe rate, execution-time distribution | runtime `H/T` 조절과 pipeline 처리율 정렬의 직접 비교군 | empirical feedback이며 deadline/schedulability 보장과 application utility가 없음. Vibration `W/M`, anomaly trigger, explicit slack, PREEMPT_RT도 없음 |
 | Gifford et al., Decntr | multi-mode CPS control | controller, safe sampling period, task/core/cache/BW allocation, transition deadline | mode-change request와 offline safety/resource model | Feasible mode set 합성과 mode 전환 적용의 가장 가까운 구조적 비교군 | Control invariant safety와 known mode graph 중심. Vibration `W`, diagnosis utility/anomaly score, inference `M`, PREEMPT_RT 실측은 없음 |
+| Marinoni and Buttazzo, Elastic DVS | hard real-time control/energy | task period, utilization, discrete CPU speed | 최고 speed feasibility, WCET와 discrete operating mode | `H`와 CPU mode 공동 조절 구조에 유용 | Frequency-dependent `C`는 다루지만 vibration `C(W,M)`과 machine condition 없음 |
+| Burgio et al., Adaptive TDMA + Elastic | MPSoC shared-bus real-time | TDMA bus slot, task period | bus bandwidth별 offline WCET table, centralized master | Shared-resource contention에 따라 `C`와 `H`를 연계하는 비교군 | Virtual platform, 중앙 조정, vibration utility 없음 |
+| Wang et al., Dynamic Multiple-Period Reconfiguration | industrial hard real-time scheduling | multiple task periods, safe execution sequence | initial supervisor가 empty일 때 TDES reconfiguration | Endpoint feasibility 외 mode-transition path 검증 근거 | Runtime slack 측정과 `W/M` 없음; 합성의 offline/online 경계 주의 |
+| Baruah, Constrained-Deadline Elastic Tasks | sporadic uniprocessor EDF | task period | processor-demand schedulability requirement | Diagnosis `D<T`에서 utilization만 쓰면 부족하다는 근거 | Fixed `C`, offline assignment, runtime trigger 없음 |
 | 본 연구 | vibration FD | `W`, `H`, `M` | `C(W,M)`과 `T=H/fs`가 함께 변함 | 기존 elastic scheduling의 확장 대상 | schedulability guarantee를 새로 정리해야 함 |
 
 ## 3. Deadline-Miss 대응 비교표

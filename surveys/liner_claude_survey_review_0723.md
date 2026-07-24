@@ -4,6 +4,14 @@
 - 원본 위치: `surveys/source_reports/2026-07-21_liner_claude/`
 - 기준 문서: `surveys/realtime_fault_diagnosis_survey_protocol.md`
 
+## 2026-07-24 원문 판정 업데이트
+
+- 신규 fault-diagnosis 후보 14편의 원문 확보, paper card, comparison table와 O/X matrix 반영을 완료했다.
+- 신규 elastic-scheduling 후보 5편을 모두 확보·카드화했다.
+- Buttazzo and Abeni 2000 `Adaptive Rate Control Through Elastic Scheduling`은 기존 RTSS 1998 `Elastic Task Model for Adaptive Rate Control`과 다른 논문임을 원문으로 확인했다.
+- 신규 19편에서 binary PDF hash 중복은 확인되지 않았다.
+- Fault-diagnosis 14편은 모두 RT 등급 `B`로 판정했다. FreeRTOS/Arduino Mbed OS 사용 사례는 있었지만 explicit task deadline, tail/miss와 schedulability를 함께 제시한 사례는 확인되지 않았다.
+
 ## 1. 자료 성격과 반영 원칙
 
 새 자료는 fault-diagnosis 후보 16편, elastic-scheduling 후보 8편과 이를 종합한 보고서 4종으로 구성된다. 후보 탐색과 연구 질문 구체화에는 유용하지만, AI가 만든 selection rationale과 종합 문장은 원 논문의 대체물이 아니다.
@@ -24,8 +32,8 @@
 
 | 집합 | CSV 행 | 기존 보유·카드화 | 신규 후보 | 현재 판정 |
 | --- | ---: | ---: | ---: | --- |
-| Real-time/embedded fault diagnosis | 16 | 2 | 14 | 원문 검증 대기 |
-| Elastic scheduling | 8 | 3 | 5 | 원문 검증 대기 |
+| Real-time/embedded fault diagnosis | 16 | 2 | 14 | 신규 14편 원문 판정·카드화 완료 |
+| Elastic scheduling | 8 | 3 | 5 | 신규 5편 원문 판정·카드화 완료 |
 
 기존 fault-diagnosis 논문은 Thota et al.의 TinyML bearing FD와 Jalonen et al.의 time-varying-speed FD다. 기존 elastic 논문은 Orr et al. 2020, Salman et al. 2021, Sudvarg et al. 2024다.
 
@@ -58,7 +66,7 @@
 
 ## 5. Fault-Diagnosis 후보 우선순위
 
-아래 title, date와 rationale은 CSV에서 가져온 후보 metadata다. 원문 확인 전 확정 인용으로 사용하지 않는다.
+아래 우선순위는 원문 확보 전 계획 기록이다. 2026-07-24 신규 14편의 판정을 완료했으며 최종 판정은 각 paper card와 `surveys/realtime_fault_diagnosis_survey_protocol.md`를 사용한다.
 
 후보 우선순위는 플랫폼보다 `fault-diagnosis domain`, `W/H/M`, `q/S`, deadline과 guarantee에 얼마나 직접 답하는지로 정한다. 플랫폼은 별도 태그로 기록해 MCU/RTOS와 SoC/Linux의 실행 모델 차이를 비교한다.
 
@@ -92,7 +100,7 @@ P0는 플랫폼과 관계없이 fault diagnosis의 runtime variable, trigger와 
 | 기존 | Orr et al. 2020, Discrete Utilizations | Period와 computational workload의 후보 집합, guarantee 조건 |
 | 기존 | Salman et al. 2021, Compositional Real-Time Systems | Local period adaptation과 system bandwidth 요청 |
 | 기존 | Sudvarg et al. 2024, Harmonic Task Systems | Offline table과 online adaptation complexity |
-| P0 | Buttazzo and Abeni 2000, Adaptive Rate Control Through Elastic Scheduling | Measured execution-time feedback가 guarantee와 어떻게 공존하는지 |
+| 완료 | Buttazzo and Abeni 2000, Adaptive Rate Control Through Elastic Scheduling | Observed execution-time feedback는 estimated utilization을 조절하지만 transient/sporadic miss를 허용함 |
 | P0 | Wang et al. 2016, Dynamic Multiple-Period Reconfiguration | Safe transition path와 mode-change transient 처리 |
 | P0 | Baruah 2023, Constrained-Deadline Elastic Tasks | `D<T`, processor-demand analysis와 period selection |
 | P1 | Marinoni and Buttazzo 2007, Elastic DVS Management | Discrete speed와 period mode, WCET 가정 |
@@ -114,8 +122,8 @@ P0는 플랫폼과 관계없이 fault diagnosis의 runtime variable, trigger와 
 
 ## 8. 다음 반영 순서
 
-1. P0 fault-diagnosis 후보 원문 확보와 판정
-2. Buttazzo-Abeni 2000, Wang 2016, Baruah 2023 원문 확보
-3. 원문 확인이 끝난 논문만 paper card와 O/X matrix에 추가
-4. `SCHED_FIFO`, implicit deadline, CPU-only를 연구 결정으로 확정하기 전 실험·정식화 조건 검토
-5. P0 판정 후 novelty 문구와 원고 related-work table 갱신
+1. Buttazzo-Abeni 2000의 observed execution-time feedback를 본 연구의 `C(W,M)` profile과 비교하고 hard/soft guarantee 경계를 결정
+2. Physics-derived minimum `W`를 hard admissibility constraint 또는 utility term 중 어디에 둘지 결정
+3. `D=T`와 `D<T` 중 application freshness에 맞는 task model을 정하고 PDA 필요 여부 결정
+4. `SCHED_FIFO`, `SCHED_DEADLINE`, CPU-only를 연구 결정으로 확정하기 전 Pi Zero 2W task model과 측정 결과 검토
+5. 추가 systematic search로 현재 14편 집합 밖의 deadline/scheduling 기반 vibration FD 반례 탐색
