@@ -112,7 +112,192 @@ Buttazzo 1998 (원형: spring, period compression, EDF/RM bound)
 
 ---
 
-## 참고문헌
+## Section 3: 실제 적용 5편 심층 분석
+
+> 각 논문의 주된 가정과 접근 방법을 단계별로 정리한다.  
+> 표(Section 2)의 한 줄 gap과 함께 읽으면 본 연구 차별화 지점이 명확해진다.
+
+---
+
+### [15] Burgio et al. — Adaptive TDMA Bus Allocation and Elastic Scheduling (ICCD 2010)
+
+#### 주된 가정
+
+- 플랫폼: 다수의 core가 STBus TDMA 공유 버스로 통신하는 MPSoC. 각 core는 ERIKA RTOS + EDF 스케줄러.
+- bus allocation(TDMA slot 수)에 따라 각 task의 C가 달라진다. 그러나 이 C 값들은 offline profiling으로 미리 측정해 **lookup table**로 저장한다. runtime에 C를 새로 측정하지 않는다.
+- 각 task는 elastic task model: `(C_i, T_min,i, T_max,i, E_i)`. C_i는 bus allocation별 table에서 선택.
+- 중앙 master node가 존재하며 모든 core의 bandwidth 요청을 집중해 조정한다.
+- QoS 목표는 가중 합으로 정의되며, master는 이 목표를 기준으로 TDMA wheel을 재배분한다.
+
+#### 접근 방법
+
+1. 각 core의 periodic task가 sampling period를 바꾸려 할 때, bus bandwidth 수요가 달라지면 bandwidth 변경 요청을 master에게 보낸다.
+2. 중앙 master가 모든 core의 요청을 수집하고 QoS-aware 알고리즘으로 TDMA slot을 재배분한다.
+3. 각 core는 새로 배정받은 bus allocation을 lookup table에서 찾아 해당 C_i를 가져온다.
+4. 각 core는 lookup한 C_i로 elastic scheduling 알고리즘을 로컬 실행해 period를 재계산한다.
+5. coordination overhead는 실험에서 task computation time의 5% 미만으로 보고한다.
+
+#### 보장 방식
+
+- TDMA wheel → bus predictability (slot별 격리)
+- offline WCET table → 각 core의 C 상한 보장
+- elastic utilization bound → EDF schedulability
+
+#### 본 연구와의 거리
+
+C가 bus allocation에 따라 달라진다는 점은 본 연구의 C(W,M)와 구조적으로 유사하다. 그러나 C 결정이 offline table + 중앙 master 방식이고, vibration window W, 기계 상태 z, PREEMPT_RT single-SBC 구조와는 전혀 다르다.
+
+---
+
+### [16] Salman et al. — Scheduling Elastic Applications in Compositional Real-Time Systems (ETFA 2021)
+
+#### 주된 가정
+
+- 시스템 구조: 상위 system level + 하위 application level의 two-level 계층.
+- application은 elastic task model (period 조절 가능).
+- system은 Periodic Resource Model(PRM): 각 application에 bandwidth Θ와 period Π로 정의된 reservation 할당.
+- uniprocessor 전제. 분산 CPS이지만 schedulability 분석은 compositional 방식으로 uniprocessor 단위로 처리.
+- 기본 전략: application level에서 먼저 대응하고, 실패할 때만 system level 조정 요청.
+- C는 고정 WCET. 가변 변수는 period T와 reservation bandwidth뿐.
+
+#### 접근 방법
+
+1. task execution time이 증가하거나 period 변경 요청이 발생하면, application elastic scheduler가 먼저 period T를 늘려 utilization bound를 만족하려 시도한다.
+2. application level 조절로 해결되면 system level은 변경하지 않는다. 다른 application에 영향 없음.
+3. application level 조절 실패 시(T_max에 도달해도 schedulable하지 않으면): system scheduler에 reservation bandwidth 증가 요청.
+4. system scheduler가 PRM 조건(supply utilization bound) 안에서 해당 application의 Θ를 늘리고, 필요하면 다른 application의 Θ를 줄인다.
+5. 재조정 후 각 application이 elastic scheduling을 재수행해 period를 다시 설정한다.
+
+#### 보장 방식
+
+- application level: elastic utilization bound 만족
+- system level: PRM supply utilization 조건 만족
+- 두 조건이 모두 충족될 때 schedulability 보장
+
+#### 본 연구와의 거리
+
+local adaptation → system-level adaptation 순서는 본 연구의 feasible mode set 필터링 구조와 개념이 유사하다. 그러나 reservation bandwidth ↔ system slack S의 mapping은 별도 정의가 필요하고, W/M/z는 전혀 없다.
+
+---
+
+### [17] Gifford et al. (Decntr) — Optimizing Safety and Schedulability with Multi-Mode Control and Resource Allocation Co-Design (RTAS 2024)
+
+#### 주된 가정
+
+- plant는 **선형 시스템**. mode가 바뀌면 controller도 교체되며 controlled invariant set으로 safety를 정의한다.
+- mode graph가 사전에 완전히 알려져 있음. runtime에 새 mode가 생기지 않는다.
+- task WCET: cache/bandwidth allocation에 따라 달라지는 함수 `e_i(c, w)`. 각 (c, w) 조합은 offline profiling으로 측정해 table화.
+- multicore (16-core Intel Xeon): Intel CAT + MemGuard로 cache·bandwidth 격리.
+- carry-over job의 worst-case demand를 분석 시점에 알 수 있다고 가정.
+- transition마다 safe deadline relaxation 범위가 linear invariant set 조건으로 제한됨.
+
+#### 접근 방법
+
+**Offline co-design phase:**
+
+1. 각 mode에서 controlled invariant set 조건을 만족하는 controller 후보와 safe sampling period 범위를 계산한다.
+2. task의 resource sensitivity를 profiling하고 resource-sensitive task는 전용 core에 배치한다. 나머지는 공유 core에 배치.
+3. 각 core의 cache partition과 memory bandwidth를 CAT·MemGuard로 배분한다.
+4. 각 mode에서 EDF demand-bound test(DBF)를 수행해 schedulability 검증.
+5. schedulable하지 않으면: task split/migrate, safe 범위 안에서 period 늘림, carry-over job deadline relaxation을 순서대로 시도.
+6. 각 transition에서 carry-over demand + new-mode demand를 합산한 DBF test 수행.
+7. 실패하면 new-mode period를 safe 범위 안에서 조정하거나 추가 deadline relaxation 적용.
+
+**Runtime phase:**
+
+1. mode-change event 발생 (예: 장애물 감지 신호).
+2. 사전에 합성한 해당 mode의 resource allocation을 즉시 적용.
+3. carry-over job의 deadline을 offline에서 계산한 safe 범위 안에서 조정.
+4. 이후 new-mode의 normal EDF schedule로 전환.
+
+#### 보장 방식
+
+- 각 mode: EDF DBF schedulability (per-mode isolated analysis)
+- 각 transition: carry-over + new-mode 복합 DBF
+- control safety: linear plant invariant set에 대한 증명 (가정: linear plant, known mode graph)
+
+#### 본 연구와의 거리
+
+**구조적으로 가장 가까운 비교군.** feasible set을 offline에서 합성하고 runtime event로 적용하는 방식이 A_feasible(k) + runtime policy와 같은 결을 가진다. 차이는 세 가지다: control invariant set 대신 diagnosis utility Q(a,z), linear plant 대신 vibration fault-detection 문제, multicore resource co-design 대신 단일 SBC에서 W/H/M 선택.
+
+---
+
+### [18] Xu et al. (Safety-Aware) — Safety-Aware Implementation of Control Tasks via Scheduling with Period Boosting and Compressing (RTCSA 2023)
+
+#### 주된 가정
+
+- 여러 control task의 sampling period가 서로 다르며, 일부 조합은 utilization이 1을 초과한다.
+- task별 WCET C_i, 기존 period P_i, plant safety margin `d_i^safe`가 모두 사전에 알려져 있다.
+- plant는 finite horizon trajectory deviation으로 안전성을 판단할 수 있는 선형 시스템.
+- common period를 채택하는 time-triggered schedule(LET model)을 사용한다.
+- **runtime trigger 없음**: 전 과정이 offline synthesis.
+- deadline miss를 일부 허용하되 physical safety property로 허용 범위를 제한한다(weakly-hard).
+
+#### 접근 방법
+
+1. WCET C_i를 내림차순으로 정렬한다.
+2. 상위 k개의 WCET 합을 common period 후보로 생성한다: `P_k^C = Σ_{i≤k} C_i`.
+3. 각 period 후보에서 plant를 re-discretize한다.
+4. 원래 controller gain을 사용할 때 finite horizon 동안 trajectory deviation이 safety margin 이내인지 over-approximation으로 확인한다.
+5. 실패 시: 새 period에 맞게 controller gain을 재계산하고 다시 확인한다.
+6. 안전하다고 판정된 period에서 weakly-hard hit/miss constraint를 구한다 (어느 miss 패턴까지 허용 가능한지).
+7. 모든 task의 constraint를 만족하는 time-triggered schedule을 automata-based synthesizer로 합성한다.
+8. 평가 예시: 5개 task, 모든 deadline 요구 시 utilization > 1인 상황에서 28 ms common period에 safe schedule 발견, 40 ms에서는 controller gain 재계산 필요.
+
+#### 보장 방식
+
+- finite horizon trajectory deviation ≤ `d_i^safe` → safe 판정 (over-approximation이므로 safe 판정은 보장, 실패는 unsafe를 의미하지 않음)
+- automata로 합성된 weakly-hard schedule → deadline miss 패턴이 safety 범위 내
+- 하드웨어 실험 없음. Julia 구현, automotive control model 시뮬레이션.
+
+#### 본 연구와의 거리
+
+weakly-hard miss와 application-level safety를 연결하는 방법론은 본 연구에서 일부 deadline miss를 허용할 경우의 이론적 근거가 된다. 그러나 본 연구의 diagnosis utility Q(a,z), runtime slack S, W/H/M 선택은 없고, 전 과정이 offline이어서 runtime 조건 변화에 대응하지 못한다.
+
+---
+
+### [19] Li et al. (ATER) — Adaptive Task Execution Rate Regulation for Enhanced Real-Time Performance in ROS 2 (RTCSA 2025)
+
+#### 주된 가정
+
+- 플랫폼: ROS 2 publish-subscribe task chain. timer task가 선두에서 sensor sampling rate를 결정하고 downstream subscription callback들이 연쇄 활성화된다.
+- execution time은 runtime에 **정규분포 (mean/std)** 로 모델링 가능하다고 가정한다.
+- message drop이 bottleneck의 주요 지표다.
+- source code를 수정하지 않고 외부 monitoring만으로 rate를 조절할 수 있다.
+- rate의 상한은 사전에 설정된다. hard deadline, formal schedulability 보장은 요구하지 않는다.
+- ROS 2 executor의 내부 scheduling 자체는 변경하지 않는다.
+
+#### 접근 방법
+
+**Runtime observer (LTTng live trace)**:
+- observation period마다 각 executor에서 task/message event를 수집한다.
+- 각 subscription의 publication rate, message drop 수, buffer 상태, execution time 분포를 측정한다.
+
+**Rate 조절 판단 (2가지 지표)**:
+
+1. MDI (Message Drop Indicator):
+   - `drop 수 / 처리 가능한 message 수 > threshold θ_i` → bottleneck 존재, sampling rate를 낮춤.
+
+2. ISRI (Increasing Sampling Rate Indicator):
+   - 평균 execution time이 과거 분포보다 충분히 작아졌고
+   - 현재 publication rate < 처리 능력이면 → rate를 사전 설정 상한까지 높임.
+
+**Rate 계산 및 적용**:
+- 예상 처리율과 buffer backlog를 기반으로 새 sampling rate `R_tmr`를 계산한다.
+- timer task의 period를 `1/R_tmr`로 reset한다. downstream callback chain 전체 activation rate가 간접 조절된다.
+- timer-reset overhead: ~80 μs.
+
+#### 보장 방식
+
+- empirical feedback regulation. hard deadline, utilization bound, WCET 기반 admission 없음.
+- message drop 감소, CPU 낭비 감소, end-to-end average/max latency 개선을 실측으로 확인.
+- rate가 사전 설정 상한을 초과하지 않음은 보장하지만 application utility 보장은 없음.
+
+#### 본 연구와의 거리
+
+**diagnosis period H 조절의 가장 직접적인 비교군.** runtime 관측 실행시간과 backlog로 rate를 조절하는 방식은 본 연구의 시스템 슬랙 S 기반 모드 전환과 같은 축에 있다. 차이: ATER는 empirical soft RT이고 anomaly-driven utility가 없으며 feasible-mode admission이 없다. 또한 sampling rate 감소에 따른 정보 손실(진단 품질 저하)을 평가하지 않는다.
+
+---
 
 ### 이론 발전 계보
 
