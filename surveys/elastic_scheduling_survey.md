@@ -109,3 +109,49 @@ Buttazzo 1998 (원형: spring, period compression, EDF/RM bound)
 - **H 조절 비교군**: ATER 2025 (rate regulation, empirical)
 - **application safety 비교군**: Safety-Aware 2023 (weakly-hard miss 허용 논거)
 - **알고리즘 overhead**: Sudvarg 2021, LITES 2025 (runtime mode switch 비용 배경)
+
+---
+
+## 참고문헌
+
+### 이론 발전 계보
+
+[1] G.C. Buttazzo, G. Lipari, L. Abeni, "Elastic Task Model For Adaptive Rate Control," Proc. 19th IEEE Real-Time Systems Symposium (RTSS), 1998
+
+[2] G.C. Buttazzo, G. Lipari, M. Caccamo, L. Abeni, "Elastic Scheduling for Flexible Workload Management," IEEE Transactions on Computers, Vol. 51, No. 3, 2002
+
+[3] G. Buttazzo, L. Abeni, "Adaptive Rate Control through Elastic Scheduling," Proc. 39th IEEE Conference on Decision and Control (CDC), 2000
+
+[4] T. Chantem, X.S. Hu, M.D. Lemmon, "Generalized Elastic Scheduling for Real-Time Tasks," IEEE Transactions on Computers, 2009
+
+[5] Y.-C. Tian, L. Gui, "QoC Elastic Scheduling for Real-Time Control Systems," Real-Time Systems, 2011
+
+[6] M. Marinoni, G. Buttazzo, "Elastic DVS Management in Processors With Discrete Voltage/Frequency Modes," IEEE Transactions on Industrial Informatics, 2007
+
+[7] X. Wang, Z. Li, W.M. Wonham, "Dynamic Multiple-Period Reconfiguration of Real-Time Scheduling Based on Timed DES Supervisory Control," IEEE Transactions on Industrial Informatics, 2016
+
+[8] S. Baruah, "Improved Uniprocessor Scheduling of Systems of Sporadic Constrained-Deadline Elastic Tasks," RTNS 2023
+
+[9] M. Sudvarg, C. Gill, S. Baruah, "Linear-Time Admission Control for Elastic Scheduling," Real-Time Systems, 2021
+
+[10] M. Sudvarg, C. Gill, S. Baruah, "Improved Elastic Scheduling Algorithms for Implicit-Deadline Tasks," Leibniz Transactions on Embedded Systems (LITES), 2025
+
+[11] M. Sudvarg, A. Li, D. Wang, S. Baruah, J. Buhler, C. Gill, N. Zhang, P. Ekberg, "Elastic Scheduling for Harmonic Task Systems," RTAS 2024
+
+[12] M. Sudvarg, D. Wang, J. Buhler, C. Gill, "Subtask-Level Elastic Scheduling," RTSS 2024
+
+[13] M.B. Sudvarg, "Improved Models of Elastic Scheduling," PhD Dissertation, 2024
+
+[14] J. Orr, J. Condori Uribe, C. Gill, S. Baruah, K. Agrawal, S. Dyke, A. Prakash, I. Bate, C. Wong, S. Adhikari, "Elastic Scheduling of Parallel Real-Time Tasks with Discrete Utilizations," RTNS 2020
+
+### 실제 적용 사례
+
+[15] P. Burgio, M. Ruggiero, F. Esposito, M. Marinoni, G. Buttazzo, L. Benini, "Adaptive TDMA Bus Allocation and Elastic Scheduling," IEEE International Conference on Computer Design (ICCD), 2010
+
+[16] S.M. Salman, S. Mubeen, F. Markovic, A.V. Papadopoulos, T. Nolte, "Scheduling Elastic Applications in Compositional Real-Time Systems," ETFA 2021
+
+[17] R. Gifford, F. Galarza-Jimenez, L.T.X. Phan, M. Zamani, "Decntr: Optimizing Safety and Schedulability with Multi-Mode Control and Resource Allocation Co-Design," RTAS 2024
+
+[18] S. Xu, B. Ghosh, C. Hobbs, P.S. Thiagarajan, P. Joshi, S. Chakraborty, "Safety-Aware Implementation of Control Tasks via Scheduling with Period Boosting and Compressing," RTCSA 2023
+
+[19] R. Li, Z. Song, M. Lv, J.-M. Wu, C.J. Xue, J. Wang, N. Guan, "ATER: Adaptive Task Execution Rate Regulation for Enhanced Real-Time Performance in ROS 2," RTCSA 2025
