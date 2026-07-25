@@ -131,11 +131,13 @@ Buttazzo 1998 (원형: spring, period compression, EDF/RM bound)
 
 #### 접근 방법
 
-1. 각 core의 periodic task가 sampling period를 바꾸려 할 때, bus bandwidth 수요가 달라지면 bandwidth 변경 요청을 master에게 보낸다.
-2. 중앙 master가 모든 core의 요청을 수집하고 QoS-aware 알고리즘으로 TDMA slot을 재배분한다.
-3. 각 core는 새로 배정받은 bus allocation을 lookup table에서 찾아 해당 C_i를 가져온다.
-4. 각 core는 lookup한 C_i로 elastic scheduling 알고리즘을 로컬 실행해 period를 재계산한다.
-5. coordination overhead는 실험에서 task computation time의 5% 미만으로 보고한다.
+1. 각 core의 periodic task가 sampling period를 바꾸려 할 때, bus bandwidth 수요가 달라지면 bandwidth 변경 요청 R_i를 master(Assigner)에게 보낸다.
+2. Assigner가 모든 core의 요청을 수집하고 **비례 공정 배분** 공식으로 각 core의 service level을 계산한다: `S_i = R_i / Σ R_j`.
+3. Service level은 ZERO~EXTREME의 **7단계 이산 값(Table 1)**으로 양자화된다. 이 양자화가 LUT 크기와 bandwidth 해상도의 tradeoff를 결정한다.
+4. 새 TDMA Time Wheel을 생성해 Bus Arbiter에 적재하고, 각 core에 새 service level을 통보한다.
+5. 각 core는 service level에 해당하는 C_i를 **LUT(offline profiling 결과)**에서 조회한다.
+6. 조회한 C_i로 Buttazzo elastic scheduling 알고리즘(Γ_f·Γ_v 분리, U_i = U_i_max - (U_vmax - Ud + Uf) × e_i/E_v)을 로컬 실행해 period를 재계산한다.
+7. coordination overhead는 실험에서 task computation time의 5% 미만으로 보고한다.
 
 #### 보장 방식
 
@@ -203,12 +205,13 @@ local adaptation → system-level adaptation 순서는 본 연구의 feasible mo
 6. 각 transition에서 carry-over demand + new-mode demand를 합산한 DBF test 수행.
 7. 실패하면 new-mode period를 safe 범위 안에서 조정하거나 추가 deadline relaxation 적용.
 
-**Runtime phase:**
+**Runtime phase (원문 mode-change semantics, 4단계):**
 
-1. mode-change event 발생 (예: 장애물 감지 신호).
-2. 사전에 합성한 해당 mode의 resource allocation을 즉시 적용.
-3. carry-over job의 deadline을 offline에서 계산한 safe 범위 안에서 조정.
-4. 이후 new-mode의 normal EDF schedule로 전환.
+- Step 0: old task 전체와 그 unfinished job을 즉시 drop.
+- Step 1: new task들의 첫 job을 즉시 release.
+- Step 2: carry-over job이 없는 경우, 다음 job을 `p_i^m` 시간 후 release.
+- Step 3: carry-over job이 있는 경우, delayable이면 deadline을 `d_i^c(m',m)`으로 조정. delayable이 아니면 첫 new-mode job deadline을 `d_i(m',m)`으로 조정.
+- 이후 new-mode의 normal EDF schedule로 전환. cache/BW 재배분은 mode-change와 동시에 즉시 적용.
 
 #### 보장 방식
 
@@ -284,8 +287,8 @@ weakly-hard miss와 application-level safety를 연결하는 방법론은 본 �
 
 **Rate 계산 및 적용**:
 - 예상 처리율과 buffer backlog를 기반으로 새 sampling rate `R_tmr`를 계산한다.
-- timer task의 period를 `1/R_tmr`로 reset한다. downstream callback chain 전체 activation rate가 간접 조절된다.
-- timer-reset overhead: ~80 μs.
+- `rclcpp::TimerBase::cancel()`로 기존 timer를 취소하고 새 `R_tmr`로 timer를 재생성한다. downstream callback chain 전체 activation rate가 간접 조절된다.
+- timer-reset overhead: ~80 μs (논문 보고값).
 
 #### 보장 방식
 
