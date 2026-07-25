@@ -28,7 +28,7 @@
 ## KCC 2026 → KSC 2026 연결
 
 KCC 2026에서 확인한 것:
-- STM32F407 + Zephyr RTOS (MCU, 하드웨어 RT 보장)
+- STM32F407 + Zephyr RTOS에서 deadline과 jitter를 측정한 선행결과
 - W=512, 40.3ms, deadline 64ms 만족, 정확도 99.30%
 - 핵심 발견: window 축소 시 latency가 superlinear 감소 (DWConv O(W²))
 
@@ -63,7 +63,7 @@ KSC 2026에서 다루는 것:
 ```
 1. 서론
    - 엣지 결함 진단의 플랫폼 선택 문제
-   - MCU(Zephyr RT 보장) vs SBC(OS RT 선택 필요)
+   - KCC의 MCU/Zephyr 선행결과에서 SBC/Linux 상위 플랫폼으로 확장
    - PREEMPT_RT가 실제 필요한가? → 본 논문의 질문
 
 2. 배경

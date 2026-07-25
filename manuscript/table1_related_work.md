@@ -19,7 +19,7 @@
 | Embedded fault diagnosis deployment | Thota et al.; Ma et al.; Lee and Kim; Choi et al.; Yang et al.; He et al.; Zhan et al.; Garay et al.; Langarica et al. | Model architecture, fixed input/window, compression/pruning, end-edge stage | Mostly offline model/input design; 일부 confidence/fault-evidence cascade | MCU/SBC/SoC inference, TinyML, RTOS/Linux, target and end-to-end latency | Resource-constrained FD 배경과 일부 runtime cascade는 직접적이나 schedulability, deadline miss/jitter, q+S joint `W/H/M`, PREEMPT_RT 비교는 확인되지 않음 |
 | PREEMPT_RT and SBC platform studies | Adam et al.; Dewit et al.; Vaghasiya; De Marco et al. | Kernel configuration, PREEMPT_RT 여부, TFLite/thread/configuration | Offline benchmarking/configuration search | Raspberry Pi/BeagleBone, cyclictest/latency, TFLite inference, CPU/temp/memory metrics | Platform timing 근거는 제공하지만 vibration FD algorithm, `W/H/M` adaptation, machine condition trigger는 다루지 않음 |
 | Miscellaneous real-time scheduling | Pathan; Tang et al.; Guan et al.; self-suspending EDF work | Ready queue, priority inheritance, federated resources, analysis interval | Scheduling events, data propagation, criticality, self-suspension | EDF overhead, end-to-end latency, DAG scheduling, self-suspension analysis | Pipeline timing 해석의 보조 배경. 본 연구 novelty의 직접 비교군은 아님 |
-| This work | 본 연구 | `W` window size, `H` diagnosis period/hop size, `M` model | Machine condition and system slack | MCU/SBC, RTOS/PREEMPT_RT, deadline-aware vibration fault diagnosis | 현재 연구에서 검증해야 할 주장 |
+| This work | 본 연구 | `W` window size, `H` diagnosis period/hop size, `M` model | Machine condition and system slack | Raspberry Pi Zero 2W, Linux/PREEMPT_RT, deadline-aware vibration fault diagnosis | 현재 연구에서 검증해야 할 주장 |
 
 ## Caption Draft
 

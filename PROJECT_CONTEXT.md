@@ -22,6 +22,11 @@
 핵심 아이디어: **adaptive window 연구(정확도 축) + elastic scheduling(시스템 축)을 결합**하여,
 진단 task의 입력 윈도우·진단 주기·모델을 기계 상태에 따라 runtime에 조율한다.
 
+현재 구현·평가 플랫폼은 **Raspberry Pi Zero 2W + Raspberry Pi OS/Linux**이며,
+일반 커널과 **PREEMPT_RT** 커널을 비교한다.
+STM32F407 + Zephyr RTOS 결과는 KCC 2026에서 완료한 선행연구이자 상위 플랫폼 확장의 motivation으로만 사용한다.
+현재 연구에서 MCU + RTOS를 추가 평가 플랫폼으로 사용하지 않는다.
+
 ---
 
 ## 3. 연구 단계
@@ -103,7 +108,7 @@ KCC 데이터에서 비중첩 window를 가정하면 `T=W/fs`이고, max latency
 | elastic-DNN (FLEX 등) | batch, fusion | 자원 경합 | edge GPU | perception |
 | Canvas/image resizing | 입력 크기 | criticality | embedded GPU | vision |
 | AIL / ADW | window | 없음 (offline) | — | fault diagnosis |
-| **본 연구** | **W + H + M 동시** | **기계 상태 + slack** | **MCU/SBC + PREEMPT_RT** | **진동 FD** |
+| **본 연구** | **W + H + M 동시** | **기계 상태 + slack** | **Pi Zero 2W + Linux/PREEMPT_RT** | **진동 FD** |
 
 → 마지막 행이 비어있는 조합 = 연구 자리. 최신 동향(AI-for-RT, 가변/stochastic task, elastic)의 교차점.
 

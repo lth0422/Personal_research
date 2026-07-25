@@ -21,4 +21,4 @@
 
 ## 불확실한 점
 - 확인 필요: `up to 15.8%` gain과 `3.6% point gain`은 비교 기준과 figure/table 조건을 원고 인용 전 재확인해야 한다.
-- 확인 필요: MacBook Pro 기반 inference time이므로 MCU/SBC/PREEMPT_RT 결과와 직접 비교하지 않도록 주의해야 한다.
+- 확인 필요: MacBook Pro 기반 inference time이므로 Pi Zero 2W/PREEMPT_RT 결과와 직접 비교하지 않도록 주의해야 한다.

@@ -302,13 +302,13 @@ GAP-01 완료 조건은 논문 수 자체가 아니다. 최근 문헌에서 real
 
 ## 10. 연구 스코프 축소 제안
 
-현재 `W/H/M + q/S + MCU/SBC + RTOS/PREEMPT_RT`를 모두 한 번에 검증하면 변수와 baseline 수가 급격히 늘어난다. 첫 번째 완결 단위는 다음처럼 줄이는 것이 적절하다.
+현재 `W/H/M + q/S + Linux/PREEMPT_RT`를 모두 한 번에 검증해도 변수와 baseline 수가 급격히 늘어난다. 평가 플랫폼은 Pi Zero 2W로 고정하고 첫 번째 완결 단위는 다음처럼 줄이는 것이 적절하다.
 
 ### 권장 코어
 
 > Vibration fault diagnosis에서 machine condition `q`는 mode utility 순위를 정하고, system slack `S`는 deadline-feasible mode를 제한한다. Scheduler는 사전 검증한 이산 `(W,H)` mode 중 하나를 runtime에 선택한다.
 
-- 고정: sampling frequency, sensor pipeline, 첫 model architecture, platform/RTOS
+- 고정: Raspberry Pi Zero 2W, sampling frequency, sensor pipeline, 첫 model architecture
 - 핵심 가변 변수: `W`와 `H`
 - 핵심 trigger: `q`와 `S`
 - 핵심 보장 질문: 선택 가능한 모든 mode와 mode transition이 정의한 deadline 조건을 만족하는가?

@@ -52,11 +52,12 @@ Codex는 작업 시작 전에 아래 파일을 먼저 확인한다.
 
 핵심 방향은 다음과 같다.
 
-* STM32F407 + Zephyr RTOS 기반 MCU 실시간 추론 결과를 출발점으로 삼는다.
-* Pi Zero 2W, 일반 Linux, PREEMPT_RT 환경에서 실시간성을 비교한다.
+* STM32F407 + Zephyr RTOS 기반 KCC 결과는 완료된 선행연구와 motivation으로 사용한다.
+* 현재 구현·평가는 Pi Zero 2W의 일반 Linux와 PREEMPT_RT 환경에서 수행한다.
+* MCU + RTOS를 현재 연구의 추가 평가 플랫폼으로 사용하지 않는다.
 * 진동 센서 기반 fault diagnosis에서 입력 window size, 진단 주기, 모델을 조절 가능한 변수로 본다.
 * machine condition과 system slack을 함께 고려하는 runtime mode selection 또는 elastic scheduling 정책으로 확장한다.
-* 연구 관점은 AI 모델 자체 최적화보다 RTOS, scheduling, deadline, jitter, resource constraint에 가깝다.
+* 연구 관점은 AI 모델 자체 최적화보다 Linux/PREEMPT_RT scheduling, deadline, jitter, resource constraint에 가깝다.
 
 ---
 

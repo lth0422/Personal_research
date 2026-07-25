@@ -28,7 +28,7 @@
 - **보장 방식**: Eq. 3을 만족하고 측정 기반 execution bound가 유효하다는 조건에서 EDF-MandFirst와 EDF-Slack의 subjob deadline 미스를 방지하는 sufficient condition을 증명한다. Runtime에는 완료된 mandatory subtask의 실제 cost로 slack을 reclaim한다.
 
 ## 내 연구 관점
-- 한 줄 gap (이 논문이 안 한 것): System slack 기반 input-scale selection은 직접 다루지만 spatial vision input과 GPU DNN에 한정되며, vibration temporal window `W`, diagnosis period `H`, model `M`, anomaly-based machine condition, MCU/SBC PREEMPT_RT는 다루지 않는다.
+- 한 줄 gap (이 논문이 안 한 것): System slack 기반 input-scale selection은 직접 다루지만 spatial vision input과 GPU DNN에 한정되며, vibration temporal window `W`, diagnosis period `H`, model `M`, anomaly-based machine condition, Pi Zero 2W PREEMPT_RT는 다루지 않는다.
 - 내 연구에 쓸 곳: `system slack -> input fidelity` 정책과 mode-dependent `C(input size)`의 강한 직접 비교군이다. 본 연구의 차별점은 image scale이 아닌 vibration information window를 조절하고, machine condition과 slack을 함께 사용하며 `H/M`까지 공동 선택하는 데 두어야 한다.
 - 인용할 문장 (있으면, 15단어 이내): "adaptively selects the scales of optional sub-tasks at run-time"
 

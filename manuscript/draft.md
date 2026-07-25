@@ -17,9 +17,9 @@ Machine- and Slack-Aware Runtime Mode Selection for Deadline-Aware Vibration Fau
 
 Vibration-based fault diagnosis on resource-constrained edge devices must balance diagnostic quality and timing predictability. Prior work has studied elastic scheduling for adapting task periods under system overload, adaptive input sizing for perception or fault diagnosis, and deadline-aware DNN serving for selecting model depth, batching, or offloading policies. However, these directions usually treat machine condition, input window size, diagnosis period, model selection, and operating-system timing behavior separately.
 
-This paper studies a runtime mode-selection approach for deadline-aware vibration fault diagnosis on embedded and edge platforms. The target diagnosis task is represented by a mode tuple consisting of window size `W`, diagnosis period or hop size `H`, and model `M`. The key idea is to select the diagnosis mode using both machine condition and system slack: normal conditions can use lighter modes to preserve slack, while suspicious conditions can switch to more informative modes when timing constraints allow. The formulation connects diagnostic utility with real-time feasibility by considering the execution cost `C(W,M)`, deadline `D`, and elastic utilization constraint.
+This paper studies a runtime mode-selection approach for deadline-aware vibration fault diagnosis on a Raspberry Pi Zero 2W. The target diagnosis task is represented by a mode tuple consisting of window size `W`, diagnosis period or hop size `H`, and model `M`. The key idea is to select the diagnosis mode using both machine condition and system slack: normal conditions can use lighter modes to preserve slack, while suspicious conditions can switch to more informative modes when timing constraints allow. The formulation connects diagnostic utility with real-time feasibility by considering the execution cost `C(W,M)`, deadline `D`, and elastic utilization constraint.
 
-The implementation and evaluation are planned on `TBD` platforms, including Raspberry Pi Zero 2W with Linux and PREEMPT_RT. The evaluation will compare timing behavior under different load conditions using latency, jitter, deadline miss, and diagnostic performance metrics. The goal is not to propose a new fault diagnosis neural network, but to provide a system-level runtime policy that coordinates diagnosis fidelity and real-time schedulability for vibration fault diagnosis.
+The implementation and evaluation are planned on a Raspberry Pi Zero 2W with vanilla Linux and PREEMPT_RT. The evaluation will compare timing behavior under different load conditions using latency, jitter, deadline miss, and diagnostic performance metrics. The goal is not to propose a new fault diagnosis neural network, but to provide a system-level runtime policy that coordinates diagnosis fidelity and real-time schedulability for vibration fault diagnosis.
 
 ## Abstract Notes
 
@@ -34,9 +34,9 @@ The implementation and evaluation are planned on `TBD` platforms, including Rasp
 
 제한된 엣지 디바이스에서 진동 기반 결함 진단을 수행하려면 진단 품질과 시간 예측 가능성을 함께 고려해야 한다. 기존 연구는 시스템 과부하 상황에서 task period를 조절하는 elastic scheduling, perception 또는 fault diagnosis를 위한 adaptive input sizing, 그리고 model depth, batching, offloading 정책을 선택하는 deadline-aware DNN serving을 각각 다루어 왔다. 그러나 이러한 연구들은 대체로 기계 상태, 입력 window size, 진단 주기, 모델 선택, 운영체제 수준의 timing behavior를 분리된 문제로 다룬다.
 
-본 연구는 embedded 및 edge platform에서 deadline-aware 진동 결함 진단을 위한 runtime mode-selection 접근을 다룬다. 대상 진단 task는 window size `W`, diagnosis period 또는 hop size `H`, model `M`으로 구성된 mode tuple로 표현된다. 핵심 아이디어는 machine condition과 system slack을 함께 사용하여 진단 mode를 선택하는 것이다. 정상 상태에서는 가벼운 mode를 사용해 slack을 보존하고, 이상 징후가 있는 상태에서는 timing constraint가 허용하는 범위 안에서 더 많은 정보를 사용하는 mode로 전환할 수 있다. 이 정식화는 실행 비용 `C(W,M)`, deadline `D`, elastic utilization constraint를 함께 고려하여 diagnostic utility와 real-time feasibility를 연결한다.
+본 연구는 Raspberry Pi Zero 2W에서 deadline-aware 진동 결함 진단을 위한 runtime mode-selection 접근을 다룬다. 대상 진단 task는 window size `W`, diagnosis period 또는 hop size `H`, model `M`으로 구성된 mode tuple로 표현된다. 핵심 아이디어는 machine condition과 system slack을 함께 사용하여 진단 mode를 선택하는 것이다. 정상 상태에서는 가벼운 mode를 사용해 slack을 보존하고, 이상 징후가 있는 상태에서는 timing constraint가 허용하는 범위 안에서 더 많은 정보를 사용하는 mode로 전환할 수 있다. 이 정식화는 실행 비용 `C(W,M)`, deadline `D`, elastic utilization constraint를 함께 고려하여 diagnostic utility와 real-time feasibility를 연결한다.
 
-구현과 평가는 Raspberry Pi Zero 2W, Linux, PREEMPT_RT를 포함한 `TBD` platform에서 수행할 예정이다. 평가는 서로 다른 부하 조건에서 latency, jitter, deadline miss, diagnostic performance metric을 사용해 timing behavior를 비교한다. 본 연구의 목표는 새로운 fault diagnosis neural network를 제안하는 것이 아니라, 진동 결함 진단에서 diagnosis fidelity와 real-time schedulability를 조율하는 system-level runtime policy를 제시하는 것이다.
+구현과 평가는 Raspberry Pi Zero 2W의 일반 Linux와 PREEMPT_RT에서 수행할 예정이다. 평가는 서로 다른 부하 조건에서 latency, jitter, deadline miss, diagnostic performance metric을 사용해 timing behavior를 비교한다. 본 연구의 목표는 새로운 fault diagnosis neural network를 제안하는 것이 아니라, 진동 결함 진단에서 diagnosis fidelity와 real-time schedulability를 조율하는 system-level runtime policy를 제시하는 것이다.
 
 ## Related Work Draft
 
@@ -54,7 +54,7 @@ Elastic scheduling adjusts task periods, rates, utilizations, or computational w
 
 ### Paragraph 4: Deadline-Aware AI Inference
 
-Deadline-aware AI systems select input resolution, model, exit, stage, batch, mapping, or offloading according to slack, deadlines, queues, and resource contention. DNN-SAM connects reclaimed slack to input fidelity, and SCENIC connects controller capability, heterogeneous mapping, and timing in an offline co-design. This line establishes that `system slack -> quality mode` is not itself new. The remaining research question is how diagnosis-specific temporal fidelity, machine condition, feasible mode selection, and transition guarantees should be combined and validated across real-time execution platforms.
+Deadline-aware AI systems select input resolution, model, exit, stage, batch, mapping, or offloading according to slack, deadlines, queues, and resource contention. DNN-SAM connects reclaimed slack to input fidelity, and SCENIC connects controller capability, heterogeneous mapping, and timing in an offline co-design. This line establishes that `system slack -> quality mode` is not itself new. The remaining research question is how diagnosis-specific temporal fidelity, machine condition, feasible mode selection, and transition guarantees should be combined and validated on a Raspberry Pi Zero 2W with PREEMPT_RT.
 
 ### Paragraph 5: Positioning
 
@@ -76,7 +76,7 @@ Elastic scheduling은 resource demand 변화에 따라 task period, rate, utiliz
 
 ### Paragraph 4: Deadline-Aware AI Inference
 
-Deadline-aware AI system은 slack, deadline, queue와 resource contention에 따라 input resolution, model, exit, stage, batch, mapping 또는 offloading을 선택한다. DNN-SAM은 reclaimed slack을 input fidelity와 연결하고, SCENIC은 controller capability, heterogeneous mapping과 timing을 offline에서 공동 설계한다. 따라서 `system slack -> quality mode` 자체는 새로운 주장이 될 수 없다. 남은 질문은 diagnosis-specific temporal fidelity, machine condition, feasible mode selection과 transition guarantee를 어떻게 결합하고 여러 real-time execution platform에서 검증할 것인가이다.
+Deadline-aware AI system은 slack, deadline, queue와 resource contention에 따라 input resolution, model, exit, stage, batch, mapping 또는 offloading을 선택한다. DNN-SAM은 reclaimed slack을 input fidelity와 연결하고, SCENIC은 controller capability, heterogeneous mapping과 timing을 offline에서 공동 설계한다. 따라서 `system slack -> quality mode` 자체는 새로운 주장이 될 수 없다. 남은 질문은 diagnosis-specific temporal fidelity, machine condition, feasible mode selection과 transition guarantee를 어떻게 결합하고 Pi Zero 2W의 PREEMPT_RT 환경에서 검증할 것인가이다.
 
 ### Paragraph 5: Positioning
 

@@ -285,7 +285,7 @@ Potential additions:
   - More complete load scenarios.
   - Better detection-delay or HI-quality metric.
   - Better ablation: no hysteresis, mean-slack vs p99-slack, condition-only, slack-only.
-  - Optional second platform only if the first platform results are already solid.
+  - Longer repeated runs on Pi Zero 2W under controlled thermal and interference conditions.
 ```
 
 ### February 2027: manuscript maturation
@@ -444,7 +444,7 @@ Optional but helpful:
 - stronger response-time model
 - fallback/admission-control argument
 - artifact/reproducibility package
-- additional platform only if it does not distract from the core claim
+- repeated Pi Zero 2W evaluation across controlled interference conditions
 ```
 
 ### RTCSA minimum viable version
@@ -464,9 +464,9 @@ Required:
 Optional but helpful:
 
 ```text
-- second platform
+- stronger repeated evaluation on Pi Zero 2W
 - more complete diagnostic metrics
-- stronger comparison with RTOS/Zephyr motivation
+- clearer connection to the prior KCC RTOS/Zephyr result
 - deeper manufacturing/fault-diagnosis discussion
 ```
 
@@ -1041,10 +1041,10 @@ Planned platforms:
 ```text
 Raspberry Pi Zero 2W + Linux
 Raspberry Pi Zero 2W + Linux PREEMPT_RT
-TBD additional board: Raspberry Pi 4/5, STM32F407, or other ARM edge platform
 ```
 
 KCC STM32F407 + Zephyr results can be used as motivation or background, but should not be presented as new results for this paper unless carefully integrated.
+MCU + RTOS and an additional SBC are outside the current evaluation scope.
 
 ## 13.2 Workload Interference
 
@@ -1553,9 +1553,10 @@ But do not present KCC results as if they already prove the new RTAS-level contr
 
 ## 20.5 Platform
 
-- Is Raspberry Pi Zero 2W enough for the full evaluation?
-- Should a stronger board like Raspberry Pi 4/5 be added for comparison?
-- Should STM32F407 + Zephyr remain only motivation, or become a second platform?
+- Decision: use Raspberry Pi Zero 2W as the only hardware evaluation platform.
+- Compare vanilla Linux and PREEMPT_RT on the same board.
+- Keep STM32F407 + Zephyr only as KCC prior work and motivation for moving to a higher-level platform.
+- Do not add MCU + RTOS or Raspberry Pi 4/5 unless the research question changes after the current evaluation.
 
 ---
 

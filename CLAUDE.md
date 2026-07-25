@@ -2,6 +2,9 @@
 
 이 repo는 이태훈의 석사 개인연구(실시간 결함 진단 + elastic scheduling) 작업 공간이다.
 
+현재 구현·평가 플랫폼은 Raspberry Pi Zero 2W의 일반 Linux와 PREEMPT_RT다.
+STM32F407 + Zephyr RTOS는 KCC 2026에서 완료한 선행연구이며, 현재 실험 플랫폼에 포함하지 않는다.
+
 ## 작업 시작 전 필수
 
 - **항상 `PROJECT_CONTEXT.md`를 먼저 읽고** 연구 배경·핵심 식·용어를 파악한 뒤 작업한다.

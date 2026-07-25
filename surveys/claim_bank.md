@@ -81,7 +81,7 @@
 
 - System slack으로 input fidelity를 runtime에 선택하면서 deadline schedulability를 유지하는 선행연구가 존재한다.
   - 근거 후보: Kang et al. RTAS 2022 DNN-SAM은 actual mandatory execution 이후 reclaim한 slack으로 optional image scale을 선택한다.
-  - 본 연구 연결: `S -> W`만으로는 novelty가 될 수 없다. 차별점 후보는 vibration temporal window의 signal semantics, machine condition과 slack의 결합, `W/H/M` 공동 선택, MCU/SBC와 PREEMPT_RT 검증이다.
+  - 본 연구 연결: `S -> W`만으로는 novelty가 될 수 없다. 차별점 후보는 vibration temporal window의 signal semantics, machine condition과 slack의 결합, `W/H/M` 공동 선택, Pi Zero 2W와 PREEMPT_RT 검증이다.
   - 주의: DNN-SAM의 sufficient condition은 non-preemptive EDF task model과 측정 기반 maximum execution-time bound에 의존한다. 이를 본 연구의 보장으로 직접 사용할 수 없다.
 
 - Model accuracy와 latency를 따로 최적화하기보다 condition과 physical/application performance를 포함한 capability function으로 mode utility를 정의할 수 있다.
@@ -113,7 +113,7 @@
 - 입력 크기 조절은 vision perception 분야에서 latency/accuracy/deadline trade-off를 만드는 scheduling variable로 사용되어 왔다.
   - 근거 후보: Hu et al. RTCSA 2021, Hu et al. Real-Time Systems 2022, Liu et al. Real-Time Systems 2023, Hu et al. RTAS 2024.
   - 본 연구 연결: vibration fault diagnosis에서는 image size가 아니라 window size W가 입력 크기 역할을 하며, window는 latency뿐 아니라 결함 정보 보존과도 연결된다.
-  - 주의: 위 논문들은 vision domain과 embedded GPU 중심이므로, 본 연구의 MCU/SBC, PREEMPT_RT, vibration FD novelty를 직접 증명하는 근거로 쓰면 안 된다.
+  - 주의: 위 논문들은 vision domain과 embedded GPU 중심이므로, 본 연구의 Pi Zero 2W, PREEMPT_RT, vibration FD novelty를 직접 증명하는 근거로 쓰면 안 된다.
 
 - 기존 image resizing 계열은 criticality, object uncertainty, deadline, workload를 trigger로 사용하지만 machine condition과 system slack을 함께 쓰는 구조는 확인되지 않았다.
   - 근거 후보: 네 편 모두 object criticality 또는 deadline/workload 중심.
@@ -177,5 +177,5 @@
 
 - 원고용 비교표는 개별 논문 나열보다 계열별 variable/trigger/platform/gap을 보여주는 방식이 적절하다.
   - 근거 후보: `manuscript/table1_related_work.md`.
-  - 본 연구 연결: Table 1에서 `W/H/M`, `machine condition + system slack`, `RTOS/PREEMPT_RT` 조합을 한눈에 보이게 할 수 있다.
+  - 본 연구 연결: Table 1에서 `W/H/M`, `machine condition + system slack`, `Pi Zero 2W + PREEMPT_RT` 조합을 한눈에 보이게 할 수 있다.
   - 주의: 대표 논문 목록은 전체 bibliography가 아니므로 본문 related work에서 필요한 논문을 별도로 인용해야 한다.

@@ -218,7 +218,7 @@ S3/S4: S와 deadline이 feasible W/H/M을 제한
                     +
 S5: static mode와 transition의 timing condition을 보장
                     +
-S6: MCU/RTOS 선행 결과와 SoC/Linux 실험에서 검증
+S6: MCU/RTOS 선행 결과를 motivation으로 사용하고 Pi Zero 2W/Linux/PREEMPT_RT에서 검증
 ```
 
 이 구조가 최종 novelty를 보장하지는 않는다. 각 연결이 기존 문헌에 있는지와 실제 실험에서 utility 및 deadline 개선이 나타나는지를 계속 검증해야 한다.

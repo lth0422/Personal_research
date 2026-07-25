@@ -5,8 +5,10 @@
 
 ## 1. Diagnosis Task Model
 
-We consider a vibration-based fault diagnosis task running on a resource-constrained edge device.
+We consider a vibration-based fault diagnosis task running on a Raspberry Pi Zero 2W with Linux or PREEMPT_RT.
 The task repeatedly receives a vibration signal segment, runs inference, and outputs a diagnosis result before its deadline.
+
+The prior STM32F407 + Zephyr result motivates the relationship between window size and execution cost, but the MCU is not an evaluation platform of this study.
 
 Let the raw vibration stream be sampled at frequency:
 

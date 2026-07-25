@@ -85,7 +85,7 @@
 - Rahmath P et al. ACM Computing Surveys 2024는 survey 논문이므로 정량 성능 근거가 아니라 early-exit taxonomy/background 근거로 사용해야 한다.
 - early-exit survey들의 prediction confidence 또는 input complexity trigger를 본 연구의 anomaly score 기반 machine condition trigger와 동일하게 표현하지 않아야 한다.
 - Jalonen et al. ICIT 2024의 `up to 15.8%` gain과 `3.6% point gain`은 비교 기준과 figure/table 조건을 manuscript 인용 전 재확인해야 한다.
-- Jalonen et al. ICIT 2024의 inference time은 MacBook Pro M1 Pro 기반이다. MCU/SBC/PREEMPT_RT 결과와 직접 비교하지 말고, 100 ms acquisition 대비 20.2 ms processing이라는 구조적 참고로만 사용해야 한다.
+- Jalonen et al. ICIT 2024의 inference time은 MacBook Pro M1 Pro 기반이다. Pi Zero 2W/PREEMPT_RT 결과와 직접 비교하지 말고, 100 ms acquisition 대비 20.2 ms processing이라는 구조적 참고로만 사용해야 한다.
 - Adam et al. Electronics 2021의 150 us upper bound, 118 us average maximum latency 등 수치는 platform/kernel/distribution 조건별로 다르므로 manuscript 인용 전 Table 4와 관련 figure를 재확인해야 한다.
 - Raspberry Pi 5 PREEMPT_RT preliminary assessment의 venue가 PDF 안에서 명확히 확인되지 않았다. manuscript 인용 전 출처/venue를 확인해야 한다.
 - Raspberry Pi 5 논문의 stock max 36802 us, RT max 124 us, 294x shorter maximum latency는 Pi 5 + Debian 12 + kernel 6.6.21 + extreme stress 조건이므로 Pi Zero 2W 결과로 일반화하면 안 된다.
