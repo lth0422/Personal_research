@@ -1,6 +1,6 @@
 # Reducing Worst-Case Deadline Failure Probability for EDF Scheduling
 
-- **그룹**: 4 idk_weakly_hard
+- **그룹**: 10 deadline_miss_handling_risk
 - **출처/연도**: RTSS 2025
 - **저자**: Fei Guan, Xu Jiang, Weipeng Jing, Nan Guan
 

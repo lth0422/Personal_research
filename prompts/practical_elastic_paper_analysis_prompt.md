@@ -37,7 +37,7 @@ a*_k = argmax Q(a, z_k),   a ∈ A_feasible(k)
 **서베이 분류 체계 (6섹션):**
 - S3: 탄력적 주기·부하 스케줄링
 - S4: 데드라인 인식 AI 추론
-- S6: 모드 전환·Weakly-Hard
+- S5: 스케줄 가능성·모드 전환·Deadline Miss Semantics
 
 **투고 목표:** RTAS 2027 (stretch) / RTCSA 2027 (main)
 
@@ -118,7 +118,7 @@ schedulability, safety, utility 등을 어떻게 보장하는지, 그 보장이 
 (내 연구에 있고 이 논문에 없는 것, 또는 반대로 이 논문이 다루지 않는 것)
 
 **이 논문을 related work로 쓸 때 적합한 섹션:**
-(S3 / S4 / S6 중 어디에 배치할지, 어떤 맥락에서 인용할지)
+(S3 / S4 / S5 중 어디에 배치할지, 어떤 맥락에서 인용할지)
 
 ---
 

@@ -2,6 +2,8 @@
 
 이 문서는 `decisions/personal_research_summary_0708.md`의 교수님 피드백을 서베이 작업 단위로 바꾼 실행 계획이다.
 
+> 최신 상태: 2026-07-26 기준 PDF 76편과 paper card 76개의 대응을 완료했다. 아래 57편 표기는 2026-07-21 진행 점검 당시의 기록이다.
+
 ## 2026-07-21 진행 점검
 
 상세 점검 결과는 `decisions/survey_alignment_review_0721.md`에 기록했다.

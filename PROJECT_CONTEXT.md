@@ -112,6 +112,8 @@ KCC 데이터에서 비중첩 window를 가정하면 `T=W/fs`이고, max latency
 
 → 마지막 행이 비어있는 조합 = 연구 자리. 최신 동향(AI-for-RT, 가변/stochastic task, elastic)의 교차점.
 
+장기 mode tuple은 `(W,H,M)`으로 유지하되, 첫 구현은 `M`을 고정하고 discrete `(W,H)` mode bank의 feasibility와 runtime selection부터 검증한다. `M`은 필요성과 보장 조건이 확인된 뒤 확장한다.
+
 ---
 
 ## 7. 단기 KSC 2026
@@ -167,6 +169,7 @@ personal-research/
 ├── manuscript/               # ★ 중장기 논문 — 학위논문 (Codex 담당)
 │   ├── draft.md              # W/H/M elastic scheduling (RTAS/RTCSA)
 │   ├── problem_formulation.md
+│   ├── related_work_draft_ko.md
 │   └── table1_related_work.md
 │
 ├── prompts/                  # 재사용 프롬프트
@@ -181,11 +184,28 @@ personal-research/
 
 ## 10. 보유 논문 그룹 (papers/)
 
+연구 질문 중심 섹션은 다음 번호를 단일 기준으로 사용한다.
+
+| 섹션 | 이름 |
+| --- | --- |
+| S1 | Embedded Real-Time Fault Diagnosis |
+| S2 | Adaptive Diagnostic Fidelity |
+| S3 | Elastic Rate and Workload Scheduling |
+| S4 | Deadline-Aware AI Inference and Mode Selection |
+| S5 | Schedulability, Mode Transition, and Miss Semantics |
+| S6 | Runtime Platform and Interference Characterization |
+
+S1~S6는 관련연구 논리를 위한 교차 태그이며, 아래 1~8 그룹은 PDF와 paper card의 보관 위치다.
+
 1. elastic_scheduling — Buttazzo 1998/2002, Chantem 2009, Orr 2020, Salman 2021, Tian 2011, Sudvarg(박사논문/RTAS24/RTSS24/Admission), FLEX
 2. input_adaptive — AIL 2편, ADW, image resizing 4편(Canvas resizing 포함)
 3. rt_dnn_serving — EdgeServing, Pantheon, BCEdge, DEMS-A, Demand Layering, Imprecise Computations, Early-Exit 2편
-4. idk_weakly_hard — IDK 2편, Weakly-Hard CBS Linux, Period Assignment Cascade
+4. cascade_inference — IDK cascade 2편
 5. fault_diagnosis_app — TinyML bearing, Time-Varying Speed FD, lightweight FD
 6. platform_preempt_rt — OSPERT 2024, MDPI ARM 2021, DLR pattern recognition, vision displacement
 7. platform_pi_zero2w — Dolphin whistle, RT object detection
 8. misc_realtime_scheduling — EDF ready queue, mixed-criticality DAG, cause-effect chain latency, self-suspending tasks
+9. weakly_hard_realtime — `(m,K)` 등 bounded deadline-miss 제약을 명시적으로 다루는 논문
+10. deadline_miss_handling_risk — overload 이후 miss 처리, allowable miss, probabilistic deadline-failure risk
+
+Weakly-hard는 S5의 대안적 deadline semantics로 관리한다. 현재 진동 기반 fault diagnosis 연구가 weakly-hard 시스템이라는 application-level 근거는 확인되지 않았으므로 본 연구의 기본 타깃이나 보장으로 전제하지 않는다.

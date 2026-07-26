@@ -1,6 +1,6 @@
 # Optimal Synthesis of Fault-Tolerant IDK Cascades for Real-Time Classification
 
-- **그룹**: 4 idk_weakly_hard
+- **그룹**: 4 cascade_inference
 - **출처/연도**: RTAS 2024
 - **저자**: Sanjoy Baruah, Iain Bate, Alan Burns, Robert I. Davis
 

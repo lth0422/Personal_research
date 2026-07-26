@@ -73,17 +73,28 @@
 - 본 연구와의 연결: runtime에 제한된 계산 자원을 어떤 perception task와 configuration에 배분할지 정한다는 점에서 system slack 기반 mode selection 비교군으로 활용 가능하다.
 - 차이점: 이 계열은 GPU serving, perception workload, ECG/health monitoring 중심이며, vibration window W, diagnosis period H, model M의 공동 선택과 PREEMPT_RT 실시간성은 다루지 않는다. 특히 AMS Heart Disease는 condition-aware이지만 현재 system slack을 함께 쓰는 정책으로 확인되지는 않았다.
 
-### Weakly-Hard and Bounded Deadline Miss
+### Weakly-Hard Deadline Semantics
 
 - Chen et al., RTSS 2025 WiP는 Linux `SCHED_DEADLINE`의 Constant Bandwidth Server를 이용해 `(m,K)` weakly-hard task를 kernel modification 없이 실행하는 user-space API framework를 제안한다.
+- Xu et al., RTCSA 2023은 control-system safety margin으로 허용 가능한 weakly-hard hit/miss pattern을 제한하고 offline schedule을 합성한다.
+- 본 연구와의 연결: 일부 deadline miss를 허용하기로 결정할 경우 비교할 수 있는 대안적 보장 모델이다.
+- 차이점: 현재 조사한 vibration fault diagnosis 문헌에서 `(m,K)` 제약을 채택한 직접 사례는 확인되지 않았다. 따라서 본 연구의 기본 타깃이나 현재 보장으로 전제하지 않는다.
+
+### Deadline-Miss Handling and Risk
+
 - Braun and Altmeyer, RTAS 2025는 STM32와 ThreadX에 rotary-pendulum controller를 구현하고, temporary overload에서 Kill, Skip-Next, Queue와 actuation timing을 비교한다. 전략 효과가 utilization, overload model과 task organization에 민감하며 보편적으로 최적인 조합은 없다고 보고한다.
 - Braun and Altmeyer의 결과는 deadline miss 이후 fallback을 실제 구현에서 비교한다는 점이 중요하다. 다만 proactive schedulability/admission이나 vibration inference의 late-result semantics는 다루지 않으므로 특정 전략의 우위를 본 연구로 일반화하지 않는다.
-- Agrawal et al., RTSS 2024는 time-series input stream에서 연속 입력 간 dependence를 학습해 IDK cascade의 expected response time을 줄이는 runtime algorithm을 제안한다.
-- Baruah et al., RTAS 2024는 classifier가 잘못된 real class를 반환할 수 있는 fault model을 고려해 fault-tolerant IDK cascade를 offline으로 합성한다.
 - Hawila et al., ECRTS 2025는 cascade control task의 period assignment를 stability와 fixed-priority schedulability 제약 아래에서 함께 최적화한다.
 - Guan et al., RTSS 2025는 EDF scheduling에서 worst-case deadline failure probability 분석의 pessimism을 줄이고 active-dropping을 결합한다.
-- 본 연구와의 연결: KSC 2026 실험의 deadline miss rate를 해석할 때 hard real-time zero-miss 관점과 bounded-miss QoS 관점을 구분하는 배경으로 활용 가능하다.
-- 차이점: 이 계열은 task timing guarantee, classifier confidence, cascade synthesis 중심이며, vibration fault diagnosis의 W/H/M 선택, anomaly score trigger, PREEMPT_RT 비교 실험은 다루지 않는다.
+- 본 연구와의 연결: miss 이후 결과를 kill, skip, queue 또는 fallback할 때 application-level consequence와 result age를 함께 평가하는 근거다.
+- 차이점: 주로 control/general scheduling domain이며 vibration fault diagnosis의 허용 miss나 late-result semantics를 직접 제시하지 않는다.
+
+### Deadline-Aware Classifier Cascades
+
+- Agrawal et al., RTSS 2024는 time-series input stream에서 연속 입력 간 dependence를 학습해 IDK cascade의 expected response time을 줄이는 runtime algorithm을 제안한다.
+- Baruah et al., RTAS 2024는 classifier가 잘못된 real class를 반환할 수 있는 fault model을 고려해 fault-tolerant IDK cascade를 offline으로 합성한다.
+- 본 연구와의 연결: classifier/model 순서와 deterministic fallback을 deadline 아래에서 구성하는 S4 비교군이다.
+- 차이점: weakly-hard와 별개이며 vibration fault diagnosis의 `W/H/M`, machine condition, system slack과 PREEMPT_RT를 다루지 않는다.
 
 ### 본 연구와의 연결
 

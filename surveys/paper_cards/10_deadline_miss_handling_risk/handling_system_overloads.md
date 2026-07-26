@@ -1,6 +1,6 @@
 # Handling System Overloads: An Empirical Evaluation of Deadline-Miss Handling Strategies
 
-- **그룹**: 4 idk_weakly_hard
+- **그룹**: 10 deadline_miss_handling_risk
 - **출처/연도**: IEEE 31st Real-Time and Embedded Technology and Applications Symposium, RTAS 2025, DOI 10.1109/RTAS65571.2025.00031
 - **저자**: Tim Braun, Sebastian Altmeyer
 

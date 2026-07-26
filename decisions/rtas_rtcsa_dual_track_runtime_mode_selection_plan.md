@@ -18,7 +18,7 @@
 
 - RTAS 2027, RTCSA 2027 일정은 공식 CFP 확인 전까지 내부 가정이다. 원고에는 날짜를 넣지 않는다.
 - RTAS를 목표로 하려면 “경험적 policy”만으로는 약할 수 있다. 최소한 formal mode model, feasible mode filtering, response-time/tail-latency 근거, baseline 대비 명확한 trade-off가 필요하다.
-- Pi Zero 2W 단일 플랫폼만으로 top conference 주장을 하기에는 약할 수 있다. 단, core story가 충분히 강하면 RTCSA에는 가능성이 있다. 추가 플랫폼은 core 결과가 안정된 뒤 결정한다.
+- Pi Zero 2W 단일 플랫폼에서는 플랫폼 수보다 core story, 반복 실험, 부하 통제와 timing 분석의 깊이가 중요하다. 현재 평가 범위에는 추가 플랫폼을 넣지 않는다.
 - PREEMPT_RT는 hard real-time guarantee처럼 표현하면 안 된다. “empirical deadline feasibility”, “tail response-time characterization”처럼 제한적으로 써야 한다.
 - diagnostic utility `Q(a,z)`는 가장 취약한 부분이다. dataset, label, anomaly score, health index 중 무엇을 쓸지 빨리 정해야 한다.
 - `M`이 서로 다른 model인지, quantization/runtime configuration인지, early-exit/variant인지 명확히 정의해야 한다. 애매하면 논문 기여가 흐려진다.

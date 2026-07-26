@@ -29,6 +29,7 @@ The implementation and evaluation are planned on a Raspberry Pi Zero 2W with van
 - venue 전략과 실험 설계는 `decisions/rtas_rtcsa_dual_track_runtime_mode_selection_plan.md`를 참고하되, 공식 일정과 미검증 성과는 원고에 단정적으로 쓰지 않는다.
 - 0708 면담 이후 초록의 중심 질문은 "정밀 mode로 전환해도 schedulability를 어떻게 보장하는가"로 둔다.
 - 방향 1 결과는 독립 contribution으로 과장하지 않고, 방향 2의 timing characterization과 mode feasibility 근거로 사용한다.
+- 장기 정식화는 `(W,H,M)`을 유지하지만 첫 구현과 핵심 실험은 `M`을 고정한 discrete `(W,H)` mode bank로 시작한다.
 
 ## Korean Abstract Draft
 
@@ -40,6 +41,8 @@ The implementation and evaluation are planned on a Raspberry Pi Zero 2W with van
 
 ## Related Work Draft
 
+> 번호 인용과 참고문헌 목록을 포함한 최신 한글 초안은 `manuscript/related_work_draft_ko.md`를 기준으로 한다. 아래 문단은 영문·한글 구조 메모로 유지한다.
+
 ### Paragraph 1: Real-Time and Embedded Fault Diagnosis
 
 Embedded fault-diagnosis studies deploy lightweight models and signal-processing pipelines on platforms ranging from microcontrollers and RTOSs to Linux-based single-board computers. Their real-time claims must be separated into model-level best-effort latency, empirical deadline-aware execution, and schedulability-backed guarantees. MCU and SoC studies provide different implementation evidence, but platform type alone does not determine the strength of a real-time claim. In the currently verified papers, model compression and inference-time reporting are more common than explicit deadlines, tail metrics, runtime scheduling, or admission analysis.
@@ -50,7 +53,7 @@ Input-adaptive perception and fault-diagnosis studies show that changing input s
 
 ### Paragraph 3: Elastic Scheduling and Mode-Change Guarantees
 
-Elastic scheduling adjusts task periods, rates, utilizations, or computational workloads under changing resource demand. Discrete utilization modes, compositional scheduling, harmonic task systems, weakly-hard constraints, and mode-change analysis provide foundations for treating diagnosis period `H`, execution demand `C(W,M)`, and transitions as schedulability variables. These methods largely target general real-time or control workloads. Their assumptions and guarantees must therefore be checked before applying them to vibration diagnosis utility and mode-dependent execution cost.
+Elastic scheduling adjusts task periods, rates, utilizations, or computational workloads under changing resource demand. Discrete utilization modes, compositional scheduling, harmonic task systems, and mode-change analysis provide foundations for treating diagnosis period `H`, execution demand `C(W,M)`, and transitions as schedulability variables. Weakly-hard constraints provide a separate bounded-miss semantics, but the surveyed vibration fault-diagnosis studies do not establish that this application should be modeled as weakly-hard. These methods largely target general real-time or control workloads. Their assumptions and guarantees must therefore be checked before applying them to vibration diagnosis utility and mode-dependent execution cost.
 
 ### Paragraph 4: Deadline-Aware AI Inference
 
@@ -72,7 +75,7 @@ Input-adaptive perception과 fault diagnosis 연구는 input size 또는 model c
 
 ### Paragraph 3: Elastic Scheduling and Mode-Change Guarantees
 
-Elastic scheduling은 resource demand 변화에 따라 task period, rate, utilization 또는 computational workload를 조절한다. Discrete utilization mode, compositional scheduling, harmonic task system, weakly-hard constraint와 mode-change analysis는 diagnosis period `H`, execution demand `C(W,M)`, transition을 schedulability 변수로 보는 기반을 제공한다. 다만 주된 대상은 general real-time 또는 control workload다. 따라서 이를 vibration diagnosis utility와 mode-dependent execution cost에 적용하기 전에 task assumption과 guarantee 조건을 확인해야 한다.
+Elastic scheduling은 resource demand 변화에 따라 task period, rate, utilization 또는 computational workload를 조절한다. Discrete utilization mode, compositional scheduling, harmonic task system과 mode-change analysis는 diagnosis period `H`, execution demand `C(W,M)`, transition을 schedulability 변수로 보는 기반을 제공한다. Weakly-hard constraint는 별도의 bounded-miss semantics를 제공하지만, 현재 조사한 vibration fault diagnosis 연구는 이 응용을 weakly-hard로 정식화할 근거를 제시하지 않는다. 또한 이 방법들의 주된 대상은 general real-time 또는 control workload다. 따라서 이를 vibration diagnosis utility와 mode-dependent execution cost에 적용하기 전에 task assumption과 guarantee 조건을 확인해야 한다.
 
 ### Paragraph 4: Deadline-Aware AI Inference
 

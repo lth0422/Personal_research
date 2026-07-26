@@ -14,10 +14,11 @@
 | RQ3 | deadline 또는 task period를 명시하는가? | O/△/X/? + 수치/정의 |
 | RQ4 | real-time을 무엇으로 달성하는가? | 모델 경량화 / 시스템 최적화 / scheduling / 혼합 |
 | RQ5 | latency를 average만 측정하는가, tail/jitter/miss까지 측정하는가? | 측정 지표 목록 |
-| RQ6 | hard 또는 weakly-hard guarantee가 있는가? | H/W/E/B/? 등급 + 근거 |
+| RQ6 | hard, weakly-hard, empirical 또는 best-effort 중 어떤 timing guarantee인가? | H/W/E/B/? 등급 + 근거 |
 | RQ7 | runtime에 window, period, model을 조절하는가? 무엇이 trigger인가? | `W/H/M`, `q/S/load/deadline/offline` |
 
 RQ6과 RQ7이 교수님 피드백의 핵심이다. RTOS 사용 여부나 짧은 평균 latency만으로 hard real-time이라고 판정하지 않는다.
+Weakly-hard는 가능한 판정 등급이지 본 연구의 사전 가정이 아니다. Fault diagnosis 논문이 `(m,K)` 또는 동등한 bounded-miss 제약을 직접 정의하고 검증한 경우에만 `W`로 판정한다.
 
 ### 플랫폼 태그
 

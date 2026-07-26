@@ -57,8 +57,8 @@ Buttazzo 1998 (원형: spring, period compression, EDF/RM bound)
 
 ### 본 연구 관련 핵심 관찰
 
-- **모든 이론 논문은 C 고정을 전제**한다. 본 연구의 C(W,M) — 즉 모드마다 실행시간이 달라지는 구조 — 는 기존 이론의 직접 적용 범위를 벗어난다.
-- **트리거가 전부 시스템 부하나 utilization 변화**다. 기계 상태 z(anomaly score)를 트리거로 쓰는 사례는 없다.
+- **대부분의 이론 논문은 C 또는 mode별 WCET profile을 사전에 고정**한다. Buttazzo and Abeni 2000은 관측 실행시간 feedback을 사용하는 예외지만 transient miss를 허용하는 soft real-time 접근이다. 본 연구의 `C(W,M)`에 기존 hard-feasibility 조건을 적용하려면 mode별 보수적 bound와 transition 조건을 별도로 정해야 한다.
+- **트리거는 주로 시스템 부하, utilization, resource 변화 또는 미리 정의된 mode event**다. Control QoC를 사용하는 인접 사례는 있지만 vibration diagnosis의 machine condition `z`를 runtime trigger로 쓰는 사례는 현재 elastic 문헌에서 확인되지 않았다.
 - Buttazzo & Abeni 2000이 런타임 C 추정을 쓰는 가장 가까운 사례지만 soft RT이며 진단 utility 개념이 없다.
 - Baruah 2023은 D < T 구조를 다루므로 본 연구 diagnosis task deadline model 선택 시 참고할 feasibility 분석 배경이다.
 

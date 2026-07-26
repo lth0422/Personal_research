@@ -1,6 +1,6 @@
 # Work-in-Progress: A Practical Linux Framework for Weakly-Hard Tasks with Constant Bandwidth Server
 
-- **그룹**: 4 idk_weakly_hard
+- **그룹**: 9 weakly_hard_realtime
 - **출처/연도**: RTSS 2025 Work-in-Progress
 - **저자**: Marcus Chen, Pascal Reich, Yidi Wang, Hyunjong Choi
 
@@ -16,9 +16,11 @@
 
 ## 내 연구 관점
 - 한 줄 gap: Linux에서 bounded deadline miss를 다루지만 vibration FD, W/H/M mode selection, machine condition trigger, PREEMPT_RT 비교는 다루지 않는다.
-- 내 연구에 쓸 곳: KSC 2026 또는 학위논문에서 deadline miss를 hard zero-miss와 bounded miss로 구분하는 related work.
+- 내 연구에 쓸 곳: 학위논문에서 hard zero-miss와 bounded miss를 구분하는 deadline semantics의 비교 문헌. 현재 fault diagnosis 문제의 기본 전제로 사용하지 않는다.
 - 인용할 문장: "without kernel modifications"
 
 ## 불확실한 점
+
+- 진동 기반 실시간 고장진단이 `(m,K)` 제약을 사용해야 한다는 application-level 근거는 이 논문에서 제공하지 않는다.
 - 확인 필요: Raspberry Pi 5 실험은 example task trace와 synthetic taskset schedulability 중심이다. Pi Zero 2W, PREEMPT_RT, TFLite inference pipeline 결과로 일반화하면 안 된다.
 - 확인 필요: QoS enhancement는 future work 성격이 있으므로 본 연구의 runtime slack adaptation과 직접 대응시키면 안 된다.

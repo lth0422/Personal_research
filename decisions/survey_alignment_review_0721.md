@@ -4,6 +4,8 @@
 - 기준 문서: `decisions/personal_research_summary_0708.md`
 - 범위: `papers/`, `surveys/`, `manuscript/`의 서베이 산출물
 
+> 이 문서는 2026-07-21 시점의 기록이다. 최신 상태는 2026-07-26 기준 PDF 76편, paper card 76개이며 `surveys/related_work_map.md`와 `surveys/survey_gap_backlog.md`에서 관리한다.
+
 ## 결론
 
 현재 아카이빙은 `PDF -> paper card -> comparison table -> claim/related-work` 흐름으로 일관되게 관리되고 있다. 점검 시점 기준 `papers/`의 PDF 57편과 `surveys/paper_cards/`의 카드 57개가 대응한다.

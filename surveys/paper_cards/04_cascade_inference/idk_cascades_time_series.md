@@ -1,6 +1,6 @@
 # IDK Cascades for Time-Series Input Streams
 
-- **그룹**: 4 idk_weakly_hard
+- **그룹**: 4 cascade_inference
 - **출처/연도**: RTSS 2024
 - **저자**: Kunal Agrawal, Sanjoy Baruah, Alan Burns, Jinhao Zhao
 

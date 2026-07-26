@@ -95,10 +95,14 @@
   - 주의: Demand Layering은 Jetson AGX Xavier + integrated GPU + NVMe SSD 구조에 최적화된 방법이므로 MCU 또는 Pi Zero 2W CPU inference에 직접 적용한다고 쓰면 안 된다.
 
 - weakly-hard real-time 문헌은 deadline miss를 무조건 실패가 아니라 `(m,K)` bounded miss constraint로 다루는 비교축을 제공한다.
-  - 근거 후보: Chen et al., RTSS 2025 WiP; Braun and Altmeyer, RTAS 2025.
-  - 본 연구 연결: KSC 2026의 deadline miss rate와 학위논문의 utility/deadline trade-off를 설명할 때 hard deadline, soft deadline, weakly-hard deadline을 구분하는 배경으로 활용 가능하다.
-  - 추가 관찰: Braun and Altmeyer는 같은 deadline-miss strategy도 utilization, overload likelihood, task organization과 actuation timing에 따라 control 결과가 달라짐을 실제 MCU에서 보인다. 따라서 miss count만으로 application consequence를 판단하기 어렵다.
-  - 주의: Chen et al.은 Linux `SCHED_DEADLINE`과 CBS parameter mapping 중심이고, Braun and Altmeyer는 한 rotary-pendulum control system의 empirical evaluation이다. 둘 다 vibration FD utility와 `W/H/M` runtime selection을 직접 다루지 않는다.
+  - 근거 후보: Chen et al., RTSS 2025 WiP; Xu et al., RTCSA 2023.
+  - 본 연구 연결: hard, empirical deadline-aware, weakly-hard 보장을 구분하는 S5 배경으로 활용 가능하다.
+  - 주의: 현재 조사한 vibration fault diagnosis 논문에서 `(m,K)` 보장을 채택한 직접 사례는 확인되지 않았다. Diagnosis utility가 허용 miss pattern을 정당화하기 전에는 본 연구를 weakly-hard 시스템으로 규정하지 않는다.
+
+- deadline-miss handling 문헌은 같은 miss라도 처리 정책과 application dynamics에 따라 결과가 달라질 수 있음을 보여준다.
+  - 근거 후보: Braun and Altmeyer, RTAS 2025.
+  - 본 연구 연결: miss ratio만 보고 진단 시스템의 유용성이나 안전성을 판단하지 않고 result age, update gap, late-result 처리와 연속 miss를 함께 검토해야 한다.
+  - 주의: 한 rotary-pendulum control system의 empirical 결과를 vibration fault diagnosis로 직접 일반화하지 않는다.
 
 - IDK cascade 계열은 classification을 빠른 classifier부터 시도하고 confidence가 부족하면 더 강한 classifier로 넘어가는 방식으로 latency/accuracy trade-off를 다룬다.
   - 근거 후보: Agrawal et al., RTSS 2024; Baruah et al., RTAS 2024.

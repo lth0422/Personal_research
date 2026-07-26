@@ -99,9 +99,12 @@
 
 현재 보관 그룹:
 
-- `04_idk_weakly_hard`
+- `09_weakly_hard_realtime`
+- `10_deadline_miss_handling_risk`
 - `08_misc_realtime_scheduling`
 - `01_elastic_scheduling`의 transition/guarantee 논문 일부
+
+`04_cascade_inference`는 deadline-aware model/fallback 선택을 다루므로 주로 S4에 두고, hard deadline 또는 fallback semantics가 필요한 경우에만 S5로 교차 태그한다. Weakly-hard는 S5의 한 보장 모델일 뿐이며, 본 연구나 fault diagnosis 분야 전체의 기본 가정으로 사용하지 않는다.
 
 0708 산출물 연결: **산출물 4, 고전 실시간 개념 노트**
 
@@ -150,18 +153,20 @@
 
 ## 4. 기존 보관 폴더 매핑
 
-기존 PDF와 paper-card 폴더는 이동하지 않는다. 현재 구조는 파일 소유와 중복 방지에 유용하며, 아래처럼 연구 섹션 태그를 추가해 사용한다.
+PDF와 paper-card 보관 그룹은 주된 방법론을 기준으로 관리하고, 아래처럼 연구 섹션 태그를 추가해 사용한다.
 
 | 기존 그룹 | 주 섹션 | 보조 섹션 |
 | --- | --- | --- |
 | `01_elastic_scheduling` | S3 | S5 |
 | `02_input_adaptive` | S2 | S4 |
 | `03_rt_dnn_serving` | S4 | S5, S6 |
-| `04_idk_weakly_hard` | S5 | S4 |
+| `04_cascade_inference` | S4 | S5 |
 | `05_fault_diagnosis_app` | S1 | S2, S6 |
 | `06_platform_preempt_rt` | S6 | S1 |
 | `07_platform_pi_zero2w` | S6 | S1 |
 | `08_misc_realtime_scheduling` | S5 또는 S6 | S3 |
+| `09_weakly_hard_realtime` | S5 | 없음 |
+| `10_deadline_miss_handling_risk` | S5 | S3 |
 
 ## 5. 원고용 Related Work 구조
 

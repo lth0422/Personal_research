@@ -1,6 +1,6 @@
 # Period Assignment for Real-Time Cascade Control Tasks Under Stability and Schedulability Constraints
 
-- **그룹**: 4 idk_weakly_hard
+- **그룹**: 10 deadline_miss_handling_risk
 - **출처/연도**: ECRTS 2025
 - **저자**: Ismail Hawila, Liliana Cucu-Grosjean, Slim Ben Amor
 
@@ -22,3 +22,4 @@
 ## 불확실한 점
 - 확인 필요: drone/PX4 평가의 구체 period, utilization, cost 수치는 Table 4~7 조건을 재확인한 뒤 사용해야 한다.
 - 확인 필요: control stability에서의 allowable deadline misses를 fault diagnosis utility로 직접 옮겨 해석하면 안 된다.
+- 이 논문은 bounded consecutive misses를 다루지만, 카드 기준으로 저자가 시스템을 `weakly-hard fault diagnosis`로 정의한 것은 아니다.

@@ -8,7 +8,7 @@
 
 ## 현재 분포
 
-2026-07-24 기준 PDF와 paper card는 각각 76개다. 카드 그룹은 elastic scheduling 19편, real-time DNN serving 13편, input-adaptive 8편, weakly-hard 6편, platform/PREEMPT_RT 5편, fault diagnosis application 19편, miscellaneous real-time scheduling 4편, Pi Zero 2W platform 2편이다.
+2026-07-24 기준 PDF와 paper card는 각각 76개다. 카드 그룹은 elastic scheduling 19편, real-time DNN serving 13편, input-adaptive 8편, cascade inference 2편, explicit weakly-hard 1편, deadline-miss handling/risk 3편, platform/PREEMPT_RT 5편, fault diagnosis application 19편, miscellaneous real-time scheduling 4편, Pi Zero 2W platform 2편이다. `Safety-Aware`처럼 weakly-hard를 보조 개념으로 사용하는 논문은 주된 연구 계열에 보관하고 S5 교차 태그로 관리한다.
 
 양적으로는 elastic scheduling과 DNN serving 쪽이 크다. 반면 연구 도메인에 직접 해당하는 fault diagnosis의 deadline/RTOS 근거와 Pi Zero 2W 부하 설계 근거는 상대적으로 부족하다.
 
