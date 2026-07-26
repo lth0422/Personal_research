@@ -14,28 +14,28 @@
 
 ## 압축 비교표
 
-| Work | Platform | Execution environment | RTOS | PREEMPT_RT | Deadline | Tail/miss | Sched. analysis | Model opt. | System scheduling | Runtime adapt. | Joint `W/H/M` | `q+S` | RT level |
-| --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Ma et al., Architecture Search FD [1] | Desktop CPU | Other OS | X | X | X | X | X | O | X | X | X | X | B |
-| Lee and Kim, FRFconv-TDSNet [2] | Raspberry Pi 4B | Linux, RT extension ? | X | X | X | X | X | O | X | X | X | X | B |
-| Jalonen et al., Time-Varying Speed FD [3] | Laptop SoC | Other OS | X | X | X | X | X | O | X | X | X | X | B |
-| Thota et al., TinyML Bearing FD [4] | MCU | Runtime ? | ? | X | X | ? | X | O | X | X | X | X | B |
-| Choi et al., Low-Cost MCU Shaft FD [5] | MCU | Bare metal | X | X | X | X | X | O | X | X | X | X | B |
-| Zhang et al., Fast Short-Time Root-MUSIC [6] | STM32H743 | FreeRTOS | O | X | X | X | X | O | X | X | X | X | B |
-| Yang et al., Stacked AE End-Edge [7] | STM32F407-class + edge | Runtime ? | ? | X | △ | X | X | O | △ | O | X | X | B |
-| He et al., Cyclostationary Edge FD [8] | STM32F407 | Runtime ? | ? | X | X | X | X | △ | X | X | X | X | B |
-| Pubalan et al., Simulated 1D-CNN [9] | Simulation | Other | X | X | X | X | X | O | X | X | X | X | B |
-| Arciniegas et al., TinyML Motor Vibration [10] | ESP32S3 | Runtime ? | ? | X | X | X | X | O | X | X | X | X | B |
-| Gupta and Shivhare, TinyML ESP32 [11] | ESP32 | Runtime ? | ? | X | X | X | X | O | X | X | X | X | B |
-| Lima, Edge Impulse Motor FD [12] | nRF52840 | Runtime ? | ? | X | X | X | X | O | X | X | X | X | B |
-| Alasiry et al., Dual-MCU Monitoring [13] | STM32F103 + ESP32 | Runtime ? | ? | X | X | X | X | X | △ | X | X | X | B |
-| Zhan et al., APTL-net [14] | Jetson Xavier NX | Linux | X | X | X | X | X | O | X | X | X | X | B |
-| Garay et al., Multimodal TinyML [15] | Cortex-M4F + gateway | Arduino Mbed OS | O | X | X | △ | X | O | X | X | X | X | B |
-| Langarica et al., Industrial Internet FD [16] | IIoT edge + server | Linux/server stack | X | X | X | X | X | X | X | △ | X | X | B |
-| Shan et al., CS-DKELM [17] | Zynq MPSoC | Linux | X | X | X | X | X | O | X | X | X | X | B |
-| Sayghe, Physics-Aware Transformer [18] | Raspberry Pi 4 | Linux | X | X | X | X | X | O | X | X | X | X | B |
-| Bhaventhan et al., Vibration PdM [19] | Raspberry Pi 4 | Linux ? | X | X | X | X | X | O | X | X | X | X | B |
-| KCC 2026 system [self-reference 확인 필요] | MCU | Zephyr RTOS | O | X | O | O | △ | O | O | X | X | X | E |
+| Work | Platform | Execution environment | RTOS | PREEMPT_RT | Deadline | Tail/miss | Sched. analysis | 경량화·배포 기법 | System scheduling | Runtime adapt. | Joint `W/H/M` | `q+S` | RT level |
+| --- | --- | --- | :---: | :---: | :---: | :---: | :---: | --- | :---: | :---: | :---: | :---: | :---: |
+| Ma et al., Architecture Search FD [1] | Desktop CPU | Other OS | X | X | X | X | X | NAS (hardware-aware, FLOP/latency 목표) | X | X | X | X | B |
+| Lee and Kim, FRFconv-TDSNet [2] | Raspberry Pi 4B | Linux, RT extension ? | X | X | X | X | X | 경량 아키텍처 수동 설계 (FRFconv + TDS 블록) | X | X | X | X | B |
+| Jalonen et al., Time-Varying Speed FD [3] | Laptop SoC | Other OS | X | X | X | X | X | 알고리즘 경량화 (시변속도 보상 처리) | X | X | X | X | B |
+| Thota et al., TinyML Bearing FD [4] | MCU | Runtime ? | ? | X | X | ? | X | TinyML + 양자화 (INT8 추정) | X | X | X | X | B |
+| Choi et al., Low-Cost MCU Shaft FD [5] | MCU | Bare metal | X | X | X | X | X | 양자화 (X-CUBE-AI INT8) | X | X | X | X | B |
+| Zhang et al., Fast Short-Time Root-MUSIC [6] | STM32H743 | FreeRTOS | O | X | X | X | X | 알고리즘 최적화 (DNN 없음, Root-MUSIC 단축 계산) | X | X | X | X | B |
+| Yang et al., Stacked AE End-Edge [7] | STM32F407-class + edge | Runtime ? | ? | X | △ | X | X | Cascade AE (space↔time 교환) + End-Edge 오프로딩 | △ | O | X | X | B |
+| He et al., Cyclostationary Edge FD [8] | STM32F407 | Runtime ? | ? | X | X | X | X | 알고리즘 경량화 (개선된 cyclostationary 분석, 비DL) | X | X | X | X | B |
+| Pubalan et al., Simulated 1D-CNN [9] | Simulation | Other | X | X | X | X | X | 경량 1D-CNN (실 배포 없음, 시뮬레이션) | X | X | X | X | B |
+| Arciniegas et al., TinyML Motor Vibration [10] | ESP32S3 | Runtime ? | ? | X | X | X | X | TinyML (Edge Impulse 배포) | X | X | X | X | B |
+| Gupta and Shivhare, TinyML ESP32 [11] | ESP32 | Runtime ? | ? | X | X | X | X | 양자화 (INT8/FP32, TFLite) | X | X | X | X | B |
+| Lima, Edge Impulse Motor FD [12] | nRF52840 | Runtime ? | ? | X | X | X | X | 양자화 (INT8/FP32) + Edge Impulse 자동 NAS | X | X | X | X | B |
+| Alasiry et al., Dual-MCU Monitoring [13] | STM32F103 + ESP32 | Runtime ? | ? | X | X | X | X | 없음 (ML 없음, threshold 기반) | X | X | X | X | B |
+| Zhan et al., APTL-net [14] | Jetson Xavier NX | Linux | X | X | X | X | X | Adaptive pruning + DW conv + BN fusion (Triple-lightweight) | X | X | X | X | B |
+| Garay et al., Multimodal TinyML [15] | Cortex-M4F + gateway | Arduino Mbed OS | O | X | X | △ | X | INT8 PTQ + TFLite Micro + ASIC (NDP120) | X | X | X | X | B |
+| Langarica et al., Industrial Internet FD [16] | IIoT edge + server | Linux/server stack | X | X | X | X | X | 없음 (signal processing cascade) | X | △ | X | X | B |
+| Shan et al., CS-DKELM [17] | Zynq MPSoC | Linux | X | X | X | X | X | 압축 센싱 (sparse 표현) + DKELM (비DL 커널) | X | X | X | X | B |
+| Sayghe, Physics-Aware Transformer [18] | Raspberry Pi 4 | Linux | X | X | X | X | X | 물리 인식 경량 Transformer (patch 수 최소화) + ONNX Runtime | X | X | X | X | B |
+| Bhaventhan et al., Vibration PdM [19] | Raspberry Pi 4 | Linux ? | X | X | X | X | X | 확인 불가 (카드 세부 정보 부족) | X | X | X | X | B |
+| KCC 2026 system [self-reference 확인 필요] | MCU | Zephyr RTOS | O | X | O | O | △ | 양자화 + Zephyr RTOS 최적화 | O | X | X | X | E |
 | Proposed work | Pi Zero 2W | Linux + PREEMPT_RT | X | P | P | P | P | - | P | P | P* | P | Target E; H requires formal analysis |
 
 `P*`: 초기 연구 범위는 joint `W/H`를 코어로 두고 `M`은 고정하거나 제한된 보조 변수로 두는 안을 우선 검토한다.
