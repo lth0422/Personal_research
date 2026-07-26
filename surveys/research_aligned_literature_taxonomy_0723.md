@@ -2,7 +2,7 @@
 
 - 작성일: 2026-07-23
 - 기준: `PROJECT_CONTEXT.md`, `decisions/personal_research_summary_0708.md`
-- 목적: 현재 8개 보관 폴더, 0708 서베이 산출물과 원고 related-work 섹션을 하나의 연구 논리로 연결한다.
+- 목적: 현재 10개 보관 폴더, 0708 서베이 산출물과 원고 related-work 섹션을 하나의 연구 논리로 연결한다.
 
 ## 1. 분류 원칙
 
@@ -29,6 +29,8 @@
 
 이 섹션에는 MCU와 SoC/SBC를 모두 포함한다. 플랫폼별 논문 수를 따로 보고하되, 핵심 분류는 `model-level best-effort`, `empirical deadline-aware`, `schedulability-backed`다.
 
+대표 문헌: embedded vibration diagnosis와 end-edge diagnosis 사례 [1]--[4].
+
 현재 보관 그룹:
 
 - `05_fault_diagnosis_app`
@@ -53,6 +55,8 @@
 
 본 연구 연결: `q -> diagnostic utility(W,M)`를 정의하는 근거
 
+대표 문헌: adaptive input length, anomaly-based window selection과 physics-aware input design [5]--[7].
+
 ### S3. Elastic Rate and Workload Scheduling
 
 **질문**: System load와 resource constraint 아래에서 period와 computation을 어떻게 탄력적으로 조절하는가?
@@ -71,6 +75,8 @@
 
 본 연구 연결: `C(W,M)`과 `T=H/f_s`가 함께 변하는 task model
 
+대표 문헌: elastic period/rate, discrete workload, constrained-deadline feasibility, multi-mode transition과 runtime rate regulation [12]--[17], [28].
+
 ### S4. Deadline-Aware AI Inference and Mode Selection
 
 **질문**: Deadline 또는 slack을 이용해 inference quality와 configuration을 어떻게 선택하는가?
@@ -86,6 +92,8 @@
 - `02_input_adaptive`의 deadline-aware perception 일부
 
 본 연구 연결: `S -> feasible modes`와 그 안에서의 quality selection
+
+대표 문헌: slack/deadline/condition 기반 input·model 선택 [8]--[11]과 deadline-aware classifier cascade [26], [27].
 
 ### S5. Schedulability, Mode Transition, and Miss Semantics
 
@@ -110,6 +118,8 @@
 
 본 연구 연결: Static mode feasibility와 transition feasibility를 구분하는 근거
 
+대표 문헌: weakly-hard semantics [21], [22], deadline-miss handling과 risk [23]--[25], mode-transition·schedulability [15], [16], [28], general scheduling mechanisms [29]--[31].
+
 ### S6. Runtime Platform and Interference Characterization
 
 **질문**: 제안한 방법을 실제 실행 환경에서 어떻게 검증하고 timing variation의 원인을 설명하는가?
@@ -130,6 +140,8 @@
 0708 산출물 연결: **산출물 3, 부하 설계 전략**
 
 이 섹션은 방법의 novelty보다 evaluation validity와 원인 분석을 담당한다. MCU와 SoC 중 하나를 배제하지 않고, 각 플랫폼에서 얻을 수 있는 근거를 구분한다.
+
+대표 문헌: ARM/PREEMPT_RT latency characterization과 Raspberry Pi inference deployment [18]--[20].
 
 ## 3. 플랫폼은 태그로 관리
 
@@ -155,18 +167,18 @@
 
 PDF와 paper-card 보관 그룹은 주된 방법론을 기준으로 관리하고, 아래처럼 연구 섹션 태그를 추가해 사용한다.
 
-| 기존 그룹 | 주 섹션 | 보조 섹션 |
-| --- | --- | --- |
-| `01_elastic_scheduling` | S3 | S5 |
-| `02_input_adaptive` | S2 | S4 |
-| `03_rt_dnn_serving` | S4 | S5, S6 |
-| `04_cascade_inference` | S4 | S5 |
-| `05_fault_diagnosis_app` | S1 | S2, S6 |
-| `06_platform_preempt_rt` | S6 | S1 |
-| `07_platform_pi_zero2w` | S6 | S1 |
-| `08_misc_realtime_scheduling` | S5 또는 S6 | S3 |
-| `09_weakly_hard_realtime` | S5 | 없음 |
-| `10_deadline_miss_handling_risk` | S5 | S3 |
+| 기존 그룹 | 주 섹션 | 보조 섹션 | 대표 참고문헌 |
+| --- | --- | --- | --- |
+| `01_elastic_scheduling` | S3 | S5 | [12]--[17], [28] |
+| `02_input_adaptive` | S2 | S4 | [5]--[7], [9] |
+| `03_rt_dnn_serving` | S4 | S5, S6 | [8], [10], [11] |
+| `04_cascade_inference` | S4 | S5 | [26], [27] |
+| `05_fault_diagnosis_app` | S1 | S2, S6 | [1]--[7] |
+| `06_platform_preempt_rt` | S6 | S1 | [18], [19] |
+| `07_platform_pi_zero2w` | S6 | S1 | [20] |
+| `08_misc_realtime_scheduling` | S5 또는 S6 | S3 | [29]--[31], self-suspending EDF 논문 metadata 확인 필요 |
+| `09_weakly_hard_realtime` | S5 | 없음 | [21], [22] |
+| `10_deadline_miss_handling_risk` | S5 | S3 | [23]--[25] |
 
 ## 5. 원고용 Related Work 구조
 
@@ -227,3 +239,73 @@ S6: MCU/RTOS 선행 결과를 motivation으로 사용하고 Pi Zero 2W/Linux/PRE
 ```
 
 이 구조가 최종 novelty를 보장하지는 않는다. 각 연결이 기존 문헌에 있는지와 실제 실험에서 utility 및 deadline 개선이 나타나는지를 계속 검증해야 한다.
+
+## 8. 참고문헌
+
+[1] S. Lee and T. Kim, "FRFconv-TDSNet: Lightweight, Noise-Robust Convolutional Neural Network Leveraging Full-Receptive-Field Convolution and Time-Domain Statistics for Intelligent Machine Fault Diagnosis," *IEEE Transactions on Instrumentation and Measurement*, 2024.
+
+[2] T. Jalonen, M. Al-Sa'd, S. Kiranyaz, and M. Gabbouj, "Real-Time Vibration-Based Bearing Fault Diagnosis Under Time-Varying Speed Conditions," *IEEE International Conference on Industrial Technology*, 2024, doi: 10.1109/ICIT58233.2024.10540813.
+
+[3] H. Zhang, B. Liu, W. Feng, and Z. Li, "A Novel Fast Short-Time Root-MUSIC Method for Vibration Monitoring of High-Speed Spindles," arXiv:2506.17600, 2025.
+
+[4] C. Yang, Z. Lai, Y. Wang, S. Lan, L. Wang, and L. Zhu, "A Novel Bearing Fault Diagnosis Method Based on Stacked Autoencoder and End-Edge Collaboration," *IEEE CSCWD*, 2023, doi: 10.1109/CSCWD57460.2023.10152598.
+
+[5] G. Tang, C. Yi, L. Liu, Z. Xing, Q. Zhou, and J. Lin, "Integrating Adaptive Input Length Selection Strategy and Unsupervised Transfer Learning for Bearing Fault Diagnosis Under Noisy Conditions," *Applied Soft Computing*, vol. 148, 2023.
+
+[6] M. Kim, S. Lee, D. Oh, B. Park, J. Jo, and C. Lee, "Anomaly Deviation-Based Window Size Selection of Sensor Data for Enhanced Fault Diagnosis Efficiency in Autonomous Manufacturing Systems," *Mathematics*, vol. 14, article 471, 2026.
+
+[7] A. Sayghe, "A Physics-Aware Lightweight Transformer Network for Intelligent Bearing Fault Diagnosis Under Variable Operating Conditions," *Artificial Intelligence for Engineering*, 2026, doi: 10.1049/aie2.70014.
+
+[8] W. Kang, S. Chung, J. Y. Kim, Y. Lee, K. Lee, J. Lee, K. G. Shin, and H. S. Chwa, "DNN-SAM: Split-and-Merge DNN Execution for Real-Time Object Detection," *IEEE RTAS*, 2022, doi: 10.1109/RTAS54340.2022.00021.
+
+[9] A. Soyyigit, S. Yao, and H. Yun, "MURAL: A Multi-Resolution Anytime Framework for LiDAR Object Detection Deep Neural Networks," *IEEE RTCSA*, 2025, doi: 10.1109/RTCSA66114.2025.00014.
+
+[10] Y. Li, Z. Li, A. A. Arafat, D. Johnson, N. Sui, A. Gehi, and Z. Guo, "Adaptive Model Selection for Real-Time Heart Disease Detection on Embedded Systems," *IEEE RTCSA*, 2025, doi: 10.1109/RTCSA66114.2025.00028.
+
+[11] J. Chen, A. Zou, Y. Xu, and Y. Ma, "SCENIC: Capability and Scheduling Co-Design for Intelligent Controller on Heterogeneous Platforms," *IEEE RTSS*, 2024, doi: 10.1109/RTSS62706.2024.00026.
+
+[12] G. C. Buttazzo, G. Lipari, and L. Abeni, "Elastic Task Model for Adaptive Rate Control," *IEEE RTSS*, 1998, pp. 286--295.
+
+[13] G. Buttazzo and L. Abeni, "Adaptive Rate Control through Elastic Scheduling," *39th IEEE Conference on Decision and Control*, 2000, doi: 10.1109/CDC.2001.914704.
+
+[14] J. Orr, J. Condori Uribe, C. Gill, S. Baruah, K. Agrawal, S. Dyke, A. Prakash, I. Bate, C. Wong, and S. Adhikari, "Elastic Scheduling of Parallel Real-Time Tasks with Discrete Utilizations," *RTNS*, 2020.
+
+[15] S. Baruah, "Improved Uniprocessor Scheduling of Systems of Sporadic Constrained-Deadline Elastic Tasks," *RTNS*, 2023, doi: 10.1145/3575757.3575759.
+
+[16] R. Gifford, F. Galarza-Jimenez, L. T. X. Phan, and M. Zamani, "Decntr: Optimizing Safety and Schedulability with Multi-Mode Control and Resource Allocation Co-Design," *IEEE RTAS*, 2024, doi: 10.1109/RTAS61025.2024.00032.
+
+[17] R. Li, Z. Song, M. Lv, J.-M. Wu, C. J. Xue, J. Wang, and N. Guan, "ATER: Adaptive Task Execution Rate Regulation for Enhanced Real-Time Performance in ROS 2," *IEEE RTCSA*, 2025, doi: 10.1109/RTCSA66114.2025.00019.
+
+[18] G. K. Adam, N. Petrellis, and L. T. Doulos, "Performance Assessment of Linux Kernels with PREEMPT_RT on ARM-Based Embedded Devices," *Electronics*, vol. 10, article 1331, 2021.
+
+[19] W. Dewit, A. Paolillo, and J. Goossens, "A Preliminary Assessment of the Real-Time Capabilities of Real-Time Linux on Raspberry Pi 5," 2024, venue 확인 필요.
+
+[20] R. De Marco, F. Di Nardo, A. Rongoni, L. Screpanti, and D. Scaradozzi, "Real-Time Dolphin Whistle Detection on Raspberry Pi Zero 2 W with a TFLite Convolutional Neural Network," *Robotics*, vol. 14, article 67, 2025.
+
+[21] G. Bernat, A. Burns, and A. Llamosi, "Weakly Hard Real-Time Systems," *IEEE Transactions on Computers*, vol. 50, no. 4, pp. 308--321, 2001, doi: 10.1109/12.919277.
+
+[22] M. Chen, P. Reich, Y. Wang, and H. Choi, "Work-in-Progress: A Practical Linux Framework for Weakly-Hard Tasks with Constant Bandwidth Server," *IEEE RTSS Work-in-Progress*, 2025.
+
+[23] T. Braun and S. Altmeyer, "Handling System Overloads: An Empirical Evaluation of Deadline-Miss Handling Strategies," *IEEE RTAS*, 2025, doi: 10.1109/RTAS65571.2025.00031.
+
+[24] I. Hawila, L. Cucu-Grosjean, and S. Ben Amor, "Period Assignment for Real-Time Cascade Control Tasks Under Stability and Schedulability Constraints," *ECRTS*, 2025.
+
+[25] F. Guan, X. Jiang, W. Jing, and N. Guan, "Reducing Worst-Case Deadline Failure Probability for EDF Scheduling," *IEEE RTSS*, 2025.
+
+[26] K. Agrawal, S. Baruah, A. Burns, and J. Zhao, "IDK Cascades for Time-Series Input Streams," *IEEE RTSS*, 2024.
+
+[27] S. Baruah, I. Bate, A. Burns, and R. I. Davis, "Optimal Synthesis of Fault-Tolerant IDK Cascades for Real-Time Classification," *IEEE RTAS*, 2024.
+
+[28] S. Xu, B. Ghosh, C. Hobbs, P. S. Thiagarajan, P. Joshi, and S. Chakraborty, "Safety-Aware Implementation of Control Tasks via Scheduling with Period Boosting and Compressing," *IEEE RTCSA*, 2023.
+
+[29] R. M. Pathan, "Design of an Efficient Ready Queue for Earliest-Deadline-First EDF Scheduler," *DATE*, 2016.
+
+[30] Y. Tang, X. Jiang, N. Guan, S. Liu, X. Luo, and W. Yi, "Optimizing End-to-End Latency of Sporadic Cause-Effect Chains Using Priority Inheritance," *IEEE RTSS*, 2023.
+
+[31] F. Guan, J. Lee, C. J. Xue, J.-M. Wu, and N. Guan, "Mixed-Criticality Federated Scheduling for Relaxed-Deadline DAG Tasks," *IEEE RTSS*, 2024.
+
+### 참고문헌 주의사항
+
+- [19]의 venue는 현재 카드에서 확인되지 않아 최종 원고 인용 전에 원문 metadata를 재확인해야 한다.
+- `Requirement-Based Analysis of Self-Suspending Tasks under EDF`는 저자 metadata가 확인되지 않아 참고문헌 번호를 부여하지 않았다.
+- 이 목록은 S1--S6 분류를 설명하는 대표 문헌이며 보유 논문 76편 전체 bibliography가 아니다.
