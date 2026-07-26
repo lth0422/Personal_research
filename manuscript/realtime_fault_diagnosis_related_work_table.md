@@ -34,7 +34,7 @@
 | Langarica et al., Industrial Internet FD [16] | IIoT edge + server | Linux/server stack | X | X | X | X | X | 없음 (signal processing cascade) | X | △ | X | X | B |
 | Shan et al., CS-DKELM [17] | Zynq MPSoC | Linux | X | X | X | X | X | 압축 센싱 (sparse 표현) + DKELM (비DL 커널) | X | X | X | X | B |
 | Sayghe, Physics-Aware Transformer [18] | Raspberry Pi 4 | Linux | X | X | X | X | X | 물리 인식 경량 Transformer (patch 수 최소화) + ONNX Runtime | X | X | X | X | B |
-| Bhaventhan et al., Vibration PdM [19] | Raspberry Pi 4 | Linux ? | X | X | X | X | X | 확인 불가 (카드 세부 정보 부족) | X | X | X | X | B |
+| Bhaventhan et al., Vibration PdM [19] | Raspberry Pi 4 | Linux (OS 미기재) | X | X | X | X | X | 없음 (원문 미명시; 표준 CNN 직접 실행 추정) | X | X | X | X | B |
 | KCC 2026 system [self-reference 확인 필요] | MCU | Zephyr RTOS | O | X | O | O | △ | 양자화 + Zephyr RTOS 최적화 | O | X | X | X | E |
 | Proposed work | Pi Zero 2W | Linux + PREEMPT_RT | X | P | P | P | P | - | P | P | P* | P | Target E; H requires formal analysis |
 
