@@ -35,6 +35,7 @@
 | Shan et al., CS-DKELM [17] | Zynq MPSoC | Linux | X | X | X | X | X | 압축 센싱 (sparse 표현) + DKELM (비DL 커널) | X | X | X | X | B |
 | Sayghe, Physics-Aware Transformer [18] | Raspberry Pi 4 | Linux | X | X | X | X | X | 물리 인식 경량 Transformer (patch 수 최소화) + ONNX Runtime | X | X | X | X | B |
 | Bhaventhan et al., Vibration PdM [19] | Raspberry Pi 4 | Linux (OS 미기재) | X | X | X | X | X | 없음 (원문 미명시; 표준 CNN 직접 실행 추정) | X | X | X | X | B |
+| Asutkar et al., TinyML TL Domain Generalization [20] | ESP32 + Raspberry Pi 4B | TFLite (Arduino IDE) / TF (Pi) | X | X | X | X | X | 통계 특징 10개 (raw→(10×1) 압축) + TFLite + 2498 파라미터 경량 CNN | X | X | X | X | B |
 | KCC 2026 system [self-reference 확인 필요] | MCU | Zephyr RTOS | O | X | O | O | △ | 양자화 + Zephyr RTOS 최적화 | O | X | X | X | E |
 | Proposed work | Pi Zero 2W | Linux + PREEMPT_RT | X | P | P | P | P | - | P | P | P* | P | Target E; H requires formal analysis |
 
@@ -98,6 +99,8 @@ Comparison of real-time support in embedded machine fault-diagnosis studies. Mod
 [18] A. Sayghe, "A Physics-Aware Lightweight Transformer Network for Intelligent Bearing Fault Diagnosis Under Variable Operating Conditions," *Artificial Intelligence for Engineering*, 2026, doi: 10.1049/aie2.70014.
 
 [19] R. Bhaventhan, X. D. Stanlyraj, and S. Purushothaman, "Vibration-Based Predictive Maintenance for Motors Using Edge AI," *IEEE RAEEUCCI*, 2026, doi: 10.1109/RAEEUCCI67649.2026.11504862.
+
+[20] S. Asutkar, C. Chalke, K. Shivgan, and S. Tallur, "TinyML-enabled edge implementation of transfer learning framework for domain generalization in machine fault diagnosis," *Expert Systems with Applications*, vol. 213, 2023, doi: 10.1016/j.eswa.2022.119016.
 
 ### 참고문헌 주의사항
 

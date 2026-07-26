@@ -203,13 +203,14 @@ RTOS 사용은 H 판정의 충분조건이 아니다. 반대로 범용 OS를 사
 | Arciniegas et al., TinyML Motor Vibration | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | X | X | O | X | X | X | X | B |
 | Gupta and Shivhare, TinyML ESP32 | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | X | X | O | X | X | X | X | B |
 | Lima, Edge Impulse Motor FD | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | X | X | O | X | X | X | X | B |
-| Alasiry et al., Dual-MCU Monitoring | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | X | X | X | △ | X | X | X | B |
+| Alasiry et al., Dual-MCU Monitoring | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | X | X | X | X | X | X | X | B |
 | Zhan et al., APTL-net | `PL-HET-SOC` | `ENV-LINUX` | X | X | X | X | X | O | X | X | X | X | B |
 | Garay et al., Multimodal TinyML PdM | `PL-MCU` | Arduino Mbed OS `ENV-RTOS` | O | X | X | △ | X | O | X | X | X | X | B |
 | Langarica et al., Industrial Internet FD | `PL-SERVER-GPU` | `ENV-LINUX`/server stack | X | X | X | X | X | X | X | △ | X | X | B |
 | Shan et al., CS-DKELM | `PL-HET-SOC` | `ENV-LINUX` | X | X | X | X | X | O | X | X | X | X | B |
 | Sayghe, Physics-Aware Transformer | `PL-SBC-SOC` | `ENV-LINUX` | X | X | X | X | X | O | X | X | X | X | B |
-| Bhaventhan et al., Vibration PdM Edge AI | `PL-SBC-SOC` | Linux 세부 확인 필요 | X | X | X | X | X | O | X | X | X | X | B |
+| Bhaventhan et al., Vibration PdM Edge AI | `PL-SBC-SOC` | Linux 미기재 | X | X | X | X | X | X | X | X | X | X | B |
+| Asutkar et al., TinyML TL Domain Generalization | `PL-MCU` + `PL-SBC-SOC` | TFLite/Arduino IDE (ESP32) + TF/Linux (Pi 4B) | X | X | X | X | X | O | X | X | X | X | B |
 | 본 연구 KCC 2026 | `PL-MCU` | Zephyr `ENV-RTOS` | O | X | O | O | △ | O | O | X | X | X | E |
 | 제안 연구 | `PL-SBC-SOC` | Linux + `ENV-PREEMPT_RT` | X | P | P | P | P | - | P | P | P | P | 목표 H 또는 조건부 H |
 
