@@ -149,6 +149,18 @@ CSV의 abstract와 selection rationale은 후보 선별 자료다. 신규 fault-
 
 `?`를 억지로 `X`로 바꾸지 않는다. `P`도 실험이 끝나기 전에는 `O`로 바꾸지 않는다.
 
+### Deadline 컬럼 세부 판정 기준
+
+Deadline 컬럼은 일반 기호보다 세밀한 구분이 필요하다.
+
+| 판정 | 의미 |
+| --- | --- |
+| O | Deadline을 명시적으로 정의하고 이를 기준으로 평가함 |
+| △ | Period/Window/Acquisition duration은 존재하여 deadline처럼 해석 가능하지만, 논문이 deadline으로 선언하거나 miss를 측정하지 않음 |
+| X | Period나 시간 기준 자체를 제시하지 않음 |
+
+이 기준을 적용하면: Jalonen (T_acq=100 ms 존재, 미선언) → △; Ma et al. (T_W=51.2 ms 존재, 미선언) → △; Bhaventhan (100 ms inter-sample period 존재, 미선언) → △; Yang et al. (로컬 추론 deadline 자체 없음) → X.
+
 ### 실시간성 등급
 
 | 등급 | 이름 | 최소 판정 기준 |
@@ -191,25 +203,25 @@ RTOS 사용은 H 판정의 충분조건이 아니다. 반대로 범용 OS를 사
 
 | 논문 | 플랫폼 | 실행 환경 | RTOS | PREEMPT_RT | Deadline | Tail/jitter/miss | Sched. 분석 | 모델 경량화 | 시스템 scheduling | Runtime 적응 | `W/H/M` 공동 | `q+S` | RT 등급 |
 | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| Ma et al., Lightweight Architecture Search FD | `PL-DESKTOP` | `ENV-OTHER` | X | X | X | X | X | O | X | X | X | X | B |
-| Lee and Kim, FRFconv-TDSNet | `PL-SBC-SOC` | Linux 계열 확인 필요 | X | X | X | X | X | O | X | X | X | X | B |
-| Jalonen et al., Time-Varying Speed FD | `PL-DESKTOP` | `ENV-OTHER` | X | X | X | X | X | O | X | X | X | X | B |
-| Thota et al., TinyML Bearing FD | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | ? | X | O | X | X | X | X | B |
-| Choi et al., Low-Cost MCU Shaft FD | `PL-MCU` | `ENV-BAREMETAL` | X | X | X | X | X | O | X | X | X | X | B |
+| Ma et al., Lightweight Architecture Search FD | `PL-DESKTOP` | `ENV-OTHER` | X | X | △ | X | X | O | X | X | X | X | B |
+| Lee and Kim, FRFconv-TDSNet | `PL-SBC-SOC` | `ENV-LINUX` (OS·kernel 미기재; PyTorch Mobile + XNNPACK) | X | X | X | X | X | O | X | X | X | X | B |
+| Jalonen et al., Time-Varying Speed FD | `PL-DESKTOP` | `ENV-OTHER` | X | X | △ | X | X | O | X | X | X | X | B |
+| Thota et al., TinyML Bearing FD | `PL-MCU` | `ENV-OTHER` (Edge Impulse firmware; OS·RTOS·runtime 미보고) | X | X | X | X | X | O | X | X | X | X | B |
+| Choi et al., Low-Cost MCU Shaft FD | `PL-MCU` | `ENV-BAREMETAL` (RTOS 없음; bare-metal 추정; X-CUBE-AI 변환) | X | X | △ | X | X | O | X | X | X | X | B |
 | Zhang et al., Fast Short-Time Root-MUSIC | `PL-MCU` | FreeRTOS `ENV-RTOS` | O | X | X | X | X | O | X | X | X | X | B |
 | Yang et al., Stacked AE End-Edge | `PL-MCU` | MCU runtime 확인 필요 | ? | X | △ | X | X | O | △ | O | X | X | B |
-| He et al., Cyclostationary Edge FD | `PL-MCU` | OS/RTOS 확인 필요 | ? | X | X | X | X | △ | X | X | X | X | B |
-| Pubalan et al., Simulated 1D-CNN RT-FDD | `PL-DESKTOP` | simulated/other | X | X | X | X | X | O | X | X | X | X | B |
-| Arciniegas et al., TinyML Motor Vibration | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | X | X | O | X | X | X | X | B |
-| Gupta and Shivhare, TinyML ESP32 | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | X | X | O | X | X | X | X | B |
-| Lima, Edge Impulse Motor FD | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | X | X | O | X | X | X | X | B |
+| He et al., Cyclostationary Edge FD | `PL-MCU` | `ENV-OTHER` (C + FPU + MCU DSP library; OS·RTOS 미기재) | X | X | △ | X | X | △ | X | X | X | X | B |
+| Pubalan et al., Simulated 1D-CNN RT-FDD | `PL-DESKTOP` | `ENV-OTHER` (MATLAB App Designer; OS·CPU 미보고; PC replay) | X | X | △ | X | X | O | X | X | X | X | B |
+| Arciniegas et al., TinyML Motor Vibration | `PL-MCU` | `ENV-OTHER` (OS 미기재; Edge Impulse firmware; TFLite Micro 여부 미명시) | X | X | △ | X | X | O | X | X | X | X | B |
+| Gupta and Shivhare, TinyML ESP32 | `PL-MCU` | `ENV-OTHER` (OS·runtime 미기재) | X | X | △ | X | X | O | X | X | X | X | B |
+| Lima, Edge Impulse Motor FD | `PL-MCU` | `ENV-OTHER` (Edge Impulse firmware + EON Compiler; OS·TFLite Micro 여부 미보고) | X | X | △ | X | X | O | X | X | X | X | B |
 | Alasiry et al., Dual-MCU Monitoring | `PL-MCU` | MCU runtime 확인 필요 | ? | X | X | X | X | X | X | X | X | X | B |
-| Zhan et al., APTL-net | `PL-HET-SOC` | `ENV-LINUX` | X | X | X | X | X | O | X | X | X | X | B |
+| Zhan et al., APTL-net | `PL-HET-SOC` | `ENV-LINUX` (Ubuntu 20.04; JetPack 5.1.2; TensorRT 8.5.1.7) | X | X | X | X | X | O | X | X | X | X | B |
 | Garay et al., Multimodal TinyML PdM | `PL-MCU` | Arduino Mbed OS `ENV-RTOS` | O | X | X | △ | X | O | X | X | X | X | B |
 | Langarica et al., Industrial Internet FD | `PL-SERVER-GPU` | `ENV-LINUX`/server stack | X | X | X | X | X | X | X | △ | X | X | B |
-| Shan et al., CS-DKELM | `PL-HET-SOC` | `ENV-LINUX` | X | X | X | X | X | O | X | X | X | X | B |
+| Shan et al., CS-DKELM | `PL-HET-SOC` | `ENV-LINUX` (CUDA 기재 이상; Zynq에 NVIDIA GPU 없음) | X | X | △ | X | X | O | X | X | X | X | B |
 | Sayghe, Physics-Aware Transformer | `PL-SBC-SOC` | `ENV-LINUX` | X | X | X | X | X | O | X | X | X | X | B |
-| Bhaventhan et al., Vibration PdM Edge AI | `PL-SBC-SOC` | Linux 미기재 | X | X | X | X | X | X | X | X | X | X | B |
+| Bhaventhan et al., Vibration PdM Edge AI | `PL-SBC-SOC` | Linux 미기재 | X | X | △ | X | X | X | X | X | X | X | B |
 | Asutkar et al., TinyML TL Domain Generalization | `PL-MCU` + `PL-SBC-SOC` | TFLite/Arduino IDE (ESP32) + TF/Linux (Pi 4B) | X | X | X | X | X | O | X | X | X | X | B |
 | 본 연구 KCC 2026 | `PL-MCU` | Zephyr `ENV-RTOS` | O | X | O | O | △ | O | O | X | X | X | E |
 | 제안 연구 | `PL-SBC-SOC` | Linux + `ENV-PREEMPT_RT` | X | P | P | P | P | - | P | P | P | P | 목표 H 또는 조건부 H |

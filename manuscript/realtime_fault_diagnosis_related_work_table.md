@@ -16,30 +16,38 @@
 
 | Work | Platform | Execution environment | RTOS | PREEMPT_RT | Deadline | Tail/miss | Sched. analysis | 경량화·배포 기법 | System scheduling | Runtime adapt. | Joint `W/H/M` | `q+S` | RT level |
 | --- | --- | --- | :---: | :---: | :---: | :---: | :---: | --- | :---: | :---: | :---: | :---: | :---: |
-| Ma et al., Architecture Search FD [1] | Desktop CPU | Other OS | X | X | X | X | X | NAS (hardware-aware, FLOP/latency 목표) | X | X | X | X | B |
-| Lee and Kim, FRFconv-TDSNet [2] | Raspberry Pi 4B | Linux, RT extension ? | X | X | X | X | X | 경량 아키텍처 수동 설계 (FRFconv + TDS 블록) | X | X | X | X | B |
-| Jalonen et al., Time-Varying Speed FD [3] | Laptop SoC | Other OS | X | X | X | X | X | 알고리즘 경량화 (시변속도 보상 처리) | X | X | X | X | B |
-| Thota et al., TinyML Bearing FD [4] | MCU | Runtime ? | ? | X | X | ? | X | TinyML + 양자화 (INT8 추정) | X | X | X | X | B |
-| Choi et al., Low-Cost MCU Shaft FD [5] | MCU | Bare metal | X | X | X | X | X | 양자화 (X-CUBE-AI INT8) | X | X | X | X | B |
+| Ma et al., Architecture Search FD [1] | Desktop CPU (AMD Ryzen 5 4600H) | OS 미기재; framework·thread 수 미기재 | X | X | △ | X | X | Hardware-aware differentiable NAS (variable-layer; GD-Conv + 다중 kernel; measured op time을 L_time = log(t̄/t_b)로 objective에 포함); 82 K params, 6.08 MFlops; 0.780 ms/sample (820-sample batch ÷ 0.64 s; batch-1 online latency 아님) | X | X | X | X | B |
+| Lee and Kim, FRFconv-TDSNet [2] | Raspberry Pi 4B | Linux (OS 미기재); PyTorch Mobile + XNNPACK | X | X | X | X | X | 경량 아키텍처 수동 설계 (FRFconv depthwise separable + TDS late fusion); 9K param, 1.80 MAdds; avg 3.40 ms·max 3.67 ms (100회) | X | X | X | X | B |
+| Jalonen et al., Time-Varying Speed FD [3] | MacBook Pro M1 Pro | OS·framework·backend 미기재 | X | X | △ | X | X | 알고리즘 경량화 (speed PSD NUFT 분석 → 10 Hz threshold → T=100 ms → W=2000 고정; angular resampling 없음); C_avg=20.2 ms ± 0.36 ms (10×1000 samples) | X | X | X | X | B |
+| Thota et al., TinyML Bearing FD [4] | Espressif ESP-EYE (ESP32 계열); clock·RAM·Flash 사양 미보고 | Edge Impulse firmware; OS·RTOS·runtime 미보고 (ENV-OTHER) | X | X | X | X | X | Compact 3-layer 1D CNN (raw triaxial vibration 직접 입력); 6-class distributed bearing fault; INT8 quantization; Table 2: FP32 99.26%·30 ms·29.3 KB RAM·43.3 KB Flash vs. INT8 99.36%·265 ms·61.2 KB RAM·69.7 KB Flash; 본문은 INT8에 30 ms·29.3 KB를 귀속 — 수치 모순; f_s·H 미보고; energy·cycles 미보고; live motor deployment 미수행 | X | X | X | X | B |
+| Choi et al., Low-Cost MCU Shaft FD [5] | STM32 Nucleo-64 / STM32F401RET6 (84 MHz, 96 KiB RAM, 512 KiB Flash) | RTOS 없음; bare-metal 추정; X-CUBE-AI 변환 (ENV-BAREMETAL) | X | X | △ | X | X | FRFconv-TDSNet + X-CUBE-AI 변환; 8-class shaft fault (Healthy/Looseness/Misalignment×3/Unbalance×3); f_s=16 kHz, W=2048, T_W=128 ms, H 미정의; quantization bit-width 미기재; accuracy 99.25%; sensing avg 151 ms (SD 5.2 ms) + inference 555.872 ms (SD 0.028 ms) + output 56.158 ms = E2E ~763 ms ≈ 5.96×T_W; Flash 144.69 KiB, SRAM 73.54 KiB | X | X | X | X | B |
 | Zhang et al., Fast Short-Time Root-MUSIC [6] | STM32H743 | FreeRTOS | O | X | X | X | X | 알고리즘 최적화 (DNN 없음, Root-MUSIC 단축 계산) | X | X | X | X | B |
 | Yang et al., Stacked AE End-Edge [7] | STM32F407-class + edge | Runtime ? | ? | X | △ | X | X | Cascade AE (space↔time 교환) + End-Edge 오프로딩 | △ | O | X | X | B |
-| He et al., Cyclostationary Edge FD [8] | STM32F407 | Runtime ? | ? | X | X | X | X | 알고리즘 경량화 (개선된 cyclostationary 분석, 비DL) | X | X | X | X | B |
-| Pubalan et al., Simulated 1D-CNN [9] | Simulation | Other | X | X | X | X | X | 경량 1D-CNN (실 배포 없음, 시뮬레이션) | X | X | X | X | B |
-| Arciniegas et al., TinyML Motor Vibration [10] | ESP32S3 | Runtime ? | ? | X | X | X | X | TinyML (Edge Impulse 배포) | X | X | X | X | B |
-| Gupta and Shivhare, TinyML ESP32 [11] | ESP32 | Runtime ? | ? | X | X | X | X | 양자화 (INT8/FP32, TFLite) | X | X | X | X | B |
-| Lima, Edge Impulse Motor FD [12] | nRF52840 | Runtime ? | ? | X | X | X | X | 양자화 (INT8/FP32) + Edge Impulse 자동 NAS | X | X | X | X | B |
+| He et al., Cyclostationary Edge FD [8] | STM32F407IGT6 (168 MHz, 192 KB RAM, 2 MB ext. SRAM) | C + FPU + MCU DSP library; OS·RTOS 미기재 (ENV-OTHER) | X | X | △ | X | X | 비DL 알고리즘 최적화: ICFEE(information-curve 기반 optimal band 자동 선택) + spectral correlation density; sound(PCB377C01 mic) + hall speed 비접촉 취득; f_s=5 kHz, W=5000 samples, T_W=1 s; pipeline 합계 10.294 s (spectral correlation 9.196 s, 89.3%) >> T_W; 논문은 deadline miss로 다루지 않고 future optimization으로 인정; % accuracy 없음, qualitative identification만 | X | X | X | X | B |
+| Pubalan et al., Simulated 1D-CNN [9] | PC (CPU·GPU 사양 미보고); 실 embedded target 없음 | MATLAB App Designer; OS 미보고 (ENV-OTHER) | X | X | △ | X | X | Physics-based W 설계: $W=60f_s/\mathrm{RPM}=1602$ samples at 1797 rpm, 48 kHz; $T_W\approx33.4$ ms; H 미정의; 1D CNN 4-block (filter 32→128, GAP, FC-64); per-prediction latency 0.03 s; accuracy 97.37% mean ±0.56 (0 HP, 5-run); param·FLOPs·model size 미보고; CWRU data PC replay (실 hardware 없음) | X | X | X | X | B |
+| Arciniegas et al., TinyML Motor Vibration [10] | XIAO ESP32S3 Sense (Xtensa LX7 dual-core) + MPU6050 | OS 미기재; Edge Impulse firmware (ENV-OTHER) | X | X | △ | X | X | INT8 PTQ + matrix factorization pruning + K-means anomaly detection; W=16, H=8, f_s=100 Hz (고정); DNN 3-class (Stopped/Average-speed/High-speed); avg inference 25 ms (SD 3 ms); E2E ~300 ms (collection 80 ms + inference 25 ms + network+alert 195 ms); accuracy 96.5% lab, 98% industrial | X | X | X | X | B |
+| Gupta and Shivhare, TinyML ESP32 [11] | ESP32 + ADXL345 | OS·runtime 미기재 (TFLite 여부 불명) | X | X | △ | X | X | INT8 post-training quantization; 1D CNN 13 ms·91.4%·224 KB vs CNN-LSTM 26 ms·93.6%·352 KB (Table 4); W=256, H=128, f_s=1 kHz 고정; "adaptive sampling" 주장이나 구현 확인 불가 | X | X | X | X | B |
+| Lima, Edge Impulse Motor FD [12] | Arduino Nano 33 BLE (nRF52840, Cortex-M4, 64 MHz, 256 KB RAM) | Edge Impulse firmware + EON Compiler; OS·TFLite Micro 여부 미보고 (ENV-OTHER) | X | X | △ | X | X | EON Tuner offline grid search: $f_s$ {100,250,500,1000 Hz} × $T_W$ {1,2 s} × $T_H$ {250–2000 ms} × DSP (FFT/Haar/Bior1.3) × ANN depth/width × {FP32, INT8}; 4-bar 최적: $f_s$=250 Hz, $T_W$=1 s, $T_H$=500 ms, 98.6%/27 ms FP32 → 98.1%/1 ms INT8; 1-bar 최적: $f_s$=1000 Hz, $T_W$=1 s, $T_H$=250 ms, 95.8%/39 ms FP32 → 68.3% INT8; RAM 1.4/1.6 KB, Flash 14.5/21.4 KB; 고정 배포 | X | X | X | X | B |
 | Alasiry et al., Dual-MCU Monitoring [13] | STM32F103 + ESP32 | Runtime ? | ? | X | X | X | X | 없음 (ML 없음, threshold 기반) | X | X | X | X | B |
-| Zhan et al., APTL-net [14] | Jetson Xavier NX | Linux | X | X | X | X | X | Adaptive pruning + DW conv + BN fusion (Triple-lightweight) | X | X | X | X | B |
+| Zhan et al., APTL-net [14] | Jetson Xavier NX | Ubuntu 20.04; JetPack 5.1.2; TensorRT 8.5.1.7 | X | X | X | X | X | Triple-lightweight: recursive inference + FDD weight-sharing multiscale conv + dependency-aware structured pruning (offline training-time, not runtime); 0.96 M params, 10.81 G FLOPs (50% pruned); avg 14.782 ms forward-pass, TensorRT 16.588 ms (SD 9.227 ms) | X | X | X | X | B |
 | Garay et al., Multimodal TinyML [15] | Cortex-M4F + gateway | Arduino Mbed OS | O | X | X | △ | X | INT8 PTQ + TFLite Micro + ASIC (NDP120) | X | X | X | X | B |
 | Langarica et al., Industrial Internet FD [16] | IIoT edge + server | Linux/server stack | X | X | X | X | X | 없음 (signal processing cascade) | X | △ | X | X | B |
-| Shan et al., CS-DKELM [17] | Zynq MPSoC | Linux | X | X | X | X | X | 압축 센싱 (sparse 표현) + DKELM (비DL 커널) | X | X | X | X | B |
-| Sayghe, Physics-Aware Transformer [18] | Raspberry Pi 4 | Linux | X | X | X | X | X | 물리 인식 경량 Transformer (patch 수 최소화) + ONNX Runtime | X | X | X | X | B |
-| Bhaventhan et al., Vibration PdM [19] | Raspberry Pi 4 | Linux (OS 미기재) | X | X | X | X | X | 없음 (원문 미명시; 표준 CNN 직접 실행 추정) | X | X | X | X | B |
+| Shan et al., CS-DKELM [17] | Zynq UltraScale+ MPSoC XCZU9EG | Linux; Python 3.8; PyTorch 1.7.0 (CUDA 기재되나 Zynq에 NVIDIA GPU 없어 환경 불명확) | X | X | △ | X | X | 압축 센싱 (CR=80%, N=4800→M=960) + reconstruction 없는 직접 분류 + DKELM (ELM-AE + RBF kernel); "100 ms industry requirement" 주장하나 physical avg 170 ms로 초과; per-window latency 경계 불명확 | X | X | X | X | B |
+| Sayghe, Physics-Aware Transformer [18] | Raspberry Pi 4 | Linux (OS 미기재); ONNX Runtime 1.16 | X | X | X | X | X | 물리 인식 경량 Transformer (overlapping Conv-Stem + physics-guided patch P=⌈f_s/f_min⌉) + ONNX Runtime; 0.52M param; avg 43.6 ms (1000 calls) | X | X | X | X | B |
+| Bhaventhan et al., Vibration PdM [19] | Raspberry Pi 4 | Linux (OS 미기재) | X | X | △ | X | X | 없음 (원문 미명시; 표준 CNN 직접 실행 추정) | X | X | X | X | B |
 | Asutkar et al., TinyML TL Domain Generalization [20] | ESP32 + Raspberry Pi 4B | TFLite (Arduino IDE) / TF (Pi) | X | X | X | X | X | 통계 특징 10개 (raw→(10×1) 압축) + TFLite + 2498 파라미터 경량 CNN | X | X | X | X | B |
 | KCC 2026 system [self-reference 확인 필요] | MCU | Zephyr RTOS | O | X | O | O | △ | 양자화 + Zephyr RTOS 최적화 | O | X | X | X | E |
 | Proposed work | Pi Zero 2W | Linux + PREEMPT_RT | X | P | P | P | P | - | P | P | P* | P | Target E; H requires formal analysis |
 
 `P*`: 초기 연구 범위는 joint `W/H`를 코어로 두고 `M`은 고정하거나 제한된 보조 변수로 두는 안을 우선 검토한다.
+
+## Deadline 컬럼 판정 기준
+
+| 판정 | 의미 |
+| --- | --- |
+| O | Deadline을 명시적으로 정의하고 이를 기준으로 평가함 |
+| △ | Period/Window/Acquisition duration은 존재하여 deadline처럼 해석 가능하지만, 논문이 deadline으로 선언하거나 miss를 측정하지 않음 |
+| X | Period나 시간 기준 자체를 제시하지 않음 |
 
 ## RT Level
 
