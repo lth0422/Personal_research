@@ -17,18 +17,18 @@
 - ERIKA RTOS가 실행되는 virtual MPSoC와 real-time benchmark에서 coordination overhead와 QoC를 평가한다.
 
 ## Conclusion 요약
-- TDMA wheel과 task period의 runtime 공동 조정이 workload 변화에 대응하며, 실험에서 coordination overhead는 task computation time의 5% 미만이었다.
+- TDMA wheel과 task period의 runtime 공동 조정이 workload 변화에 대응하며, F-14/CoreMark/메모리 태스크 실험에서 QoC를 약 27~31% 개선하고 coordination overhead는 task computation time의 5% 미만이었다.
 
 ## 요점
 - 플랫폼: STBus 기반 multiprocessor virtual platform, ERIKA RTOS, EDF.
 - 도메인: shared-bus MPSoC real-time control.
 - 핵심 방법 (2~3줄): 중앙 master가 core의 bandwidth 요청을 모아 TDMA slot을 공정하게 재배분한다. 각 core는 bus allocation별 offline WCET table을 사용해 elastic period를 계산한다.
-- 정식화/수식 (있으면): `tau_i(C_i,T_i,min,T_i,max,E_i)`, `C_i`는 bus bandwidth별 offline table에서 선택한다.
+- 정식화/수식 (있으면): `tau_i(C_i,T_i,min,T_i,max,E_i)`, `C_i`는 bus bandwidth별 offline table에서 선택한다. Bandwidth는 service level 7단계로 사전 이산화하며, QoC 감쇠 모델은 `ΔJ = αe^(−β/T)` 형태다. Master는 요청 비례 `S_i = R_i/ΣR_i`로 재분배하는데, 논문 스스로 optimal이 아니라 fair tradeoff라고 인정한다.
 
 ## 0708 면담 기준 보강
-- **실시간성 수준**: RTOS/EDF 기반이며 TDMA predictability와 workload 대응을 함께 다룬다.
-- **실행시간 가정**: bus allocation별 WCET를 offline profiling/static analysis로 미리 구한다.
-- **보장 방식**: TDMA isolation, WCET table, elastic utilization bound를 조합한다.
+- **실시간성 수준**: RTOS(ERIKA)/EDF 기반이며 TDMA predictability와 workload 대응을 함께 다룬다. Deadline miss나 tail을 정형 분석하지 않고 QoC 지수(실험적)로 평가한다.
+- **실행시간 가정**: bus allocation별 WCET를 service level(7단계)마다 offline profiling으로 LUT에 미리 구한다.
+- **보장 방식**: **Soft**. Elastic 파라미터를 offline에서 최악 조건 기준으로 정해 TDMA-wheel이 어떻게 바뀌어도 태스크셋이 항상 feasible하도록 방어선을 치고, runtime은 QoC 최적화만 한다. 정형 증명(lemma/theorem)은 없고 QoC는 실험적으로만 검증한다.
 
 ## 내 연구 관점
 - 한 줄 gap (이 논문이 안 한 것): vibration `W/M`, machine condition, PREEMPT_RT는 없고 중앙 master와 사전 WCET table을 요구한다.

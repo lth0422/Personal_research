@@ -73,7 +73,7 @@ Buttazzo 1998 (원형: spring, period compression, EDF/RM bound)
 
 | 논문 | 연도 | venue | 응용 도메인 | 가변 변수 | 트리거 | 플랫폼·환경 | 보장 수준 | 본 연구와의 gap |
 |---|---|---|---|---|---|---|---|---|
-| Burgio et al. [15] | 2010 | ICCD | MPSoC 실시간 제어 (shared TDMA bus) | TDMA slot·bandwidth, period T | core workload 변화로 bandwidth 요청 발생 | STBus MPSoC, ERIKA RTOS, EDF | TDMA isolation + WCET table + elastic bound (hard 지향) | 중앙 master + offline WCET table 필요. z·W·M 없음 |
+| Burgio et al. [15] | 2010 | ICCD | MPSoC 실시간 제어 (shared TDMA bus) | TDMA slot·bandwidth, period T | core workload 변화로 bandwidth 요청 발생 | STBus MPSoC, ERIKA RTOS, EDF | TDMA isolation + WCET table + elastic bound; offline feasibility 방어로 schedulability 유지, 단 정형 증명 없이 실험 QoC로만 검증 (soft) | 중앙 master + offline WCET table 필요. z·W·M 없음 |
 | Salman et al. [16] | 2021 | ETFA | 분산 CPS — compositional/hierarchical 실시간 | period T, reservation bandwidth | bandwidth 초과, period 변경 요청 | uniprocessor compositional evaluation | two-level (application period → system bandwidth) | vibration W·M·z·PREEMPT_RT 없음. reservation ↔ slack S mapping 별도 필요 |
 | Gifford et al. (Decntr) [17] | 2024 | RTAS | 멀티모드 CPS 제어 (automotive) — controller + scheduling + resource co-design | controller, period T, core mapping, cache·bandwidth allocation | runtime mode-change event (ex. 장애물 감지) | Intel Xeon 16-core + CAT·MemGuard profiling / RPi 3 B+ WCET | DBF schedulability (mode별·transition별), linear plant safety invariant | **구조적으로 가장 가까운 비교군.** vibration window W, diagnosis utility, anomaly score, PREEMPT_RT measurement 없음 |
 | Xu et al. (Safety-Aware) [18] | 2023 | RTCSA | Automotive safety-critical feedback control | common period T (boosting·compressing) | offline only — WCET·plant model·safety margin 입력 | Julia 구현, control model 평가 | weakly-hard constraint + automata schedule synthesis (offline) | runtime slack·z·W·M 없음. offline synthesis only. safety margin ≠ diagnosis utility |
@@ -137,13 +137,14 @@ Buttazzo 1998 (원형: spring, period compression, EDF/RM bound)
 4. 새 TDMA Time Wheel을 생성해 Bus Arbiter에 적재하고, 각 core에 새 service level을 통보한다.
 5. 각 core는 service level에 해당하는 C_i를 **LUT(offline profiling 결과)**에서 조회한다.
 6. 조회한 C_i로 Buttazzo elastic scheduling 알고리즘(Γ_f·Γ_v 분리, U_i = U_i_max - (U_vmax - Ud + Uf) × e_i/E_v)을 로컬 실행해 period를 재계산한다.
-7. coordination overhead는 실험에서 task computation time의 5% 미만으로 보고한다.
+7. F-14/CoreMark/메모리 태스크 실험에서 QoC를 약 27~31% 개선하고, coordination overhead는 task computation time의 5% 미만으로 보고한다.
 
 #### 보장 방식
 
 - TDMA wheel → bus predictability (slot별 격리)
 - offline WCET table → 각 core의 C 상한 보장
 - elastic utilization bound → EDF schedulability
+- 단, 전체 보장은 **soft**다. Elastic 파라미터를 offline 최악 조건 기준으로 못박아 feasibility를 방어할 뿐 lemma/theorem 형태의 정형 증명은 없고, QoC는 실험적으로만 검증한다. Master의 비례 배분 `S_i=R_i/ΣR_j`도 optimal이 아니라 fair tradeoff라고 논문 스스로 인정한다.
 
 #### 본 연구와의 거리
 

@@ -14,10 +14,10 @@
 - 공통 period의 time-triggered schedule을 safety constraint에 맞게 합성하며, 여러 automotive control model에서 접근법을 평가한다.
 
 ## Conclusion 요약
-- 공통 sampling period 후보와 weakly-hard deadline hit/miss constraint를 연결해, 일부 deadline miss를 허용하면서도 plant trajectory가 safety margin 안에 머무는 schedule을 합성한다. 평가에서는 모든 deadline을 요구할 때 utilization이 1을 넘는 다섯 control task에 대해 28 ms common period에서 safe schedule을 찾았고, 40 ms에서는 controller gain 재계산이 필요했다.
+- 공통 sampling period 후보와 weakly-hard deadline hit/miss constraint를 연결해, 일부 deadline miss를 허용하면서도 plant trajectory가 safety margin 안에 머무는 schedule을 합성한다. 평가에서는 모든 deadline을 요구하면 utilization이 약 2.51에 이르는 자동차 control task 다섯 개를 단일 프로세서에 스케줄에 성공했고, 28 ms common period에서 safe schedule을 찾았으며 40 ms에서는 controller gain 재계산이 필요했다.
 
 ## 요점
-- 플랫폼: Julia 구현을 이용한 control-model 평가. 특정 embedded hardware 또는 RTOS 실험은 제시되지 않는다.
+- 플랫폼: 단일 프로세서, time-triggered, LET(logical execution time) 패러다임, AUTOSAR/OSEK 호환을 가정한 control-model 평가. 특정 embedded hardware 또는 RTOS 실측은 제시되지 않는다.
 - 도메인: automotive를 포함한 safety-critical feedback control.
 - 핵심 방법 (2~3줄): WCET를 내림차순으로 정렬하고 상위 `k`개 WCET의 합을 common period 후보로 만든다. 각 period에서 plant를 다시 discretize하고, 안전한 weakly-hard hit/miss constraint를 구한 뒤 automata-based time-triggered schedule을 합성한다. 원래 controller gain으로 실패하면 새 period에 맞춘 gain으로 다시 시도한다.
 - 정식화/수식 (있으면): Task `i`는 `C_i`, `P_i`, `d_i^safe`를 가진다. 후보 common period는 `P_k^C = sum_{i<=k} C_i`이고, trajectory deviation이 `d(m,k) <= d_i^safe`이면 해당 weakly-hard constraint를 safe하다고 판정한다.
