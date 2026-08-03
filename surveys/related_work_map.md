@@ -53,6 +53,8 @@
 
 ### Real-Time DNN Serving
 
+- Xiang and Kim, RTSS 2019 DART는 multi-DNN layer를 CPU/GPU pipeline stage에 배치하고, layer/node별 measured maximum profile, response-time analysis, admission control과 runtime enforcement를 결합한다.
+- DART는 offline profile이 online admission에 필요한 cost model로 기능하는 선례다. 다만 input/model fidelity를 runtime에 선택하지 않고 OS/driver jitter를 guarantee 범위에서 제외한다.
 - Yao et al., RTCSA 2020은 DNN workflow를 mandatory/optional stages가 있는 imprecise computation으로 보고, deadline 안에서 confidence/accuracy utility가 높은 stage를 선택한다.
 - Kang et al., RTAS 2022 DNN-SAM은 object-detection inference를 critical RoI mandatory subtask와 scaled full-image optional subtask로 분리하고, actual mandatory cost 이후 남은 slack으로 optional scale을 선택한다.
 - DNN-SAM은 `system slack + input fidelity`를 이미 직접 결합하고 sufficient non-preemptive EDF condition을 제시한다. 본 연구와의 차이는 vibration temporal `W`, machine condition과 slack의 동시 trigger, `H/M` 공동 선택 및 PREEMPT_RT 환경에 있다.
@@ -74,6 +76,10 @@
 - 차이점: 이 계열은 GPU serving, perception workload, ECG/health monitoring 중심이며, vibration window W, diagnosis period H, model M의 공동 선택과 PREEMPT_RT 실시간성은 다루지 않는다. 특히 AMS Heart Disease는 condition-aware이지만 현재 system slack을 함께 쓰는 정책으로 확인되지는 않았다.
 
 ### Weakly-Hard Deadline Semantics
+
+- Chwa et al., RTAS 2018은 external physical state별 LC/HC execution budget을 정의하고, job release/completion에서 reclaim한 LC/HC-mode slack으로 mixed-criticality mode switch와 LC-job service를 관리한다.
+- 이 논문으로 인해 `physical/machine state + runtime slack` 조합 자체를 본 연구의 novelty로 주장할 수 없다. 차이는 vibration diagnosis에서 state가 required fidelity를 정하고, slack이 feasible `(W,H,M)`을 제한하는 역할 분리와 diagnostic metric 검증에 두어야 한다.
+- 이 논문의 physical state는 execution demand를 결정하며 본 연구의 anomaly score와 동일하지 않다. Mixed-criticality와 EDF-VD를 채택하지 않는다면 수식의 직접 적용보다 state-dependent bound와 safe slack reclamation 원칙을 비교한다.
 
 - Chen et al., RTSS 2025 WiP는 Linux `SCHED_DEADLINE`의 Constant Bandwidth Server를 이용해 `(m,K)` weakly-hard task를 kernel modification 없이 실행하는 user-space API framework를 제안한다.
 - Xu et al., RTCSA 2023은 control-system safety margin으로 허용 가능한 weakly-hard hit/miss pattern을 제한하고 offline schedule을 합성한다.

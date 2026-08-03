@@ -29,6 +29,9 @@
 - MURAL의 measured WCET와 dynamic latency predictor에 적용된 safety margin 또는 conservative correction을 확인한 뒤, 본 연구의 feasible mode filtering과 비교해야 한다.
 - DNN-SAM이 `system slack -> input scale`을 이미 다루므로 본 연구 novelty를 단순한 slack 기반 `W` 선택으로 표현하지 않아야 한다. Machine condition, temporal signal semantics와 `W/H/M` 공동 선택 중 무엇을 핵심 claim으로 검증할 것인가?
 - DNN-SAM처럼 actual execution 이후 slack을 reclaim할 것인가, 아니면 p99/max profile로 다음 diagnosis mode를 보수적으로 고를 것인가?
+- Chwa et al. RTAS 2018이 external physical state와 runtime slack을 이미 결합하므로, 본 연구 novelty를 trigger 조합이 아니라 `diagnostic requirement state -> utility order`와 `system state -> feasible W/H mode`의 역할 분리로 충분히 방어할 수 있는가?
+- Chwa et al.처럼 future state를 알기 전에는 모든 state의 maximum execution budget을 예약하고 release 시 reclaim할 것인가, 아니면 Pi Zero 2W의 empirical profile과 guard band로 next-job response를 예측할 것인가?
+- DART처럼 offline measured maximum을 admission에 쓰고 runtime overrun을 감시할 경우, overrun 발생 mode를 즉시 금지할지 profile을 갱신할지 fallback할지 정책을 정해야 한다.
 - 측정 maximum을 `C(W,M)` bound로 사용할 경우 unseen workload에서 bound가 깨질 가능성과 safety margin을 어떻게 처리할 것인가?
 - Decntr와 구분하려면 본 연구의 mode를 machine condition mode, diagnosis configuration `(W,H,M)`, platform/resource mode 중 어떤 계층으로 나눠 정의해야 하는가?
 - Decntr의 offline mode/transition synthesis처럼 모든 anomaly-state transition에 대한 feasible set을 미리 계산할 것인가, 아니면 runtime slack으로 admission을 반복할 것인가?
@@ -104,6 +107,8 @@
 - Ma et al. Engineering Applications of Artificial Intelligence 2023의 real-time 수치는 CPU test-set processing time 중심이다. per-sample latency, worst-case latency, deadline miss, embedded target measurement와 혼동하지 않아야 한다.
 - Lee and Kim IEEE TIM 2024 FRFconv-TDSNet의 Raspberry Pi 4B inference time은 conclusion 기준 less than 5 ms로 정리했지만, average/max 수치는 Figure 6에서 재확인해야 한다.
 - FRFconv-TDSNet 논문 수치와 KCC 2026 STM32F407 + Zephyr + TFLite Micro 결과를 비교할 때 platform, framework, input window, quantization 조건을 분리해야 한다.
+- KCC 2026 원문에서 40.3 ms는 평균 response time이다. 이를 max, p99 또는 WCET로 다시 쓰지 않아야 하며 정식 proceedings metadata를 확인해야 한다.
+- KCC 2026 원문은 anomaly score나 runtime anomaly detector를 제시하지 않는다. 후속 연구의 machine-condition indicator `q`를 KCC에서 검증한 결과처럼 연결하지 않아야 한다.
 - Choi et al. KSC 2025의 sensing, inference, output 실행시간은 deadline이나 주기 조건 없이 system execution time으로 제시된다. KCC/KSC 원고에서 real-time guarantee처럼 표현하지 않도록 주의해야 한다.
 - Choi et al. KSC 2025와 KCC 2026 Zephyr 결과를 연결할 때 STM32F401RET6 vs STM32F407, X-CUBE-AI vs TFLite Micro/CMSIS-NN, non-RTOS integration vs Zephyr task pipeline 차이를 분리해야 한다.
 - Chen et al. RTSS 2025 WiP의 Raspberry Pi 5 실험은 synthetic taskset schedulability와 example trace 중심이다. Pi Zero 2W, PREEMPT_RT, TFLite fault diagnosis pipeline 결과와 직접 비교하지 않아야 한다.

@@ -1,0 +1,522 @@
+% !TEX program = xelatex
+% 컴파일: XeLaTeX 또는 LuaLaTeX (kotex 사용). Overleaf에서 Menu > Compiler를 XeLaTeX로 설정.
+% 버전: v1_4 · 2026-08-03 · 작성자: 이태훈
+\documentclass[10pt]{article}
+\usepackage{kotex}
+\usepackage[margin=1in]{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{ragged2e}
+\setlist{nosep,leftmargin=1.4em}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\renewcommand{\arraystretch}{1.25}
+\newcommand{\circled}[1]{\ifcase#1\or①\or②\or③\or④\or⑤\or⑥\fi}
+
+\title{개인 연구 주제 구체화 문서}
+\author{이태훈 · v1\_4}
+\date{2026-08-03}
+
+\begin{document}
+\maketitle
+
+\section*{0. 문서의 목적}
+\begin{itemize}
+\item 이 문서는 학위논문의 \textbf{주제를 구체화}하기 위한 내부 작업 문서임.
+\item 실시간 결함 진단과 elastic scheduling의 조사 결과를 정리하고, 연구 공백·정식화·실험 설계·남은 과제를 작성하였음.
+\item 적응형 입력(S2)과 실시간 DNN(S4)은 서베이 중이며, 현재까지 확보한 범위만 표로 반영하였음.
+\end{itemize}
+
+\section{제목 (가제)}
+\begin{itemize}
+\item \textbf{추천 가제 (국문):} 엣지 디바이스에서 기계 상태와 시스템 여유를 이용한 실시간 진동 결함 진단의 진단 모드 선택
+\item \textbf{추천 가제 (영문):} Machine-Condition and Slack-Aware Mode Selection for Real-Time Vibration Fault Diagnosis on Edge Devices
+\end{itemize}
+
+\section{Keywords}
+\texttt{real-time fault diagnosis}, \texttt{runtime mode selection}, \texttt{elastic scheduling}, \texttt{anomaly-driven adaptation}
+
+\section{국문 초록(간단히 작성)}
+회전 기계의 진동 결함 진단을 엣지 디바이스에서 실시간으로 수행할 때, 진단 신뢰성과 실시간성은 서로 trade-off 관계에 있다. 더 큰 입력 window와 더 무거운 모델은 결함을 더 잘 구분하지만 실행시간과 이용률을 함께 키워 데드라인을 넘길 수 있다. 본 연구는 진단 태스크의 입력 window $W$, 진단 주기를 정하는 hop $H$, 추론 모델 $M$을 하나의 진단 모드로 묶고, 기계 상태 $q$와 시스템 여유 $S$를 함께 기준으로 삼아 매 진단 시점에 모드를 고르는 방법을 제시한다. 정상 상태에서는 가벼운 모드로 여유를 확보하고, 이상 징후가 감지되면 정밀 모드를 고르되 데드라인 안에서 실행 가능한 모드만 후보로 둔다. 이를 통해 각 진단 시점에서 기계 상태에 따라 요구되는 진단 정밀도를 반영하면서도, 시스템 여유를 기준으로 데드라인을 만족할 수 있는 모드만 선택하는 실시간 진동 결함 진단 방법을 제안한다.
+
+\section{Abstract (English)}
+In real-time vibration fault diagnosis on edge devices, diagnostic reliability and real-time behavior are in a trade-off: a larger input window $W$ and a heavier model $M$ separate faults more reliably but increase execution time and utilization, which can violate the deadline. This work groups the window $W$, the hop $H$ that sets the diagnosis period, and the model $M$ into a single diagnosis mode, and selects one mode at each diagnosis step using both the machine condition $q$ and the system slack $S$. Under a normal condition the runtime chooses a light mode to preserve slack; under a suspicious condition it chooses a precise mode, restricting the candidates to modes that run within the deadline. Consequently, this work proposes a real-time vibration fault diagnosis method that, at each diagnosis step, reflects the diagnostic precision required by the machine condition while selecting only the modes that can meet the deadline according to the system slack.
+
+\section{기호 정의}
+\begin{center}\footnotesize
+\begin{tabular}{@{}lL{13cm}@{}}
+\toprule
+기호 & 의미 \\ \midrule
+$f_s$ & 샘플링 주파수 \\
+$W_i$ & $i$번째 후보 모드의 입력 window 크기, 샘플 수 \\
+$H_i$ & $i$번째 후보 모드의 hop 크기, 샘플 수 \\
+$M_i$ & $i$번째 후보 모드의 추론 모델 또는 구성 \\
+$m_i$ & $i$번째 후보 진단 모드, $m_i = (W_i, H_i, M_i)$ \\
+$N$ & 후보 모드 개수. 후보 집합은 $\{m_1, \dots, m_N\}$ \\
+$T_i$ & 모드 $m_i$의 진단 주기, $T_i = H_i / f_s$ \\
+$C_i$ & 모드 $m_i$의 추론 실행시간. 평균과 관측 최대(max)를 사용, 여러 번 측정 예정. inference latency \\
+$I$ & 다른 workload나 공유 자원에 의한 간섭 시간 \\
+$L$ & 운영체제 스케줄링 지연 \\
+$R_i$ & 모드 $m_i$의 관측 응답시간, $R_i = C_i + I + L$ \\
+$D$ & 상대 데드라인 \\
+$U_i$ & 모드 $m_i$의 이용률, $U_i = C_i / T_i$ \\
+$U_{bg}$ & 배경 workload와 다른 실시간 태스크의 이용률 \\
+$U_{bound}$ & 이용률 상한 \\
+$q_k$ & $k$번째 진단 시점의 기계 상태 지표. 본 연구에서는 anomaly score로 구체화 \\
+$S_k$ & $k$번째 진단 시점의 시스템 여유, $S_k = D - \max(\text{최근 응답시간})$. 평균 대신 최근 $n$개 job의 응답시간의 관측 최대를 빼서 계산. 응답시간이 튀면 추정이 늦어질 수 있으므로 검토해야 함 \\
+$Q(m_i, q_k)$ & 현재 기계 상태에서 모드 $m_i$가 달성하는 진단 성능. 본 연구에서는 진단 정확도(accuracy)로 측정 \\
+$m^{*}_k$ & $k$ 시점에 \textbf{선택된 하나의 모드}. 별표는 선택 결과를 뜻하며 다른 모드를 포함한다는 의미가 아님 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Background}
+\subsection{연구 동기}
+\begin{itemize}
+\item 회전 기계는 발전설비·생산공정·교통 등 다양한 산업 현장의 핵심 요소이므로, 결함의 조기 탐지는 안전 확보와 유지보수 비용 절감에 중요하다.
+\item 원시 데이터에서 직접 특징을 추출하는 딥러닝 기반 data-driven 진단은 높은 성능을 보인다. 그러나 대부분 엣지에서 수집한 데이터를 클라우드로 전송해 추론하는 중앙집중형 구조라, 네트워크 지연과 통신 병목 때문에 결함에 실시간으로 대응하기 어렵다. 이에 데이터가 수집되는 엣지에서 직접 추론하는 방식이 대안으로 제시된다 [22].
+\item 엣지 자원은 제한적이어서, 모델 정확도가 높아도 추론 응답시간이 데드라인을 넘거나 지터가 크면 실시간 진단에 활용하기 어렵다.
+\item 여기서 진단 신뢰성과 실시간성이 trade-off 관계를 이룬다.
+\begin{itemize}
+\item 진단 신뢰성: 더 긴 window는 더 많은 회전 주기와 주파수 정보를 담아 약한 결함을 더 잘 구분하고, 더 무거운 모델은 결함 구분력이 높다.
+\item 실시간성: 엣지 자원은 제한적이며 진단 결과는 데드라인 안에 나와야 한다.
+\end{itemize}
+\item KCC 2026 결과는 CMSIS-NN 기반 연산 최적화와 입력 window 축소를 통해 추론시간을 줄였으며, 특히 window 크기가 응답시간과 데드라인 만족 여부를 결정하는 주요 설계 변수임을 정량적으로 보여준다 [22].
+\begin{itemize}
+\item 사용한 FRFconv-TDSNet 모델 [23]은 depthwise convolution 계층이 입력 길이에 비례하는 가변 커널 구조를 가져 $O(W^2)$ 복잡도를 갖는다. 따라서 window를 줄이면 연산량이 선형보다 빠르게 감소한다.
+\item 데드라인은 한 window의 수집 시간으로 정의된다: $D = W / f_s$. 비중첩 window에서는 진단 주기 $T$가 곧 $D$와 같다.
+\item 같은 데이터의 평균 추론 응답시간과 이용률은 다음과 같다.
+\end{itemize}
+\end{itemize}
+\begin{center}\footnotesize
+\begin{tabular}{@{}rrrr@{}}
+\toprule
+$W$ & 평균 추론 응답시간 & 데드라인 $D = W/f_s$ (8 kHz) & 이용률 $U = C/D$ \\ \midrule
+512 & 40.3 ms & 64 ms & 0.63 \\
+1024 & 129.8 ms & 128 ms & 1.01 \\
+2048 & 460.3 ms & 256 ms & 1.80 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item 해석: 정밀한 모드로 갈수록 실행시간이 커지고, 주기가 충분히 커지지 않으면 이용률이 1을 넘어 단일 태스크만으로도 데드라인을 지킬 수 없다. 즉 정확도를 올리는 선택이 곧 데드라인을 위협하는 선택이 된다.
+\item 위 값은 MCU 환경의 측정으로 지터가 매우 작아 평균과 최대가 거의 같다. Pi Zero 2W의 Linux 환경에서는 지터가 커질 수 있어 관측 최대를 함께 본다.
+\item 핵심 아이디어: 이 선택을 고정하지 않는다. 정상일 때는 가벼운 모드로 여유를 확보하고, 이상 징후가 감지되면 정밀 모드로 전환하되 그 전환이 데드라인 안에서 실행 가능한 경우에만 허용한다.
+\item 조절 대상은 window 하나가 아니라 window·hop·model 세 값을 묶은 진단 모드다. 이 결합이 필요한 이유는 7.6절에서 다룬다.
+\end{itemize}
+\noindent\fbox{\parbox{0.97\linewidth}{\footnotesize FRFconv-TDSNet 모델은 8-class 결함 분류기다. 기계 상태 지표 $q$는 이 분류기 출력(예: $1-P(\text{Healthy})$) 또는 별도 anomaly detection 기법에서 유도하며, 구체적 정의는 추후 결정}}
+
+\subsection{관련 연구 --- 실시간 결함 진단}
+\begin{itemize}
+\item 검토한 실시간 진동·회전 기계 결함 진단 논문은 데드라인·tail latency·스케줄 가능성을 결합한 사례가 서베이 범위에서 확인되지 않았고, 모두 best-effort 수준이었다. 다수 논문의 ``real-time''은 online 실행이나 낮은 평균 latency를 뜻했다.
+\item 데드라인 판정: 데드라인을 명시하고 miss를 측정하면 O, 시간 기준은 있으나 데드라인으로 선언·측정하지 않으면 $\triangle$, 시간 기준 자체가 없으면 X
+\end{itemize}
+\noindent 핵심 논문 요약
+\begin{center}\scriptsize
+\begin{tabular}{@{}C{0.6cm}L{2.5cm}L{2.4cm}L{1.7cm}L{4.5cm}C{1.0cm}L{3.0cm}@{}}
+\toprule
+\# & 논문 & 문제 상황 & 무엇을 조절하나 & 무엇으로 정하나 (anomaly detection 방식 포함) & 데드라인 & 본 연구와의 차이 \\ \midrule
+{[1]} & Langarica et al., 2020, IEEE TASE & 산업용 모터 online 진단 & 없음 & DIPCA+SPE 통계량이 관리한계 초과 시 이상 판정 $\rightarrow$ RBC가 진동 결함 지목 시 무거운 CNN 실행 (1 Hz) & X & q 트리거의 구조적 선례. 시스템 여유 S 미고려, 모드 선택 없음 \\
+{[6]} & Arciniegas et al., 2025, Discover IoT & 모터 진동 이상 알림 & 없음 & K-means 정상군 거리 임계 초과 시 alert & $\triangle$ & anomaly detection이 alert 조건일 뿐 모드 선택 아님 \\
+{[2]} & Lima, 2025, IEEE LCIoT & 회전자봉 파손 진단 & 없음 & offline grid search로 결함 유형별 최적 (f\_s, W, H) 선택 & $\triangle$ & 상태별 최적 W/H가 다름을 grid search로 확인. runtime 규칙·트리거 없음 \\
+{[3]} & Pubalan et al., 2025, ICSIMA & 베어링 분류 (replay) & 없음 & 물리식 W = 60·f\_s/RPM (1회전) & $\triangle$ & 회전속도를 입력 길이로 변환한 물리 근거. runtime 적응 아님 \\
+{[4]} & Yang et al., 2023, IEEE CSCWD & 베어링 이상 진단 (단말-엣지) & 추론 위치 & 단말 AE의 confidence + 허용 latency 예산으로 엣지 오프로딩 결정 & $\triangle$ & machine evidence + timing을 함께 트리거로 쓰는 가장 가까운 FD 사례. 스케줄 가능성 분석 X \\
+{[5]} & He et al., 2023, IEEE TIM & 모터 베어링 음향 진단 & 없음 & 없음 (회전속도로 BPFI/BPFO prior만 갱신) & $\triangle$ & pipeline 10.294 s가 1 s window 초과. ``online $\ne$ 데드라인 충족'' 반례 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item anomaly detection 정량 기준: 정량 기준을 제시한 논문은 통계 관리한계(Langarica의 SPE [1])나 클러스터 거리 임계(Arciniegas의 K-means [6])를 쓴다. 두 방식 모두 본 연구의 $q$ 설계에 참고 가능
+\item Lima [2]에 대한 표현: 미세 결함이 더 높은 f\_s와 더 짧은 hop을 요구한 것이 아니라, offline grid search 결과 그러한 설정이 최적으로 선택되었다. 즉 기계 상태에 따라 적절한 W/H가 달라진다는 간접 근거이며, runtime 규칙으로 정식화된 것은 아니다.
+\item Yang et al. [4] 트리거 상세: 단말이 경량 stacked autoencoder를 실행하고, 그 재구성 신뢰도(confidence)와 현재 허용 가능한 latency 예산을 함께 판단해, 무거운 진단을 엣지 서버로 오프로딩할지 결정한다. 기계 증거와 timing을 함께 보는 점에서 본 연구의 $q + S$와 형태가 가깝지만, 스케줄 가능성 분석은 없다.
+\end{itemize}
+
+\subsection{관련 연구 --- Elastic Scheduling}
+\begin{itemize}
+\item elastic scheduling 문헌은 이론과 적용으로 나눈다. 분류 기준은 다음과 같다.
+\begin{itemize}
+\item 이론: 기여가 정형 분석과 증명에 있는 논문. utilization bound, schedulability 증명, mode transition 분석 등을 제시하며 특정 플랫폼 구현이 중심이 아니다. [11], [12]는 제어 응용을 대상으로 하지만 기여가 invariant set·weakly-hard 합성 같은 정형 분석이므로 이론으로 분류
+\item 적용: 기여가 실제 시스템·플랫폼에 elastic scheduling을 구현한 데 있는 논문. [13]은 MPSoC와 ERIKA RTOS, [14]는 ROS 2에 구현했다.
+\end{itemize}
+\item 공통 관찰:
+\begin{itemize}
+\item 직접 검토한 elastic rate 연구의 트리거는 주로 시스템 내부 신호(부하·자원·메시지 드롭)이거나 offline이다.
+\item 다만 인접 mixed-criticality 연구는 외부 physical state별 execution budget과 runtime slack을 이미 결합한다 [24]. 따라서 외부 상태와 slack의 결합 자체를 novelty로 주장할 수 없다.
+\item 조절 대상은 주기·rate·대역폭으로, 조절해도 계산 결과의 의미가 바뀌지 않는다. 정확도 자체를 바꾸는 변수를 다룬 사례는 확인되지 않았다.
+\end{itemize}
+\end{itemize}
+\noindent 이론 논문
+\begin{center}\scriptsize
+\begin{tabular}{@{}C{0.6cm}L{2.5cm}L{2.4cm}L{2.2cm}L{2.4cm}L{4.4cm}@{}}
+\toprule
+\# & 논문 & 조절 대상 & 조절 기준 & 실시간성 보장 수준 & 핵심 정리 \\ \midrule
+{[9]} & Buttazzo et al., 1998/2002, RTSS/IEEE TC & task 주기 T & 시스템 부하, admission & 제한된 모델 내 formal hard & elastic task model 원형. task를 spring으로 보고 부하 시 주기를 늘려 이용률을 낮춤 \\
+{[10]} & Salman et al., 2021, ETFA & 앱 주기 T + reservation & runtime 이벤트 & hard (PRM 이용률 bound) & 2계층. 앱 수준에서 주기로 먼저 흡수하고 실패 시에만 system reservation 조정 \\
+{[11]} & Gifford et al. (Decntr), 2024, RTAS & controller·주기·자원 할당 & offline + mode-change 이벤트 & hard (invariant set + DBF) & multi-mode 제어를 안전·스케줄 공동설계. 전환 시 carry-over 데드라인 완화로 과부하 흡수 \\
+{[12]} & Xu et al. (Safety-Aware), 2023, RTCSA & 공통 주기, miss 패턴 & offline & weakly-hard / formal safety guarantee & 주기를 공통화하고 안전한 데드라인 miss 패턴을 automata로 합성 \\
+{[24]} & Chwa et al. (Physical-State-Aware Slack), 2018, RTAS & physical-state별 LC/HC execution budget, runtime slack & job release의 physical state + actual execution & mixed-criticality formal guarantee & 외부 상태에 따라 WCET budget을 바꾸고 LC/HC slack을 reclaim. 본 연구의 q+S 조합 자체가 신규하지 않음을 보여주는 직접 비교군 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\noindent 적용 논문 (어떻게 적용했는가)
+\begin{center}\scriptsize
+\begin{tabular}{@{}C{0.6cm}L{2.2cm}L{2.4cm}L{6.5cm}L{2.4cm}@{}}
+\toprule
+\# & 논문 & 조절 대상 & 적용 방법 & 실시간성 보장 수준 \\ \midrule
+{[13]} & Burgio et al., 2010, ICCD & TDMA bus 대역폭 + 주기 & 중앙 master가 각 core의 대역폭 요청을 모아 TDMA slot을 재분배하고, 각 core는 대역폭별 실행시간 LUT를 조회해 elastic 알고리즘으로 주기를 재계산. ERIKA RTOS & soft (offline feasibility 방어 + 실험적 QoC) \\
+{[14]} & Li et al. (ATER), 2025, RTCSA & 센서 샘플링 rate & LTTng로 실행을 관측해 메시지 드롭이 늘면 rate를 낮추고 실행 여유가 생기면 rate를 높임. ROS 2 Humble, 소스 수정 없음 & empirical only $\rightarrow$ baseline 대비 개선만 보여줌 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{관련 연구 --- 적응형 입력·모델, 실시간 DNN}
+\begin{itemize}
+\item 두 섹션은 조사를 보강 중이며 현재 확보한 범위만 표로 제시
+\item 두 섹션의 구분:
+\begin{itemize}
+\item 적응형 입력·모델: 무엇을 입력으로 줄지(window·length)를 정하는 데 초점을 둔다. 분류기가 딥러닝이 아닐 수도 있다. 예: ADW [15]는 SVM을 분류기로 쓴다.
+\item 실시간 DNN 추론: 데드라인 안에서 딥러닝 추론을 어떻게 스케줄·구성할지에 초점을 둔다. 조절 대상은 모델·입력 scale·batch·실행 depth 등이다.
+\end{itemize}
+\end{itemize}
+\noindent 적응형 입력·모델 (무엇을 무슨 기준으로 조절하는가)
+\begin{center}\scriptsize
+\begin{tabular}{@{}C{0.6cm}L{2.5cm}L{2.3cm}L{3.6cm}L{1.3cm}L{1.7cm}L{1.2cm}@{}}
+\toprule
+\# & 논문 & 조절 대상 & 조절 기준 & 분류기 & 목적 & 시점 \\ \midrule
+{[15]} & Kim et al. (ADW), 2026, Mathematics & window size W (H = $\beta$·W) & anomaly deviation score (변동성·주기·국부 스파이크 유형별 편차) & SVM & 진단 민감도 향상 & offline \\
+{[16]} & Tang et al. (AIL), 2023, Appl. Soft Comput. & input length & 물리식 (베어링 특성 주파수·f\_s·회전속도) & CNN & 잡음 강건성·전이 진단 & offline \\
+{[17]} & Tang et al. (AILWTLN), 2023, EAAI & input length + 경량 모델 & 물리식 Na = n²·f\_s/BW & 경량 CNN & 경량·전이 진단 & offline \\
+\bottomrule
+\end{tabular}
+\end{center}
+\noindent 실시간 DNN 추론 (어떻게 실시간성을 달성하는가)
+\begin{center}\scriptsize
+\begin{tabular}{@{}C{0.6cm}L{2.2cm}L{2.8cm}L{2.8cm}L{4.5cm}@{}}
+\toprule
+\# & 논문 & 조절 대상 & 트리거 & 실시간성 달성 방식 \\ \midrule
+{[18]} & Kang et al. (DNN-SAM), 2022, RTAS & 전체 영상을 보완 탐지하는 optional sub-task의 입력 scale & ToC 기반 safety-critical RoI + reclaim된 runtime slack & 고해상도 RoI mandatory 추론을 우선 실행하고, 남은 slack에 맞춰 optional full-image scale을 결정한 뒤 결과 merge; non-preemptive EDF 충분조건 \\
+{[19]} & Li et al. (AMS), 2025, RTCSA & 모델 복잡도·anytime exit & 순간 심박 HR 임계 $\rightarrow$ D(HR) & 상태 기반 모델 선택 + anytime 파라미터 공유 + watchdog fallback \\
+{[20]} & Xu et al. (FLEX), 2024, RTSS & batch·fusion 구성 & 뷰 criticality·GPU 예산·데드라인 & elastic fusion + CEDF 동적 배칭 \\
+{[21]} & Yao et al. (Imprecise DL), 2020, RTCSA & 실행 depth (필수+선택 단계) & 데드라인 + 선택 단계 성능 기여 & imprecise computation + EDF stage 스케줄 \\
+{[25]} & Xiang and Kim (DART), 2019, RTSS & DNN pipeline stage와 CPU/GPU node configuration & task admission + execution-time overrun & measured maximum profile + response-time analysis + admission control. OS/driver jitter는 guarantee 범위에서 제외 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{연구 공백}
+\begin{itemize}
+\item 결함 진단 관점: 진동 결함 진단에서 runtime에 W·H·M을 함께 조절하고 데드라인·스케줄 가능성을 결합한 사례가 서베이 범위에서 확인되지 않았다.
+\item scheduling 관점: physical state와 runtime slack의 결합은 mixed-criticality scheduling에서 이미 존재하지만 [24], state는 execution demand를 정하며 diagnostic fidelity를 선택하지 않는다.
+\item 두 관점의 결합: vibration anomaly state가 진단 성능 순위를 정하고 system slack이 feasible $(W,H,M)$을 제한하도록 역할을 분리한 뒤, 진단 성능과 deadline을 함께 검증한 사례는 현재 서베이 범위에서 확인되지 않았다. 본 연구는 이 더 좁은 결합을 대상으로 한다.
+\end{itemize}
+
+\section{Methodology}
+\begin{itemize}
+\item 서술 흐름은 이 분야 논문의 구성, 즉 태스크 모델 $\rightarrow$ 실행시간·이용률 모델 $\rightarrow$ 실행 가능 조건 $\rightarrow$ 상태 기반 선택 정책 $\rightarrow$ 알고리즘 순서를 따른다.
+\end{itemize}
+\subsection{태스크 모델과 진단 모드}
+\begin{itemize}
+\item Raspberry Pi Zero 2W에서 진동 결함 진단 태스크가 주기적으로 실행된다. 태스크는 신호 segment를 받아 추론하고 데드라인 안에 결과를 낸다. 원신호는 $f_s$로 취득된다.
+\item 매 진단 시점 $k$에 후보 집합 $\{m_1, \dots, m_N\}$에서 모드 하나를 고른다.
+\begin{itemize}
+\item 각 모드 $m_i = (W_i, H_i, M_i)$
+\item 진단 주기 $T_i = H_i / f_s$
+\end{itemize}
+\item W와 H를 분리하는 이유: 진동 진단에서 ``얼마나 많은 신호 맥락을 보는가(W)''와 ``얼마나 자주 진단하는가(H)''는 서로 다른 설계 선택
+\end{itemize}
+\noindent 모드 후보 설정 (첫 구현)
+\begin{itemize}
+\item 첫 구현은 M을 고정하고 discrete $(W, H)$만 다룬다. M은 필요성과 보장 조건이 확인된 뒤 확장
+\item W 후보는 KCC 측정값 $\{512, 1024, 2048\}$을 기준으로 하고, 물리식 하한 $W \ge 60 \cdot f_s/\mathrm{RPM}$ [3]을 반영해 회전속도에서 정보가 보존되는 최소 window를 정한다.
+\item 예시 후보 집합 ($f_s = 8$ kHz, 플랫폼 profiling 후 확정)
+\end{itemize}
+\begin{center}\footnotesize
+\begin{tabular}{@{}lrrrrL{5.8cm}@{}}
+\toprule
+모드 & $W$ & $H$ & 진단 주기 $T = H/f_s$ & 상대 연산량 ($\propto W^2$) & 의미 \\ \midrule
+$m_1$ & 512 & 512 & 64 ms & 1배 (기준) & 짧게 보고 자주 실행하는 빠른 모드 \\
+$m_2$ & 1024 & 512 & 64 ms & 4배 & 길게 보면서 자주 실행하는 고부하 실행모드 \\
+$m_3$ & 1024 & 1024 & 128 ms & 4배 & 동일한 신호 맥락 유지하면서 실행 빈도를 낮춘 절충 모드 \\
+$m_4$ & 2048 & 2048 & 256 ms & 16배 & 긴 시간적 맥락이 실제로 진단 성능을 향상시키고, 즉각적인 반복 진단보다 정밀한 결함 유형 확인이 필요하며, 시스템 여유가 충분할 때 선택하는 정밀 모드 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item 위 표는 W와 H를 분리하는 이점을 보여준다. $m_2$와 $m_3$은 같은 window(1024)를 쓰지만 hop이 달라 진단 빈도와 이용률이 다르다.
+\item 모드 개수 N은 4$\sim$6개를 목표로 하나 달라질 수 있음.
+\item Offline profiling으로 각 모드의 실행시간을 측정해 실행 가능 여부를 미리 표로 만든다.
+\end{itemize}
+
+\subsection{실행시간과 이용률}
+\begin{itemize}
+\item 각 모드의 추론 실행시간 $C_i$는 단일 값이 아니라 분포로 보고한다. 후보로 평균과 관측 최대(max)를 사용한다.
+\item 관측 응답시간은 다음과 같다.
+\end{itemize}
+\[ R_i = C_i + I + L \]
+\begin{itemize}
+\item $I$는 다른 workload·공유 자원 간섭, $L$은 운영체제 스케줄링 지연이다.
+\item PREEMPT\_RT에서 static hard WCET를 증명 없이 주장하지 않는다. 초기 정식화는 실측 응답시간의 관측 최대를 기준으로 한다.
+\end{itemize}
+\[ R_i(\max) \le D \]
+\begin{itemize}
+\item 모드의 이용률과 총 이용률:
+\end{itemize}
+\[ U_i = C_i / T_i,\quad T_i = H_i / f_s,\qquad U_{total}(m_i) = U_{bg} + U_i \]
+
+\subsection{실행 가능 조건과 선택 정책}
+\begin{itemize}
+\item 중요 질문: 이상 징후 시 정밀 모드로 전환해도 정적으로 스케줄 가능한가, 그 보장을 어떻게 제시하는가.
+\item 정책은 실행 가능한 모드 집합 안에서만 진단 성능이 가장 높은 모드를 고른다.
+\end{itemize}
+\begin{align*}
+&\text{실행 가능 모드 집합:}\quad F(k) = \{\, m_i : U_{bg} + C_i(\max)/T_i \le U_{bound} \text{ 그리고 } R_i(\max) \le D \,\} \\
+&\text{선택된 모드:}\quad m^{*}_k = \arg\max_{m_i \in F(k)} Q(m_i, q_k)
+\end{align*}
+\begin{itemize}
+\item 여기서 $m^{*}_k$는 k 시점에 선택된 하나의 모드이며, 다른 모드를 포함한다는 뜻이 아니다.
+\item $Q(m_i, q_k)$는 현재 기계 상태에서 모드가 달성하는 진단 성능이며, 진단 정확도(accuracy)로 측정한다. 정상 상태에서는 가벼운 모드의 정확도로도 충분하고, 이상 상태에서는 정밀 모드의 정확도가 더 높다.
+\item $F(k)$가 비면 사전 정의된 fallback 모드를 실행한다.
+\begin{itemize}
+\item 데드라인 miss를 감지한 뒤 가벼운 모델을 재실행하는 방식은 그 자체로 timing 보장이 아니다. 따라서 초기 구현은 offline에서 실행 가능함이 확인된 모드를 우선하고, 재실행은 재실행에 필요한 시간을 미리 확보한 경우에만 둔다.
+\end{itemize}
+\item 시스템 여유는 평균이 아니라 최근 응답시간의 관측 최대로 정의한다.
+\end{itemize}
+\[ S_k = D - \max(\text{최근 응답시간}) \]
+
+\subsubsection*{기계 상태에 따른 진단 주기 요구사항}
+기계 상태 지표 $q_k$는 필요한 진단 정밀도뿐 아니라 진단의 긴급도에도 영향을 줄 수 있다. 이상 징후가 커질수록 상태 변화를 더 빠르게 추적하고 최종 진단 결과를 조기에 제공해야 하므로, 높은 $q_k$에서 진단 주기 $T_i = H_i/f_s$가 오히려 길어지는 정책은 end-to-end 진단 지연시간을 증가시킬 수 있다. 따라서 본 연구에서는 $q_k$가 높아질수록 허용 가능한 최대 진단 주기가 감소하거나 최소한 증가하지 않는다는 설계 원칙을 추가로 고려한다.
+\begin{equation*}
+q_a < q_b \;\Rightarrow\; T_{\max}(q_a) \ge T_{\max}(q_b)
+\end{equation*}
+예를 들어 정상·의심·경고 상태별 최대 허용 진단 주기를 다음과 같이 둘 수 있다.
+\begin{equation*}
+T_{\max}(q_k)=
+\begin{cases}
+T_{\mathrm{normal}}, & q_k < \theta_1\\
+T_{\mathrm{suspicious}}, & \theta_1 \le q_k < \theta_2\\
+T_{\mathrm{warning}}, & q_k \ge \theta_2
+\end{cases}
+\end{equation*}
+각 상태의 최대 허용 진단 주기는 다음 조건을 만족한다.
+\begin{equation*}
+T_{\mathrm{normal}} \ge T_{\mathrm{suspicious}} \ge T_{\mathrm{warning}}
+\end{equation*}
+을 만족하도록 한다. 이에 따라 실행 가능 모드 집합은 응답시간과 이용률뿐 아니라 현재 상태가 요구하는 진단 주기까지 만족하는 모드로 제한한다.
+\begin{equation*}
+F(k)=\Big\{\, m_i \;\Big|\; T_i \le T_{\max}(q_k),\; U_{bg}+C_i^{\max}/T_i \le U_{bound},\; R_i^{\max} \le D_i \,\Big\}
+\end{equation*}
+이때 $q_k$가 높다고 해서 window size($W_i$)나 모델 복잡도($M_i$)가 반드시 증가해야 하는 것은 아니다. Hop size($H_i$)는 진단 빈도와 적시성을 결정하지만, $W_i$와 $M_i$의 증가는 진단 성능 향상과 실행시간 증가를 동시에 유발한다. 따라서 $q_k$는 우선 필요한 최대 진단 주기를 제한하고, $W_i$와 $M_i$는 그 주기와 데드라인을 만족하는 후보 중 실제 진단 성능이 가장 높은 값으로 선택된다. 상태별 $T_{\max}$는 임의로 확정하지 않고, 실제 결함 발생 시 진단 주기별 end-to-end diagnostic latency, 이상 구간 recall, deadline miss 및 이용률을 측정해 결정한다.
+
+\subsection{기계 상태와 anomaly detection 기준}
+\begin{itemize}
+\item anomaly detection은 정상과 비정상을 판별하는 문제이며, 결함 유형을 분류하는 fault diagnosis와 구분된다. 본 연구의 기계 상태 $q$는 anomaly detection이 내는 연속 score에서 온다.
+\item 기계 상태 $q_k$는 연속 상태 지표로 두며 구체적 정의는 열린 설계 문제다. 첫 구현 후보로는 FRFconv-TDSNet [23]의 출력에서 유도하는 방식(예: $q_k = 1 - P(\text{Healthy})$, 결함일 확률)을 검토한다. 단 softmax 확률은 보정 문제가 있어, 별도 anomaly detection 기법도 대안으로 둔다. 추가 조사 예정.
+\item $q$ 임계 설계는 검토한 두 방식을 참고하여 결정
+\begin{itemize}
+\item 통계 관리한계 방식: Langarica [1]의 SPE 관리한계 --- 정상 데이터 분포에서 신뢰수준 기반 임계를 정한다.
+\item 분포 percentile 방식: AMS [19]가 심박 임계를 학습 분포 percentile로 결정 - 검증 데이터의 anomaly score percentile로 정상·의심·경고 구간을 나눈다.
+\item 기계 노후화·드리프트가 있으면 정적 임계가 안 맞을 수 있다. 따라서 running percentile로 임계를 online 갱신하면 ``adaptation''의 근거가 강해지므로 고려 중
+\end{itemize}
+\item $q$는 모드의 진단 성능 순위를 정하고, $S$는 실행 가능한 모드를 제한한다. 두 신호의 역할을 분리하는 것이 정책의 핵심이다.
+\end{itemize}
+
+\subsection{알고리즘 (예비 초안, 미확정)}
+\begin{itemize}
+\item 아래 절차는 예비 초안이며 확정되지 않았다. 특히 실행시간 측정을 offline과 online에 어떻게 배분할지는 아래 방침으로 정리한다.
+\end{itemize}
+\noindent 실행시간을 offline에서 재는 이유
+\begin{itemize}
+\item 실행 가능 모드 집합 $F(k)$를 만들려면 지금 실행 중이지 않은 모드의 실행시간도 알아야 한다. 어떤 모드를 실제로 실행하지 않고는 그 비용을 관측할 수 없으므로, 후보 모드 전체의 실행시간은 offline profiling으로 미리 확보한다.
+\item 반면 실제 응답시간은 실행 조건에 따라 runtime에 변하므로, slack $S_k$는 매 진단 시점마다 최근 실제 응답시간 이력(최근 n개 job)으로 계산하고, feasibility 판정에도 이 online 값을 반영한다.
+\item 즉 offline profile은 초기 기준값, online 최근 이력은 실시간 보정값이다.
+\end{itemize}
+\noindent Offline 단계
+\begin{enumerate}
+\item 후보 모드 집합 $\{m_1, \dots, m_N\}$ 구성 (W 후보 + 물리식 하한 반영)
+\item 각 모드의 실행시간 $C_i$ 측정 $\rightarrow$ 평균 / 최대 기록
+\item 부하 조건별로 실행 가능 여부를 표로 작성 (mode feasibility table)
+\item anomaly score 임계 (정상 / 의심 / 경고) 를 검증 데이터로 보정
+\end{enumerate}
+\noindent Online 단계 (매 진단 시점 k)
+\begin{enumerate}
+\item anomaly score $q_k$ 계산
+\item 최근 응답시간으로 $S_k$ 계산
+\item 실행 가능 모드 집합 $F(k)$ 계산 (이용률·응답시간 조건, online 최근 이력 반영)
+\item $F(k)$ 안에서 $Q(m_i, q_k)$ 가 최대인 모드 $m^{*}_k$ 선택
+\item $F(k)$ 가 비면, 사전 정의 fallback 모드 실행: 실행 가능한 모드가 하나도 없을 때의 안전 기본값 실행. 예: 가장 가벼운 모드를 강제 실행하는 방안 등 여러 방안 고려
+\item 잦은 전환을 막기 위한 hysteresis 적용: 경계 근처에서 신호가 떨려도 모드가 흔들리지 않도록, 올릴 때와 내릴 때 임계에 여유 구간을 둠
+\end{enumerate}
+
+\subsection{$W\cdot H\cdot M$을 함께 묶는 이유}
+\begin{itemize}
+\item 입력 적응은 1차원이 아니다. $W$를 줄이면 $C$가 줄지만, 더 짧은 $H$와 짝지어지면 주기 $T$도 줄어든다.
+\item $U_i = C_i / T_i$이므로 두 경우가 갈린다.
+\end{itemize}
+\begin{center}\footnotesize
+\begin{tabular}{@{}cL{4.5cm}L{2.6cm}L{2.6cm}@{}}
+\toprule
+경우 & 변화 & 이용률 U & 스케줄 가능성 \\ \midrule
+1 & W$\downarrow$ $\rightarrow$ C$\downarrow$, H·T 고정 & 감소 & 개선 \\
+2 & W$\downarrow$ $\rightarrow$ C$\downarrow$, H·T 도 감소 & 증가할 수 있음 & 악화 가능 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item 따라서 window 하나가 아니라 모드 $(W, H, M)$에서 골라야 한다. 이 관찰이 모드를 묶는 근거다.
+\item M도 연산량을 바꾸는 축이다. 무거운 모델은 정확도가 높지만 실행시간 C가 커진다. 즉 실행시간은 $C = C(W, M)$으로, W와 M이 함께 결정된다.
+\item 처리 방안 후보:
+\begin{itemize}
+\item 첫 구현은 M을 고정해 $C = C(W)$로 두고, W·H의 feasibility와 runtime 선택부터 검증
+\item 확장 단계에서는 사전 프로파일한 몇 개의 이산 모델 변형(예: 경량/표준/정밀)을 후보에 추가하고, 각 $(W, M)$ 조합의 $C(W, M)$을 offline에서 측정해 모드를 $(W, H, M)$으로 확장
+\item M도 다른 축과 동일하게 feasible 집합 안에서 진단 정확도가 가장 높은 것을 고른다. 무거운 M은 C가 커서 여유가 있을 때만 feasible해짐.
+\end{itemize}
+\end{itemize}
+
+\section{Experiment}
+\subsection{플랫폼과 검증 실험}
+\begin{itemize}
+\item 평가 플랫폼: Raspberry Pi Zero 2W (Cortex-A53), Raspberry Pi OS Lite
+\item 추론 backend: CMSIS-NN은 Cortex-M 전용이므로 Cortex-A에서는 XNNPACK 또는 reference 구현을 사용
+\item 일반 Linux와 PREEMPT\_RT 비교는 본 연구의 주 실험이 아니라 검증 실험이다. 플랫폼의 응답시간과 jitter의 특성을 파악해 실행시간 모델의 신뢰성을 확인하는 용도다. cyclictest 분포로 PREEMPT\_RT 패치의 실효성을 별도 검증한다.
+\begin{itemize}
+\item 스케줄
+\end{itemize}
+\end{itemize}
+
+\subsection{baseline과 제안 정책}
+\begin{center}\footnotesize
+\begin{tabular}{@{}lccL{6.5cm}@{}}
+\toprule
+정책 & q 사용 & S 사용 & 설명 \\ \midrule
+static-light & X & X & 항상 가벼운 모드 고정 \\
+static-precise & X & X & 항상 정밀 모드 고정 \\
+q-only & O & X & 기계 상태만 보고 모드 선택, 실행 가능 여부 미확인 \\
+S-only & X & O & 여유만 보고 모드 선택, 기계 상태 미반영 \\
+제안 (q + S) & O & O & 실행 가능한 모드 안에서 기계 상태 기반 진단 정확도가 가장 높은 모드 선택 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{기계 상태 시나리오}
+\begin{itemize}
+\item anomaly score를 $[0, 1]$로 정규화한다고 가정하고, 정상·의심·경고 구간을 나눈다.
+\item 후보 임계 (검증 데이터 percentile로 보정)
+\end{itemize}
+\begin{center}\footnotesize
+\begin{tabular}{@{}lL{4cm}L{6cm}@{}}
+\toprule
+구간 & anomaly score 후보 임계 & 정책 동작 \\ \midrule
+정상 & $< 0.3$ & 가벼운 모드로 여유 확보 \\
+의심 & $0.3 \sim 0.7$ & 중간 모드 \\
+경고 & $> 0.7$ & 정밀 모드, 단 실행 가능한 경우만 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item 세 구간을 오가는 anomaly score 궤적을 재생하고, 각 궤적에서 정책이 고르는 모드 열과 그에 따른 진단 정확도·데드라인 miss를 baseline과 비교한다.
+\item 온라인으로 바꾸는 방안 고려
+\end{itemize}
+
+\subsection{측정 지표}
+\begin{itemize}
+\item 실시간성: 데드라인 miss 비율, 관측 최대 응답시간, activation jitter, 이용률
+\item 진단 성능: 진단 정확도(accuracy)
+\item 정책 효과: 제안 정책이 static·단일 트리거 baseline 대비 deadline miss rate를 늘리지 않으면서 진단 정확도를 높이는지, 그리고 이상 구간에서 정밀 모드 선택으로 진단 성능이 개선되는지
+\item 오버헤드: 모드 선택은 표 조회와 비교로 이루어져 실행시간 대비 무시 가능할 것으로 예상한다. ATER [14]처럼 실측해 무시 가능함을 확인만 하고, 지속 측정은 하지 않는다.
+\end{itemize}
+\noindent\emph{위 값과 결과는 아직 측정하지 않았으며 설계로만 제시. 추후 실험 예정}
+
+\section{Novelty}
+\begin{itemize}
+\item 본 연구의 차별점: 외부 상태 트리거나 정확도--실행시간 trade-off 자체의 신규성에 있지 않다. 실시간 DNN 연구는 응용 상태나 system slack에 따라 입력 scale, 모델 복잡도와 실행 depth를 조절하며 [18, 19, 21], mixed-criticality 연구는 physical state와 runtime slack을 결합한다 [24].
+\item 다만 조사한 진동 결함 진단 연구에서는, 진동 신호에서 산출한 anomaly score와 runtime 시스템 여유(slack)를 함께 고려하고, 입력 window 길이 W와 진단 간격 H를 분리한 진단 모드 중 deadline을 만족하는 모드를 선택하는 방법은 확인되지 않았다.
+\item 본 연구는 anomaly score에 따라 요구되는 진단 빈도와 성능을 반영하고, 시스템 여유를 이용해 실행 가능한 후보를 제한한 뒤 그 안에서 적절한 진단 모드를 선택하는 결합을 대상으로 한다.
+\end{itemize}
+\noindent 세 가지 구체적 차별점
+\begin{enumerate}
+\item \textbf{조절 대상}: 기존은 주기·rate·입력 크기 중 하나를 조절한다 [9$\sim$21]. 본 연구는 window, hop, model 세 값을 함께 고르며, 특히 W와 H를 분리해 ``정보량''과 ``진단 빈도''를 독립 변수로 둔다.
+\item \textbf{트리거의 역할 분리}: Physical-State-Aware Slack [24]이 외부 상태와 slack을 이미 함께 사용하므로 단순 결합은 차별점이 아니다. 본 연구에서는 vibration anomaly state $q$가 진단 성능 순위를 정하고, system slack $S$가 실행 가능한 $(W,H,M)$ 후보를 제한한다. 선행연구의 state는 execution budget을 정한다는 점에서 역할이 다르다.
+\item \textbf{진동 진단 도메인에서의 실시간성 검증}: 진동 결함 진단에서 실행 가능한 모드 집합 안에서 선택하고, Pi Zero 2W의 일반 Linux와 PREEMPT\_RT에서 실측 응답시간으로 스케줄 가능성을 확인한다. 검토한 FD 문헌이 best-effort에 머문 지점을 데드라인·tail latency와 결합한다.
+\end{enumerate}
+\noindent 중요 논문과의 차별점 표
+\begin{center}\scriptsize
+\begin{tabular}{@{}L{1.8cm}L{1.5cm}L{2.3cm}L{2.3cm}L{2.5cm}L{1.3cm}L{2.0cm}@{}}
+\toprule
+논문 & \circled{1} 정확도 바꿈 & \circled{2} 외부 기계상태 트리거 & \circled{3} slack을 별도 제약으로 & \circled{4} W·H·M 공동 (W/H 분리) & \circled{5} 진동 FD & \circled{6} 스케줄 가능성 검증 \\ \midrule
+AMS [19] & O & O (심박 상태) & X (심박이 D도 정함) & X (모델만) & X (ECG) & $\triangle$* \\
+DNN-SAM [18] & O & $\triangle$ (ToC는 외부 physical state지만 machine-health 아님) & O & X (입력 scale만) & X (vision) & O \\
+Imprecise DL [21] & O & X (deadline·utility) & O & X (실행 depth만) & X (분류) & O \\
+Langarica [1] & $\triangle$ (CNN 실행 여부) & O (anomaly) & X & X & O & X \\
+ADW [15] & O & O (anomaly 편차) & X (offline) & $\triangle$ (H=$\beta$W 종속) & O & X \\
+Physical-State-Aware Slack [24] & X & O (vehicle physical state) & O & X (execution budget) & X (control/MC) & O \\
+\textbf{본 연구} & \textbf{O} & \textbf{O} & \textbf{O} & \textbf{O} & \textbf{O} & \textbf{O} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\noindent{\footnotesize *: 평균 레이턴시를 기준으로 하였고, 데드라인을 보장 못하는 부분 존재}
+
+\noindent 범례 (열 설명):
+\begin{itemize}
+\item \circled{1} 정확도 바꿈: 조절 대상이 진단 정확도를 바꾸는가(trade-off)
+\item \circled{2} 외부 기계상태 트리거: 진동/기계에서 나온 anomaly 신호로 트리거하는가
+\item \circled{3} slack을 별도 제약으로: 시스템 여유를 진단 성능과 분리해 실행 가능성 제약으로 쓰는가
+\item \circled{4} W·H·M 공동 (W/H 분리): window·hop·model을 함께, 특히 W와 H를 독립 축으로 고르는가
+\item \circled{5} 진동 FD: 진동 결함 진단 도메인인가
+\item \circled{6} 스케줄 가능성 검증: 실제 RT 플랫폼에서 스케줄 가능성을 검증하는가
+\end{itemize}
+\noindent 정리: 개별 요소(\circled{1}$\sim$\circled{6})는 이미 여러 논문에 존재하나, 여섯 가지를 동시에 만족하는 사례는 확인되지 않음. 특히 \circled{3}(q·S 역할 분리)과 \circled{4}(W·H 분리)가 본 연구의 날카로운 지점.
+
+\section{To-Do List}
+\subsection{서베이 보강}
+\begin{itemize}
+\item[$\square$] 적응형 입력(S2) 조사 완결: ADW·AIL·AILWTLN 외 image resizing·MURAL 계열의 조절 대상·기준·시점을 확정해 서베이표와 6.4절 갱신
+\item[$\square$] 실시간 DNN(S4) 조사 완결: DNN-SAM·AMS·FLEX·Imprecise 외 EdgeServing·Pantheon·SCENIC·early-exit 계열의 실시간성 달성 방식을 확정해 서베이표와 6.4절 갱신
+\item[$\square$] 다른 섹션도 수시로 보강 예정
+\end{itemize}
+\subsection{정식화, 방법 보강}
+\begin{itemize}
+\item[$\square$] 모드 전환 안전 조건 정리: 모드 $m_i \rightarrow m_j$ 전환 시 이전 모드의 잔여 job과 새 모드가 겹쳐 순간 과부하가 나지 않는지 판정하는 전환 스케줄 가능성 조건을 정리 (Decntr [11]의 carry-over 전환 분석 참고).
+\item[$\square$] 이용률 bound 재유도: 고전 elastic scheduling은 C 고정을 가정하나, 본 연구는 $C = C(W, M)$으로 설정에 따라 실행시간이 바뀐다. 따라서 표준 bound를 그대로 쓸 수 없어, C가 설정의 함수인 우리 구조에 맞는 feasibility·이용률 조건을 새로 유도한다.
+\item[$\square$] 기계 상태 q와 진단 성능 Q 정의 확정: q를 분류기 출력 유도(예: $1-P(\text{Healthy})$), 별도 anomaly detection 중 무엇으로 둘지, Q를 정확도로 둘지 확정.
+\item[$\square$] 후보 모드 집합의 W, H 값과 개수 N 확정. 첫 구현은 M 고정.
+\item[$\square$] fallback 모드와 전환 hysteresis 정도 확정.
+\end{itemize}
+\subsection{실험 및 마일스톤}
+\begin{itemize}
+\item[$\square$] Pi Zero 2W에서 모드별 실행시간 profiling, mode feasibility table 작성. KCC 이용률 표 확장
+\item[$\square$] 검증 실험: 일반 Linux vs PREEMPT\_RT 응답시간, jitter 비교 및 스케줄링 방식 비교
+\item[$\square$] 정책 평가: baseline 5종과 제안 정책 비교.
+\end{itemize}
+
+\begin{thebibliography}{99}\footnotesize
+\bibitem{ref1} S. Langarica, C. R\"uffelmacher, F. N\'u\~nez, ``An Industrial Internet Application for Real-Time Fault Diagnosis in Industrial Motors,'' IEEE Trans. Automation Science and Engineering, 2020.
+\bibitem{ref2} J. P. B. Lima, ``Real-Time Fault Detection in Induction Motors Using TinyML: An Evaluation of the Edge Impulse Platform,'' IEEE Latin Conf. on IoT (LCIoT), 2025.
+\bibitem{ref3} B. Pubalan, M. S. R. M. Saufi, M. S. Leong, A. Jamali, ``Real-Time Bearing Fault Detection and Visualization Using 1D CNN: A Simulated Deployment with the CWRU Dataset,'' IEEE ICSIMA, 2025.
+\bibitem{ref4} C. Yang, Z. Lai, Y. Wang, S. Lan, L. Wang, L. Zhu, ``A Novel Bearing Fault Diagnosis Method Based on Stacked Autoencoder and End-Edge Collaboration,'' IEEE CSCWD, 2023.
+\bibitem{ref5} C. He, P. Han, J. Lu, X. Wang, J. Song, Z. Li, S. Lu, ``Real-Time Fault Diagnosis of Motor Bearing via Improved Cyclostationary Analysis Implemented onto Edge Computing System,'' IEEE Trans. Instrumentation and Measurement, 2023.
+\bibitem{ref6} S. Arciniegas, D. Rivero, J. Pi\~nan, E. Diaz, F. Rivas, ``IoT Device for Detecting Abnormal Vibrations in Motors Using TinyML,'' Discover Internet of Things, 2025.
+\bibitem{ref7} S. Ma, H. Sun, S. Gao, G. Zhou, ``A Real-Time Mechanical Fault Diagnosis Approach Based on Lightweight Architecture Search Considering Industrial Edge Deployments,'' Engineering Applications of Artificial Intelligence, 2023.
+\bibitem{ref8} 최성현, 김서랑, 김태현, ``저비용 마이크로컨트롤러 환경에서의 경량 딥러닝 기반 회전기계 축 결함 진단 시스템,'' 한국소프트웨어종합학술대회 (KSC), 2025.
+\bibitem{ref9} G. C. Buttazzo, G. Lipari, L. Abeni, ``Elastic Task Model for Adaptive Rate Control,'' IEEE RTSS, 1998; G. C. Buttazzo, G. Lipari, M. Caccamo, L. Abeni, ``Elastic Scheduling for Flexible Workload Management,'' IEEE Trans. Computers, 2002.
+\bibitem{ref10} S. M. Salman, S. Mubeen, F. Markovi\'c, A. V. Papadopoulos, T. Nolte, ``Scheduling Elastic Applications in Compositional Real-Time Systems,'' IEEE ETFA, 2021.
+\bibitem{ref11} R. Gifford, F. Galarza-Jim\'enez, L. T. X. Phan, M. Zamani, ``Decntr: Optimizing Safety and Schedulability with Multi-Mode Control and Resource Allocation Co-Design,'' IEEE RTAS, 2024.
+\bibitem{ref12} S. Xu, B. Ghosh, C. Hobbs, P. S. Thiagarajan, P. Joshi, S. Chakraborty, ``Safety-Aware Implementation of Control Tasks via Scheduling with Period Boosting and Compressing,'' IEEE RTCSA, 2023.
+\bibitem{ref13} P. Burgio, M. Ruggiero, F. Esposito, M. Marinoni, G. Buttazzo, L. Benini, ``Adaptive TDMA Bus Allocation and Elastic Scheduling,'' IEEE ICCD, 2010.
+\bibitem{ref14} R. Li, Z. Song, M. Lv, J.-M. Wu, C. J. Xue, J. Wang, N. Guan, ``ATER: Adaptive Task Execution Rate Regulation for Enhanced Real-Time Performance in ROS 2,'' IEEE RTCSA, 2025.
+\bibitem{ref15} M. Kim, S. Lee, D. Oh, B. Park, J. Jo, C. Lee, ``Anomaly Deviation-Based Window Size Selection of Sensor Data for Enhanced Fault Diagnosis Efficiency in Autonomous Manufacturing Systems,'' Mathematics, 2026.
+\bibitem{ref16} G. Tang, C. Yi, L. Liu, Z. Xing, Q. Zhou, J. Lin, ``Integrating Adaptive Input Length Selection Strategy and Unsupervised Transfer Learning for Bearing Fault Diagnosis under Noisy Conditions,'' Applied Soft Computing, 2023.
+\bibitem{ref17} G. Tang, C. Yi, L. Liu, X. Yang, D. Xu, Q. Zhou, J. Lin, ``A Novel Transfer Learning Network with Adaptive Input Length Selection and Lightweight Structure for Bearing Fault Diagnosis,'' Engineering Applications of Artificial Intelligence, 2023.
+\bibitem{ref18} W. Kang, S. Chung, J. Y. Kim, Y. Lee, K. Lee, J. Lee, K. G. Shin, H. S. Chwa, ``DNN-SAM: Split-and-Merge DNN Execution for Real-Time Object Detection,'' IEEE RTAS, 2022.
+\bibitem{ref19} Y. Li, Z. Li, A. A. Arafat, D. Johnson, N. Sui, A. Gehi, Z. Guo, ``Adaptive Model Selection for Real-Time Heart Disease Detection on Embedded Systems,'' IEEE RTCSA, 2025.
+\bibitem{ref20} Y. Xu, Z. Liu, X. Fu, S. Liu, F. Wu, G. Chen, ``FLEX: Adaptive Task Batch Scheduling with Elastic Fusion in Multi-Modal Multi-View Machine Perception,'' IEEE RTSS, 2024.
+\bibitem{ref21} S. Yao, Y. Hao, Y. Zhao, H. Shao, D. Liu, S. Liu, T. Wang, J. Li, T. Abdelzaher, ``Scheduling Real-Time Deep Learning Services as Imprecise Computations,'' IEEE RTCSA, 2020.
+\bibitem{ref22} 이태훈, 박신형, 김태현, ``Zephyr RTOS 기반 MCU에서의 실시간 기계 결함 진단 추론 성능 분석,'' KCC, 2026. 정식 proceedings metadata 확인 필요.
+\bibitem{ref23} S. Lee and T. Kim, ``FRFconv-TDSNet: Lightweight, Noise-Robust Convolutional Neural Network Leveraging Full-Receptive-Field Convolution and Time-Domain Statistics for Intelligent Machine Fault Diagnosis,'' IEEE Transactions on Instrumentation and Measurement, vol. 73, pp. 1--13, 2024.
+\bibitem{ref24} H. S. Chwa, K. G. Shin, H. Baek, and J. Lee, ``Physical-State-Aware Dynamic Slack Management for Mixed-Criticality Systems,'' IEEE RTAS, 2018, doi: 10.1109/RTAS.2018.00023.
+\bibitem{ref25} Y. Xiang and H. Kim, ``Pipelined Data-Parallel CPU/GPU Scheduling for Multi-DNN Real-Time Inference,'' IEEE RTSS, 2019, doi: 10.1109/RTSS46320.2019.00042.
+\end{thebibliography}
+
+\end{document}

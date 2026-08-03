@@ -84,6 +84,16 @@
   - 본 연구 연결: `S -> W`만으로는 novelty가 될 수 없다. 차별점 후보는 vibration temporal window의 signal semantics, machine condition과 slack의 결합, `W/H/M` 공동 선택, Pi Zero 2W와 PREEMPT_RT 검증이다.
   - 주의: DNN-SAM의 sufficient condition은 non-preemptive EDF task model과 측정 기반 maximum execution-time bound에 의존한다. 이를 본 연구의 보장으로 직접 사용할 수 없다.
 
+- External physical state와 runtime slack을 함께 사용하는 schedulability-aware 선행연구가 존재한다.
+  - 근거 후보: Chwa et al. RTAS 2018은 physical-state-dependent LC/HC WCET budget과 EDF-VD의 LC/HC-mode slack을 결합한다.
+  - 본 연구 연결: `machine/physical state + system slack`이라는 trigger 조합 자체는 novelty가 될 수 없다. 남는 차이는 physical state가 diagnostic fidelity 요구를 바꾸는 방식, vibration temporal `(W,H)` mode, diagnosis accuracy/detection metric과 PREEMPT_RT 실측이다.
+  - 주의: 이 논문에서 physical state는 task execution demand를 결정하고 mixed-criticality service degradation을 줄이는 데 쓰인다. 본 연구의 anomaly score나 fault severity와 같은 의미로 등치하지 않는다.
+
+- Offline execution-time profiling은 runtime 변화와 모순되는 절차가 아니라 admission을 위한 조건부 cost model로 사용할 수 있다.
+  - 근거 후보: Xiang and Kim RTSS 2019 DART는 DNN layer/node별 반복 측정 최대를 profile하고 pipeline response-time analysis와 admission control에 사용하며, runtime overrun을 별도로 감시한다.
+  - 본 연구 연결: `(W,H,M)` mode별 offline profile과 online feasibility filtering을 분리하는 근거가 된다.
+  - 주의: DART도 관찰 최대보다 긴 실행 가능성과 OS/driver jitter를 인정한다. 따라서 본 연구의 measured maximum을 formal WCET로 부르지 않는다.
+
 - Model accuracy와 latency를 따로 최적화하기보다 condition과 physical/application performance를 포함한 capability function으로 mode utility를 정의할 수 있다.
   - 근거 후보: Chen et al. RTSS 2024 SCENIC은 controller complexity, response time, plant와 environment condition을 실제 control performance에 연결한다.
   - 본 연구 연결: `U_diag(q,W,M,R,H)` 또는 이에 준하는 diagnosis utility를 정의하고, model-independent scheduler와 model-specific profile/utility를 분리하는 근거다.

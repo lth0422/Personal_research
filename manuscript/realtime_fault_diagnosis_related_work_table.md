@@ -36,7 +36,7 @@
 | Sayghe, Physics-Aware Transformer [18] | Raspberry Pi 4 | Linux (OS 미기재); ONNX Runtime 1.16 | X | X | X | X | X | 물리 인식 경량 Transformer (overlapping Conv-Stem + physics-guided patch P=⌈f_s/f_min⌉) + ONNX Runtime; 0.52M param; avg 43.6 ms (1000 calls) | X | X | X | X | B |
 | Bhaventhan et al., Vibration PdM [19] | Raspberry Pi 4 | Linux (OS 미기재) | X | X | △ | X | X | 없음 (원문 미명시; 표준 CNN 직접 실행 추정) | X | X | X | X | B |
 | Asutkar et al., TinyML TL Domain Generalization [20] | ESP32 + Raspberry Pi 4B | TFLite (Arduino IDE) / TF (Pi) | X | X | X | X | X | 통계 특징 10개 (raw→(10×1) 압축) + TFLite + 2498 파라미터 경량 CNN | X | X | X | X | B |
-| KCC 2026 system [self-reference 확인 필요] | MCU | Zephyr RTOS | O | X | O | O | △ | 양자화 + Zephyr RTOS 최적화 | O | X | X | X | E |
+| Lee, Park, and Kim, KCC 2026 [21] | STM32F407 MCU | Zephyr v4.3 + TFLite Micro + CMSIS-NN | O | X | O | △ | X | INT8 quantization + CMSIS-NN + offline W reduction | △ | X | X | X | E |
 | Proposed work | Pi Zero 2W | Linux + PREEMPT_RT | X | P | P | P | P | - | P | P | P* | P | Target E; H requires formal analysis |
 
 `P*`: 초기 연구 범위는 joint `W/H`를 코어로 두고 `M`은 고정하거나 제한된 보조 변수로 두는 안을 우선 검토한다.
@@ -110,7 +110,10 @@ Comparison of real-time support in embedded machine fault-diagnosis studies. Mod
 
 [20] S. Asutkar, C. Chalke, K. Shivgan, and S. Tallur, "TinyML-enabled edge implementation of transfer learning framework for domain generalization in machine fault diagnosis," *Expert Systems with Applications*, vol. 213, 2023, doi: 10.1016/j.eswa.2022.119016.
 
+[21] T. Lee, S. Park, and T. Kim, "Zephyr RTOS 기반 MCU에서의 실시간 기계 결함 진단 추론 성능 분석," *KCC*, 2026. 정식 proceedings metadata 확인 필요.
+
 ### 참고문헌 주의사항
 
-- KCC 2026 system은 본인 선행연구의 저자, 정식 제목과 publication metadata를 확정한 뒤 번호를 부여한다.
-- 표의 `[1]`--`[19]`는 현재 비교 행과 1:1로 대응한다.
+- KCC 2026 system은 본인 선행연구이며 외부 related-work 20편의 등급 집계에서 제외한다.
+- KCC 2026의 정식 proceedings metadata는 제출 원고 또는 proceedings에서 추가 확인한다.
+- 표의 `[1]`--`[21]`은 비교 행 또는 self-reference와 대응한다.

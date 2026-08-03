@@ -1,7 +1,7 @@
 # Table 1 Draft: Related Work Comparison
 
 이 파일은 `surveys/comparison_table.md`의 내부 상세 비교표를 원고용으로 압축한 초안이다.
-현재 카드화한 개별 논문 76편을 모두 나열하지 않고, 관련연구 계열별 핵심 차이만 보여준다.
+현재 카드화한 개별 논문 80편을 모두 나열하지 않고, 관련연구 계열별 핵심 차이만 보여준다.
 
 이 표는 관련연구 **계열** 비교용이다. Real-Time Fault Diagnosis 개별 논문의 O/△/X 비교는 `manuscript/realtime_fault_diagnosis_related_work_table.md`에서 관리한다. 최종 원고에서는 두 표의 역할과 지면을 보고 하나만 본문에 두거나 다른 하나를 부록으로 이동한다.
 
@@ -14,7 +14,8 @@
 | Elastic and rate-adaptive scheduling | Buttazzo et al. [1]; Buttazzo and Abeni [2]; Chantem et al. [3]; Orr et al. [4]; Marinoni and Buttazzo [5]; Burgio et al. [6]; Wang et al. [7]; Baruah [8]; Sudvarg et al. [9]; Xu et al. [10]; Li et al. [11]; Gifford et al. [12] | Period/rate, observed execution-time estimate, controller/mode, utilization, workload, CPU/bus mode, sampling rate, core/cache/BW allocation | Overload, estimated load, available utilization, mode-change event, control safety, shared-resource demand, message/processing-rate mismatch | EDF/RM/PDA and federated schedulability, soft feedback adaptation, TDES safe sequence, weakly-hard safety, multi-mode transition DBF, ROS 2 feedback | Measured execution-time feedback와 period 조절도 이미 존재하지만 hard bound는 아님. Vibration temporal `W`, diagnosis utility/anomaly score, inference `M`, hard-feasible mode selection과 PREEMPT_RT pipeline의 결합은 확인되지 않음 |
 | Input-adaptive visual perception | Hu et al. [13]--[15]; Liu et al. [16]; Soyyigit et al. [17] | Image/segment size, LiDAR resolution, inspection frequency, canvas packing, batching | Object criticality, spatial uncertainty, workload, deadline, predicted execution time | Embedded GPU, autonomous driving/surveillance, deadline-aware perception | Vision/LiDAR spatial input 중심. Vibration window `W`, diagnosis period `H`, model `M`, machine condition 기반 utility를 함께 다루지 않음 |
 | Input-adaptive fault diagnosis | Kim et al. [18]; Tang et al. [19], [20]; Jalonen et al. [21]; Zhang et al. [22]; Lima [23]; Shan et al. [24]; Sayghe [25] | Window/input/patch length, hop, sampling/compression ratio, model | Bearing parameters and fault frequency, anomaly deviation, speed, offline accuracy/resource profile | MCU/SoC target latency and fault-diagnosis accuracy, mostly offline/data-driven selection | Physics와 `W`를 연결하지만 system slack, deadline-aware runtime scheduling, `H/M` 공동 선택과 PREEMPT_RT는 확인되지 않음 |
-| Deadline-aware DNN serving | Yao et al. [26]; Kang et al. [27]; Chen et al. [28]; Xu et al. [29]; Li et al. [30]; Cao et al. [31]; Han et al. [32]; He et al. [33]; Zhang et al. [34]; Raj et al. [35] | DNN stage/depth, input scale, model capability, heterogeneous mapping, exit, batch/fusion/offloading | Confidence, slack/deadline, queue/load, critical region, environment/control condition, GPU budget, heart rate | Non-preemptive EDF, fixed-priority WCRT, edge GPU/server, SLO and deadline miss | Slack 기반 image scale와 condition-aware capability는 이미 다룸. Vibration temporal `W`, runtime machine condition + slack, `H/M`, PREEMPT_RT timing의 결합은 확인되지 않음 |
+| Deadline-aware DNN serving | Yao et al. [26]; Kang et al. [27]; Chen et al. [28]; Xu et al. [29]; Li et al. [30]; Cao et al. [31]; Han et al. [32]; He et al. [33]; Zhang et al. [34]; Raj et al. [35]; Xiang and Kim [58] | DNN stage/depth, input scale, model capability, heterogeneous mapping, exit, batch/fusion/offloading, CPU/GPU pipeline | Confidence, slack/deadline, queue/load, critical region, environment/control condition, GPU budget, heart rate, task admission | Non-preemptive EDF, fixed-priority WCRT, pipeline response-time analysis, edge GPU/server, SLO and deadline miss | Slack 기반 image scale와 profiling 기반 admission은 이미 다룸. Vibration temporal `W`, runtime machine condition + slack, `H/M`, PREEMPT_RT timing의 결합은 확인되지 않음 |
+| Physical-state-aware slack management | Chwa et al. [59] | Physical-state-dependent LC/HC execution budget, runtime slack | External physical state at release, actual execution completion, budget overrun | EDF-VD mixed-criticality schedulability and safe LC/HC slack reclamation | External state + slack 자체는 이미 존재. State가 diagnostic fidelity를 정하는 구조, vibration `(W,H,M)`과 diagnosis metric은 다루지 않음 |
 | Weakly-hard deadline semantics | Chen et al. [36]; Xu et al. [10] | `(m,K)` constraint, CBS parameters, safe miss pattern | Offline constraint derivation and server/schedule synthesis | Linux `SCHED_DEADLINE`, weakly-hard schedulability and control-safety analysis | Bounded miss의 대안적 보장 모델이다. Surveyed vibration FD work가 이 모델을 채택했다는 근거는 확인되지 않아 본 연구의 기본 타깃으로 전제하지 않음 |
 | Deadline-miss handling and risk | Braun and Altmeyer [37]; Hawila et al. [38]; Guan et al. [39] | Kill/skip/queue, period, allowable consecutive misses, active dropping | Deadline miss/overload, stability constraint, probabilistic failure risk | STM32/ThreadX empirical fallback, fixed-priority and probabilistic EDF analysis | Miss 결과와 fallback 설계의 배경이지만 주로 control/general task domain이며 vibration diagnosis의 허용 miss를 직접 정당화하지 않음 |
 | Deadline-aware classifier cascades | Agrawal et al. [40]; Baruah et al. [41] | Cascade order, classifier subset, deterministic fallback | Input history/confidence or offline deadline-constrained synthesis | Hard latency/deadline constraint, algorithmic evaluation | Model/exit 선택 비교군이지만 weakly-hard와 별개이며 vibration `W/H/M`, system slack, PREEMPT_RT는 다루지 않음 |
@@ -25,7 +26,7 @@
 
 ## Caption Draft
 
-Comparison of related work by adaptation variable, trigger, and real-time/platform scope. Existing work covers elastic period/workload scheduling, adaptive input sizing, deadline-aware DNN serving, and embedded real-time platforms separately. In the surveyed papers, we did not find a runtime policy that jointly selects vibration diagnosis window size, diagnosis period, and model based on both machine condition and system slack.
+Comparison of related work by adaptation variable, trigger, and real-time/platform scope. Existing work already covers physical-state-aware slack management, elastic period/workload scheduling, adaptive input sizing, and deadline-aware DNN serving. In the surveyed papers, we did not find a runtime policy that separates vibration-state-driven diagnostic preference from slack-constrained feasibility while jointly selecting temporal diagnosis modes.
 
 ## Notes
 
@@ -149,3 +150,7 @@ Comparison of related work by adaptation variable, trigger, and real-time/platfo
 [56] Y. Tang et al., "Optimizing End-to-End Latency of Sporadic Cause-Effect Chains Using Priority Inheritance," *IEEE RTSS*, 2023.
 
 [57] F. Guan et al., "Mixed-Criticality Federated Scheduling for Relaxed-Deadline DAG Tasks," *IEEE RTSS*, 2024.
+
+[58] Y. Xiang and H. Kim, "Pipelined Data-Parallel CPU/GPU Scheduling for Multi-DNN Real-Time Inference," *IEEE RTSS*, 2019, doi: 10.1109/RTSS46320.2019.00042.
+
+[59] H. S. Chwa, K. G. Shin, H. Baek, and J. Lee, "Physical-State-Aware Dynamic Slack Management for Mixed-Criticality Systems," *IEEE RTAS*, 2018, doi: 10.1109/RTAS.2018.00023.
